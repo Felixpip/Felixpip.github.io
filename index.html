@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<title>Калькулятор ОВиК</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eff2;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#c9d6dc;--ac:#0b7a86;--acs:#d6eef0;--hot:#c8581a;--hots:#fbe6d8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--hot:#ff9a5c;--hots:#3a2415}}
+:root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--hot:#ff9a5c;--hots:#3a2415}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.1;margin:8px 0 4px;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 18px}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer}
+nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
+:root:not([data-theme="light"]) nav button[aria-selected=true]{color:#06222a}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+section.on{display:block}
+h2{margin:0 0 4px;font-size:1.25rem}
+.hint{color:var(--mut);font-size:.9rem;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--mut)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+.res{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.r{border-left:4px solid var(--ac);background:var(--acs);padding:10px 12px;border-radius:0 6px 6px 0}
+.r.main{border-color:var(--hot);background:var(--hots)}
+.r small{display:block;color:var(--mut);font-size:.8rem}
+.r b{font-size:1.5rem;font-variant-numeric:tabular-nums}
+.r span{color:var(--mut);font-size:.9rem}
+.note{margin-top:12px;font-size:.85rem;color:var(--mut)}
+.gh{grid-column:1/-1;font-weight:700;margin-top:6px}
+footer{margin-top:18px;font-size:.8rem;color:var(--mut)}
+.add,.tool{margin-top:14px;font:inherit;background:var(--ac);color:#fff;border:0;border-radius:6px;padding:9px 14px;cursor:pointer;font-weight:700}
+:root:not([data-theme="light"]) .add,:root:not([data-theme="light"]) .tool{color:#06222a}
+.tool.sec{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:400}
+#log{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.tw{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--acs)}
+td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;cursor:pointer}
+.empty{color:var(--mut);text-align:center}
+#lg_s{margin-left:10px;color:var(--mut);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Калькулятор вентиляции и кондиционирования</h1>
+<p class="sub">Быстрые прикидки на объекте: воздухообмен, воздуховоды, холод, нагрев, единицы.</p>
+<nav role="tablist" id="tabs"></nav>
+
+<section id="t0"><h2>Воздухообмен</h2><p class="hint">Расход по кратности и по числу людей — берётся большее значение.</p>
+<div class="grid">
+<label>Площадь, м²<input id="a_s" type="number" value="30" min="0"></label>
+<label>Высота, м<input id="a_h" type="number" value="2.7" step="0.1" min="0"></label>
+<label>Тип помещения<select id="a_k"></select></label>
+<label>Людей, чел.<input id="a_n" type="number" value="4" min="0"></label>
+<label>Норма на человека<select id="a_p"><option value="20">20 м³/ч (покой)</option><option value="30" selected>30 м³/ч (офис)</option><option value="40">40 м³/ч</option><option value="60">60 м³/ч (спорт, курение)</option></select></label>
+</div>
+<div class="res" id="a_r"></div>
+<p class="note">Кратности ориентировочные. Для проекта используйте действующие СП/СНиП и задание заказчика.</p></section>
+
+<section id="t1"><h2>Воздуховод</h2><p class="hint">Подбор сечения по скорости, а также проверка своего круглого и прямоугольного воздуховода: скорость, сечение, давление и площадь поверхности по длине участка (для изоляции и листового металла).</p>
+<div class="grid">
+<label>Расход, м³/ч<input id="d_l" type="number" value="1000" min="0"></label>
+<label>Скорость, м/с<input id="d_v" type="number" value="5" step="0.5" min="0.1"></label>
+<label>Диаметр круглого, мм<input id="d_d" type="number" value="250" min="50"></label>
+<label>Ширина прямоугольного, мм<input id="d_w" type="number" value="400" min="50"></label>
+<label>Высота прямоугольного, мм<input id="d_h" type="number" value="200" min="50"></label>
+<label>Длина участка, м<input id="d_n" type="number" value="10" min="0" step="0.5"></label>
+</div>
+<div class="res" id="d_r"></div>
+<p class="note">Ориентиры скорости: магистраль 5–8 м/с, ответвления 3–5 м/с, решётки 2–3 м/с (жилые и офисы — ниже ради шума). Экв. Ø по расходу — круглый воздуховод с тем же расходом и потерями на трение, по нему читают таблицы потерь. Экв. Ø по скорости — с той же скоростью, 2ab/(a+b).</p></section>
+
+<section id="t2"><h2>Холодопроизводительность</h2><p class="hint">Прикидка теплопритоков и подбор сплит-системы по типоряду.</p>
+<div class="grid">
+<label>Площадь, м²<input id="c_s" type="number" value="25" min="0"></label>
+<label>Высота, м<input id="c_h" type="number" value="2.7" step="0.1" min="0"></label>
+<label>Освещённость солнцем<select id="c_q"><option value="30">Север / тень</option><option value="35" selected>Обычная</option><option value="40">Солнечная сторона</option></select></label>
+<label>Людей, чел.<input id="c_n" type="number" value="2" min="0"></label>
+<label>Техника, Вт<input id="c_e" type="number" value="400" min="0"></label>
+<label>Запас, %<input id="c_r" type="number" value="10" min="0"></label>
+</div>
+<div class="res" id="c_r2"></div>
+<p class="note">Метод: 30–40 Вт/м³ + 130 Вт на человека + техника. Для серверных, кухонь и больших остеклений нужен полный расчёт.</p></section>
+
+<section id="t3"><h2>Нагрев воздуха</h2><p class="hint">Мощность калорифера и ток нагрузки.</p>
+<div class="grid">
+<label>Расход, м³/ч<input id="h_l" type="number" value="1000" min="0"></label>
+<label>t наружная, °C<input id="h_t1" type="number" value="-26"></label>
+<label>t приточная, °C<input id="h_t2" type="number" value="18"></label>
+</div>
+<div class="res" id="h_r"></div>
+<p class="note">Q = L · 1,2 · 1,005 · Δt / 3600. Ток: 230 В однофазный и 400 В трёхфазный, cosφ = 1 для ТЭНов.</p></section>
+
+<section id="t4"><h2>Единицы</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<div class="grid">
+<label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
+<label>Значение<input id="u_v" type="number" value="1000"></label>
+<label>Единица<select id="u_u"></select></label>
+</div>
+<div class="res" id="u_r"></div></section>
+
+<section id="t5"><h2>Зонт местного отсоса</h2><p class="hint">Расход воздуха для вытяжного зонта над плитой, печью или рабочим местом.</p>
+<div class="grid">
+<label>Длина источника, мм<input id="z_a" type="number" value="1000" min="0"></label>
+<label>Ширина источника, мм<input id="z_b" type="number" value="700" min="0"></label>
+<label>Высота зонта над источником, мм<input id="z_h" type="number" value="700" min="0"></label>
+<label>Вылет зонта за источник, мм<input id="z_e" type="number" value="150" min="0"></label>
+<label>Расположение<select id="z_t"><option value="4">Островной (4 стороны открыты)</option><option value="3" selected>Пристенный (3 стороны)</option><option value="2">Угловой (2 стороны)</option></select></label>
+<label>Скорость захвата<select id="z_v"><option value="0.15">0,15 м/с (холодные процессы)</option><option value="0.25" selected>0,25 м/с (кухня, плита)</option><option value="0.35">0,35 м/с (жарочные, фритюр)</option><option value="0.5">0,5 м/с (сильные тепловыделения)</option></select></label>
+<label>Запас, %<input id="z_r" type="number" value="10" min="0"></label>
+<label>Скорость в патрубке, м/с<input id="z_s" type="number" value="7" step="0.5" min="1"></label>
+</div>
+<div class="res" id="z_res"></div>
+<p class="note">Расчёт по формуле L = 3600 · v · P · H, где P — открытый периметр зонта, H — высота над источником. Держите H не более 0,6–0,7 м, вылет не менее 150 мм. Для мощных тепловых источников дополнительно проверьте расход по тепловыделению.</p></section>
+<div id="log"><h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту и копируйте таблицу в Excel или мессенджер.</p>
+<label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
+<div class="tw"><table><thead><tr><th>№</th><th>Время</th><th>Расчёт</th><th>Пометка</th><th>Исходные данные</th><th>Результат</th><th>Значение</th><th></th></tr></thead><tbody id="lg_b"></tbody><tfoot id="lg_f"></tfoot></table></div>
+<button class="tool" id="lg_c">Копировать таблицу</button> <button class="tool sec" id="lg_x">Очистить журнал</button><span id="lg_s" role="status"></span></div>
+<footer>Расчёты справочные и не заменяют проектную документацию.</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const f=(x,d=1)=>isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:d}):'—';
+const box=(l,v,u,m)=>`<div class="r${m?' main':''}"><small>${l}</small><b>${v}</b> <span>${u||''}</span></div>`;
+const names=['Воздухообмен','Воздуховод','Кондиционер','Нагрев','Единицы','Зонт отсоса'];
+const tabs=$('tabs');
+names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.setAttribute('role','tab');b.onclick=()=>show(i);tabs.appendChild(b)});
+function show(i){[...tabs.children].forEach((b,j)=>b.setAttribute('aria-selected',i===j));document.querySelectorAll('section').forEach((s,j)=>s.classList.toggle('on',i===j));try{history.replaceState(null,'','#t'+i)}catch(e){}}
+const rooms=[['Жилая комната',1],['Спальня',1],['Кухня (электроплита)',6],['Санузел',7],['Офис',3],['Переговорная',5],['Магазин',3],['Ресторан, зал',8],['Спортзал',5],['Мастерская',4],['Склад',1]];
+$('a_k').innerHTML=rooms.map((r,i)=>`<option value="${r[1]}">${r[0]} — ${r[1]} 1/ч</option>`).join('');
+$('a_k').value=3;
+function calcA(){const V=+$('a_s').value*+$('a_h').value,k=+$('a_k').value,n=+$('a_n').value,p=+$('a_p').value;
+const L1=V*k,L2=n*p,L=Math.max(L1,L2);
+$('a_r').innerHTML=box('Объём',f(V),'м³')+box('По кратности',f(L1,0),'м³/ч')+box('По людям',f(L2,0),'м³/ч')+box('Требуемый расход',f(L,0),'м³/ч',1)+box('Расход',f(L/3.6,0),'л/с');}
+const STD=[100,125,160,200,250,315,400,500,630,710,800,1000,1250];
+function calcD(){const L=+$('d_l').value,v=+$('d_v').value,w=+$('d_w').value,dd=+$('d_d').value,hh=+$('d_h').value,ln=+$('d_n').value;
+const A=L/3600/v,D=Math.sqrt(4*A/Math.PI)*1000,s=STD.find(x=>x>=D)||STD[STD.length-1];
+const vf=L/3600/(Math.PI*(s/1000)**2/4),h=A*1e6/w;
+const ar=Math.PI*(dd/1000)**2/4,vr=L/3600/ar,aw=w*hh/1e6,vw=L/3600/aw,de=1.3*Math.pow(w*hh,0.625)/Math.pow(w+hh,0.25),rs=w+'×'+hh;
+$('d_r').innerHTML='<div class="gh">Подбор по скорости '+f(v)+' м/с</div>'+box('Площадь сечения',f(A*1e4,0),'см²')+box('Расчётный Ø',f(D,0),'мм')+box('Стандартный Ø',s,'мм',1)+box('Скорость в нём',f(vf),'м/с')+box('Высота при ширине '+w+' мм',f(Math.ceil(h/10)*10,0),'мм')+box('Динамическое давление',f(0.6*v*v),'Па')+'<div class="gh">Круглый Ø'+f(dd,0)+' мм</div>'+box('Ø'+dd+': скорость',f(vr),'м/с',1)+box('Ø'+dd+': сечение',f(ar*1e4,0),'см²')+box('Ø'+dd+': дин. давление',f(0.6*vr*vr),'Па')+box('Ø'+dd+': площадь поверхности',f(Math.PI*dd/1000*ln,2),'м²')+'<div class="gh">Прямоугольный '+w+' × '+hh+' мм</div>'+box(rs+': скорость',f(vw),'м/с',1)+box(rs+': сечение',f(aw*1e4,0),'см²')+box(rs+': экв. Ø по расходу',f(de,0),'мм',1)+box(rs+': экв. Ø по скорости',f(2*w*hh/(w+hh),0),'мм')+box(rs+': дин. давление',f(0.6*vw*vw),'Па')+box(rs+': площадь поверхности',f(2*(w+hh)/1000*ln,2),'м²');}
+const AC=[[2.0,'07'],[2.6,'09'],[3.5,'12'],[5.3,'18'],[7.0,'24'],[8.8,'30'],[10.5,'36'],[14,'48']];
+function calcC(){const S=+$('c_s').value,h=+$('c_h').value,q=+$('c_q').value,n=+$('c_n').value,e=+$('c_e').value,r=+$('c_r').value;
+const W=S*h*q+n*130+e,Q=W*(1+r/100)/1000,m=AC.find(a=>a[0]>=Q);
+$('c_r2').innerHTML=box('Теплопритоки',f(W/1000,2),'кВт')+box('С запасом',f(Q,2),'кВт',1)+box('В BTU/ч',f(Q*3412,0),'')+box('Типоразмер',m?m[1]+' ('+m[0]+' кВт)':'мульти-/полупром.','',1)+box('Удельно',f(W/S,0),'Вт/м²');}
+function calcH(){const L=+$('h_l').value,a=+$('h_t1').value,b=+$('h_t2').value,dt=b-a;
+const Q=L*1.2*1.005*dt/3600;
+$('h_r').innerHTML=box('Δt',f(dt,0),'°C')+box('Мощность',f(Q,2),'кВт',1)+box('Ток, 1 фаза 230 В',f(Q*1000/230),'А')+box('Ток, 3 фазы 400 В',f(Q*1000/(Math.sqrt(3)*400)),'А')+box('Ккал/ч',f(Q*860,0),'');}
+const U=[[['м³/ч',1],['л/с',3.6],['м³/с',3600],['CFM',1.699011]],[['Вт',1],['кВт',1000],['BTU/ч',0.293071],['ккал/ч',1.163],['ton (TR)',3516.85]],[['Па',1],['кПа',1000],['мм вод. ст.',9.80665],['бар',100000],['inH₂O',249.089]]];
+function fillU(){const c=+$('u_c').value;$('u_u').innerHTML=U[c].map((u,i)=>`<option value="${i}">${u[0]}</option>`).join('');calcU()}
+function calcU(){const c=+$('u_c').value,v=+$('u_v').value,i=+$('u_u').value,base=v*U[c][i][1];
+$('u_r').innerHTML=U[c].map((u,j)=>box(u[0],f(base/u[1],4),'',j===i)).join('');}
+function calcZ(){const a=+$('z_a').value/1000,b=+$('z_b').value/1000,h=+$('z_h').value/1000,e=+$('z_e').value/1000,t=+$('z_t').value,v=+$('z_v').value,r=+$('z_r').value,vs=+$('z_s').value;
+const A=a+(t>=3?2*e:e),B=b+(t===4?2*e:e),P=t===4?2*(A+B):t===3?A+2*B:A+B;
+const L0=3600*v*P*h,L=L0*(1+r/100),vf=L/3600/(A*B),D=Math.sqrt(4*L/3600/vs/Math.PI)*1000,s=STD.find(x=>x>=D)||STD[STD.length-1],vp=L/3600/(Math.PI*(s/1000)**2/4);
+$('z_res').innerHTML=box('Размер зонта',f(A*1000,0)+' × '+f(B*1000,0),'мм')+box('Открытый периметр',f(P,2),'м')+box('Расход расчётный',f(L0,0),'м³/ч')+box('Расход с запасом',f(L,0),'м³/ч',1)+box('Скорость в плоскости зонта',f(vf,2),'м/с')+box('Расчётный Ø патрубка',f(D,0),'мм')+box('Стандартный Ø патрубка',s,'мм',1)+box('Скорость в нём',f(vp),'м/с');}
+const bind=(ids,fn)=>ids.forEach(i=>{$(i).addEventListener('input',fn)});
+bind(['a_s','a_h','a_k','a_n','a_p'],calcA);bind(['d_l','d_v','d_d','d_w','d_h','d_n'],calcD);
+bind(['c_s','c_h','c_q','c_n','c_e','c_r'],calcC);bind(['h_l','h_t1','h_t2'],calcH);bind(['z_a','z_b','z_h','z_e','z_t','z_v','z_r','z_s'],calcZ);
+$('u_c').addEventListener('input',fillU);bind(['u_v','u_u'],calcU);
+calcA();calcD();calcC();calcH();calcZ();fillU();
+let LOG=[];try{LOG=JSON.parse(localStorage.getItem('hvaclog')||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem('hvaclog',JSON.stringify(LOG))}catch(e){}};
+const say=t=>{$('lg_s').textContent=t;setTimeout(()=>$('lg_s').textContent='',2500)};
+function renderLog(){const tb=$('lg_b');tb.innerHTML=LOG.length?'':'<tr><td colspan="8" class="empty">Пока пусто. Нажмите «Записать в журнал» под результатами расчёта.</td></tr>';
+LOG.forEach((r,i)=>{const tr=document.createElement('tr');[i+1,r.t,r.n,r.o,r.i,r.r,r.v!=null?f(r.v,2)+' '+r.u:''].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});const td=document.createElement('td'),b=document.createElement('button');b.textContent='×';b.setAttribute('aria-label','Удалить строку '+(i+1));b.onclick=()=>{LOG.splice(i,1);save();renderLog()};td.appendChild(b);tr.appendChild(td);tb.appendChild(tr)});renderTot()}
+function renderTot(){const s={};LOG.forEach(r=>{if(r.v!=null){const g=s[r.n]||(s[r.n]={v:0,k:0,u:r.u});g.v+=r.v;g.k++}});const k=Object.keys(s);$('lg_f').innerHTML=k.length?'<tr><th colspan="6">Итого</th><th colspan="2">'+k.map(n=>n+': '+f(s[n].v,2)+' '+s[n].u+' ('+s[n].k+' поз.)').join('<br>')+'</th></tr>':''}
+const SUM={0:['Требуемый расход','м³/ч'],2:['С запасом','кВт'],3:['Мощность','кВт'],5:['Расход с запасом','м³/ч']};
+function sv(s,i){const d=SUM[i];if(!d)return{};const r=[...s.querySelectorAll('.r')].find(x=>x.querySelector('small').textContent===d[0]);const v=r?parseFloat(r.querySelector('b').textContent.replace(/[\s\u00a0\u202f]/g,'').replace(',','.')):NaN;return isFinite(v)?{v,u:d[1]}:{}}
+document.querySelectorAll('section').forEach((s,i)=>{const b=document.createElement('button');b.className='add';b.textContent='Записать в журнал';b.onclick=()=>{
+const inp=[...s.querySelectorAll('label')].map(l=>{const c=l.querySelector('input,select');const v=c.tagName==='SELECT'?c.options[c.selectedIndex].text:c.value;return l.firstChild.textContent.trim()+': '+v}).join('; ');
+const res=[...s.querySelectorAll('.r')].map(r=>(r.querySelector('small').textContent+': '+r.querySelector('b').textContent+' '+r.querySelector('span').textContent).trim()).join('; ');
+LOG.push({t:new Date().toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'short'}),n:names[i],o:$('lg_o').value,i:inp,r:res,...sv(s,i)});save();renderLog();say('Строка добавлена');$('log').scrollIntoView({behavior:'smooth'})};s.appendChild(b)});
+$('lg_c').onclick=async()=>{const tsv=['№\tВремя\tРасчёт\tПометка\tИсходные данные\tРезультат\tЗначение'].concat(LOG.map((r,i)=>[i+1,r.t,r.n,r.o,r.i,r.r,r.v!=null?f(r.v,2)+' '+r.u:''].join('\t'))).join('\n');try{await navigator.clipboard.writeText(tsv);say('Скопировано')}catch(e){say('Не удалось скопировать')}};
+let armed=0;$('lg_x').onclick=()=>{if(!armed){armed=1;$('lg_x').textContent='Точно очистить?';setTimeout(()=>{armed=0;$('lg_x').textContent='Очистить журнал'},3000)}else{LOG=[];save();renderLog();armed=0;$('lg_x').textContent='Очистить журнал'}};
+renderLog();
+const m=/^#t([0-5])$/.exec(location.hash);show(m?+m[1]:0);
+</script>
+</body>
+</html>
