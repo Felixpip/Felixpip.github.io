@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "ru.hvascalc.app",
-        "sha256_cert_fingerprints": ["FB:AD:33:C0:1E:7D:EB:AF:27:E8:6A:DB:B1:08:83:AE:43:8D:7F:A0:F4:0B:CD:86:62:82:80:6E:B7:7A:0E:A9"]
+        "sha256_cert_fingerprints": ["46:6B:3D:48:BB:89:55:C3:9D:DB:81:9D:1F:12:98:53:83:DE:31:DE:1B:1D:39:9C:45:72:F9:97:14:39:F6:A4"]
       }
     }]
