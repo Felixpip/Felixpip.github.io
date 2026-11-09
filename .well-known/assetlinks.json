@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "ru.hvascalc.app",
+        "sha256_cert_fingerprints": ["FB:AD:33:C0:1E:7D:EB:AF:27:E8:6A:DB:B1:08:83:AE:43:8D:7F:A0:F4:0B:CD:86:62:82:80:6E:B7:7A:0E:A9"]
+      }
+    }]
