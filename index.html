@@ -73,11 +73,11 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 
 <section id="t0" role="tabpanel"><h2>Воздухообмен</h2><p class="hint">Расход по кратности и по числу людей — берётся большее значение.</p>
 <div class="grid">
-<label>Площадь, м²<input id="a_s" type="number" value="30" min="0" inputmode="decimal"></label>
-<label>Высота, м<input id="a_h" type="number" value="2.7" step="0.1" min="0" inputmode="decimal"></label>
+<label>Площадь, м²<input id="a_s" type="number" value="20" min="0" inputmode="decimal"></label>
+<label>Высота, м<input id="a_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
 <label>Тип помещения<select id="a_k"></select></label>
-<label>Людей, чел.<input id="a_n" type="number" value="4" min="0" inputmode="numeric"></label>
-<label>Норма на человека<select id="a_p"><option value="20">20 м³/ч (покой)</option><option value="30" selected>30 м³/ч (офис)</option><option value="40">40 м³/ч</option><option value="60">60 м³/ч (спорт, курение)</option></select></label>
+<label>Людей, чел.<input id="a_n" type="number" value="2" min="0" inputmode="numeric"></label>
+<label>Норма на человека<select id="a_p"><option value="20">20 м³/ч (покой)</option><option value="30">30 м³/ч (офис)</option><option value="40">40 м³/ч</option><option value="60" selected>60 м³/ч (спорт, курение)</option></select></label>
 </div>
 <div class="res" id="a_r"></div>
 <p class="note">Кратности ориентировочные. Для проекта используйте действующие СП/СНиП и задание заказчика.</p></section>
@@ -94,10 +94,10 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="d_r"></div>
 <p class="note">Ориентиры скорости: магистраль 5–8 м/с, ответвления 3–5 м/с, решётки 2–3 м/с. Экв. Ø по расходу — круглый воздуховод с теми же потерями. Экв. Ø по скорости — 2ab/(a+b).</p></section>
 
-<section id="t2" role="tabpanel"><h2>Холодопроизводительность</h2><p class="hint">Прикидка теплопритоков и подбор сплит-системы по типоряду.</p>
+<section id="t2" role="tabpanel"><h2>Холод</h2><p class="hint">Прикидка теплопритоков и подбор сплит-системы по типоряду.</p>
 <div class="grid">
-<label>Площадь, м²<input id="c_s" type="number" value="25" min="0" inputmode="decimal"></label>
-<label>Высота, м<input id="c_h" type="number" value="2.7" step="0.1" min="0" inputmode="decimal"></label>
+<label>Площадь, м²<input id="c_s" type="number" value="20" min="0" inputmode="decimal"></label>
+<label>Высота, м<input id="c_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
 <label>Освещённость солнцем<select id="c_q"><option value="30">Север / тень</option><option value="35" selected>Обычная</option><option value="40">Солнечная сторона</option></select></label>
 <label>Людей, чел.<input id="c_n" type="number" value="2" min="0" inputmode="numeric"></label>
 <label>Техника, Вт<input id="c_e" type="number" value="400" min="0" inputmode="numeric"></label>
@@ -115,15 +115,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="h_r"></div>
 <p class="note">Q = L · 1,2 · 1,005 · Δt / 3600. Ток: 230 В однофазный и 400 В трёхфазный, cosφ = 1.</p></section>
 
-<section id="t4" role="tabpanel"><h2>Единицы</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
-<div class="grid">
-<label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
-<label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
-<label>Единица<select id="u_u"></select></label>
-</div>
-<div class="res" id="u_r"></div></section>
-
-<section id="t5" role="tabpanel"><h2>Зонт местного отсоса</h2><p class="hint">Расход воздуха для вытяжного зонта.</p>
+<section id="t4" role="tabpanel"><h2>Зонт местного отсоса</h2><p class="hint">Расход воздуха для вытяжного зонта.</p>
 <div class="grid">
 <label>Длина источника, мм<input id="z_a" type="number" value="1000" min="0" inputmode="numeric"></label>
 <label>Ширина источника, мм<input id="z_b" type="number" value="700" min="0" inputmode="numeric"></label>
@@ -136,7 +128,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="z_res"></div></section>
 
-<section id="t6" role="tabpanel"><h2>Бассейн и ПВУ</h2><p class="hint">Расчёт влаговыделений, воздухообмена и подбор приточно-вытяжной установки (ПВУ).</p>
+<section id="t5" role="tabpanel"><h2>Бассейн и ПВУ</h2><p class="hint">Расчёт влаговыделений, воздухообмена и подбор приточно-вытяжной установки (ПВУ).</p>
 <div class="grid">
 <label>Длина зеркала, м<input id="b_a" type="number" value="10" min="0" step="0.1" inputmode="decimal"></label>
 <label>Ширина зеркала, м<input id="b_b" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
@@ -154,7 +146,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="b_res"></div>
 <p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека. Вытяжка обычно на 10–15% меньше притока. Нагрев ПВУ с учётом КПД рекуператора. Для аквапарков — полный расчёт по СП 31-113-2004.</p></section>
 
-<section id="t7" role="tabpanel"><h2>Аэродинамика</h2><p class="hint">Расчёт потерь давления в воздуховоде на трение и в местных сопротивлениях.</p>
+<section id="t6" role="tabpanel"><h2>Аэродинамика</h2><p class="hint">Расчёт потерь давления в воздуховоде на трение и в местных сопротивлениях.</p>
 <div class="grid">
 <label>Расход воздуха, м³/ч<input id="e_l" type="number" value="2000" min="0" inputmode="decimal"></label>
 <label>Форма сечения<select id="e_shape"><option value="round">Круглый</option><option value="rect">Прямоугольный</option></select></label>
@@ -162,11 +154,19 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label id="lbl_e_w" style="display:none">Ширина, мм<input id="e_w" type="number" value="500" min="50" inputmode="numeric"></label>
 <label id="lbl_e_h" style="display:none">Высота, мм<input id="e_h" type="number" value="300" min="50" inputmode="numeric"></label>
 <label>Длина участка, м<input id="e_len" type="number" value="20" min="0" step="0.5" inputmode="decimal"></label>
-<label>Шероховатость, мм<select id="e_k"><option value="0.1">0.1 — Сталь, алюминий</option><option value="0.3">0.3 — Оцинковка</option><option value="1.0">1.0 — Гибкий воздуховод</option><option value="3.0">3.0 — Кирпич / бетон</option></select></label>
+<label>Шероховатость, мм<select id="e_k"><option value="0.01">0.01 — ПВХ / пластик</option><option value="0.1" selected>0.1 — Сталь, алюминий</option><option value="0.3">0.3 — Оцинковка</option><option value="1.0">1.0 — Гибкий воздуховод</option><option value="3.0">3.0 — Кирпич / бетон</option></select></label>
 <label>Сумма КМС (Σζ)<input id="e_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
 </div>
 <div class="res" id="e_res"></div>
 <p class="note">Расчёт по формуле Дарси-Вейсбаха. Коэффициент трения — по формуле Альтшуля. Динамическое давление Pd = 0.6 · v². Потери: ΔP = (λ/d · L + Σζ) · Pd.</p></section>
+
+<section id="t7" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<div class="grid">
+<label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
+<label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
+<label>Единица<select id="u_u"></select></label>
+</div>
+<div class="res" id="u_r"></div></section>
 
 <div id="log"><h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
 <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
@@ -208,7 +208,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Воздуховод', 'Кондиционер', 'Нагрев', 'Единицы', 'Зонт отсоса', 'Бассейн', 'Аэродинамика'];
+const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт отсоса', 'Бассейн', 'Аэродинамика', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -237,7 +237,7 @@ tabs.addEventListener('keydown', e => {
 /* 1. воздухообмен */
 const rooms = [['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3], ['Ресторан, зал', 8], ['Спортзал', 5], ['Мастерская', 4], ['Склад', 1]];
 $('a_k').innerHTML = rooms.map(r => `<option value="${r[1]}">${r[0]} — ${r[1]} 1/ч</option>`).join('');
-$('a_k').value = 3;
+$('a_k').value = 1;
 function calcA() {
   const V = val('a_s') * val('a_h'), k = val('a_k'), n = val('a_n'), p = val('a_p');
   const L1 = V * k, L2 = n * p, L = Math.max(L1, L2);
@@ -456,7 +456,7 @@ function renderTot() {
   const k = Object.keys(s);
   $('lg_f').innerHTML = k.length ? '<tr><th colspan="6">Итого</th><th colspan="2">' + k.map(n => n + ': ' + f(s[n].v, 2) + ' ' + s[n].u + ' (' + s[n].k + ' поз.)').join('<br>') + '</th></tr>' : '';
 }
-const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 5: ['Расход с запасом', 'м³/ч'], 6: ['Приток', 'м³/ч'], 7: ['Суммарные потери', 'Па'] };
+const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'] };
 function sv(section, i) {
   const d = SUM[i]; if (!d) return {};
   const r = [...section.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === d[0]);
