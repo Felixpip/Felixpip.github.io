@@ -470,6 +470,27 @@ renderLog();
 const m = /^#t([0-6])$/.exec(location.hash);
 show(m ? +m[1] : 0);
 })();
+  if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing; if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            if(confirm('Доступно обновление. Перезагрузить?')) {
+                nw.postMessage({ type: 'SKIP_WAITING' });
+            }
+          }
+        });
+      });
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return; refreshing = true; location.reload();
+      });
+    } catch (err) { console.warn('SW:', err); }
+  });
+}
 </script>
 </body>
 </html>
