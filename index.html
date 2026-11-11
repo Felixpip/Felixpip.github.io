@@ -71,7 +71,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="head">
   <div>
     <h1>Калькулятор ОВиК</h1>
-    <p class="sub">Инструменты проектировщика: аэродинамика, гидравлика, холод, тепло.</p>
+    <p class="sub">Инструменты проектировщика: вентиляция, холод, тепло, вода и электрика.</p>
   </div>
   <button id="theme" type="button" title="Переключить тему">Тема: авто</button>
 </div>
@@ -98,7 +98,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Длина участка, м<input id="d_n" type="number" value="10" min="0" step="0.5" inputmode="decimal"></label>
 </div>
 <div class="res" id="d_r"></div>
-<p class="note">Ориентиры скорости: магистраль 5–8 м/с, ответвления 3–5 м/с, решётки 2–3 м/с. Экв. Ø по расходу — круглый воздуховод с теми же потерями. Экв. Ø по скорости — 2ab/(a+b).</p></section>
+<p class="note">Ориентиры скорости: магистраль 5–8 м/с, ответвления 3–5 м/с, решётки 2–3 м/с.</p></section>
 
 <section id="t2" role="tabpanel"><h2>Холод</h2><p class="hint">Прикидка теплопритоков и подбор сплит-системы по типоряду.</p>
 <div class="grid">
@@ -110,7 +110,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Запас, %<input id="c_r" type="number" value="10" min="0" inputmode="numeric"></label>
 </div>
 <div class="res" id="c_r2"></div>
-<p class="note">Метод: 30–40 Вт/м³ + 130 Вт на человека + техника. Для серверных и больших остеклений нужен полный расчёт.</p></section>
+<p class="note">Метод: 30–40 Вт/м³ + 130 Вт на человека + техника.</p></section>
 
 <section id="t3" role="tabpanel"><h2>Нагрев воздуха</h2><p class="hint">Мощность калорифера и ток нагрузки.</p>
 <div class="grid">
@@ -187,9 +187,31 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Сумма КМС (Σζ)<input id="g_zeta" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
 </div>
 <div class="res" id="g_res"></div>
-<p class="note">Расход воды G = 0.86 · Q / Δt. Подбор диаметра идёт по рекомендуемой скорости 0.5–1.5 м/с. Потери давления считаются как в аэродинамике, но для воды (плотность 1000 кг/м³).</p></section>
+<p class="note">Расход воды G = 0.86 · Q / Δt. Подбор диаметра идёт по рекомендуемой скорости 0.5–1.5 м/с.</p></section>
 
-<section id="t9" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
+<section id="t9" role="tabpanel"><h2>Фанкойлы</h2><p class="hint">Расчёт требуемого расхода воды и воздуха для фанкойла.</p>
+<div class="grid">
+<label>Тепловая/Холодильная нагрузка, кВт<input id="fc_q" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
+<label>t подающей воды, °C<input id="fc_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
+<label>t обратной воды, °C<input id="fc_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
+<label>t приточного воздуха, °C<input id="fc_tas" type="number" value="14" step="0.5" inputmode="decimal"></label>
+<label>t воздуха в помещении, °C<input id="fc_tar" type="number" value="24" step="0.5" inputmode="decimal"></label>
+</div>
+<div class="res" id="fc_res"></div>
+<p class="note">Расход воды G = 0.86 · Q / Δt_воды. Расход воздуха L = Q · 3600 / (1.2 · 1.005 · Δt_воздуха).</p></section>
+
+<section id="t10" role="tabpanel"><h2>Электрика</h2><p class="hint">Расчёт тока нагрузки, подбор автомата и сечения кабеля.</p>
+<div class="grid">
+<label>Мощность нагрузки, кВт<input id="el_p" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Тип сети<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (380 В)</option></select></label>
+<label>cosφ (коэфф. мощности)<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
+<label>Материал жилы<select id="el_mat"><option value="cu">Медь (Cu)</option><option value="al">Алюминий (Al)</option></select></label>
+<label>Длина линии, м<input id="el_l" type="number" value="20" min="0" inputmode="numeric"></label>
+</div>
+<div class="res" id="el_res"></div>
+<p class="note">Автомат подбирается с запасом 25% от тока нагрузки. Кабель подбирается по номиналу автомата (ПУЭ). Падение напряжения не должно превышать 5%.</p></section>
+
+<section id="t11" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
 <div style="text-align:center; margin-bottom: 20px;">
     <input type="file" id="photo_input" accept="image/*" capture="environment" style="display:none">
     <button class="tool" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">
@@ -199,7 +221,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
 </section>
 
-<section id="t10" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<section id="t12" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
 <div class="grid">
 <label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
 <label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
@@ -247,7 +269,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт отсоса', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидродинамика', 'Фото', 'Конвертер'];
+const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Фото', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -519,7 +541,81 @@ function calcG() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
-/* 11. ФОТО */
+/* 11. Фанкойлы */
+function calcFC() {
+  const Q = val('fc_q');
+  const tws = val('fc_tws');
+  const twr = val('fc_twr');
+  const tas = val('fc_tas');
+  const tar = val('fc_tar');
+
+  const dtw = twr - tws;
+  const dta = tar - tas;
+
+  const G = dtw > 0 ? (0.86 * Q / dtw) : 0;
+  const L = dta > 0 ? (Q * 3600) / (1.2 * 1.005 * dta) : 0;
+
+  $('fc_res').innerHTML = 
+    box('Расход воды', f(G, 2), 'м³/ч', 1) +
+    box('Расход воды', f(G / 3.6, 2), 'л/с') +
+    box('Расход воздуха', f(L, 0), 'м³/ч', 1) +
+    box('Перепад t воды', f(dtw, 1), '°C') +
+    box('Перепад t воздуха', f(dta, 1), '°C');
+}
+
+/* 12. Электрика */
+function calcEL() {
+  const P = val('el_p');
+  const ph = val('el_ph');
+  const cos = Math.max(val('el_cos'), 0.1);
+  const mat = val('el_mat');
+  const len = val('el_l');
+
+  const U = ph === '3' ? 380 : 220;
+  let I = 0;
+  
+  if (ph === '1') {
+    I = (P * 1000) / (U * cos);
+  } else {
+    I = (P * 1000) / (Math.sqrt(3) * U * cos);
+  }
+
+  const breakers = [6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160];
+  let breaker = breakers.find(b => b >= I * 1.25) || '>160';
+
+  const cuTable = [{ s: 1.5, i: 19 }, { s: 2.5, i: 27 }, { s: 4, i: 38 }, { s: 6, i: 46 }, { s: 10, i: 70 }, { s: 16, i: 85 }, { s: 25, i: 115 }, { s: 35, i: 135 }];
+  const alTable = [{ s: 2.5, i: 21 }, { s: 4, i: 28 }, { s: 6, i: 36 }, { s: 10, i: 50 }, { s: 16, i: 60 }, { s: 25, i: 85 }, { s: 35, i: 100 }];
+  
+  const table = mat === 'cu' ? cuTable : alTable;
+  let cable = table.find(c => c.i >= (breaker === '>160' ? 200 : breaker));
+  let cableSize = cable ? cable.s : '—';
+
+  let rho = mat === 'cu' ? 0.0175 : 0.028;
+  let dU = 0;
+  if (cableSize !== '—') {
+    if (ph === '1') {
+      dU = (2 * len * I * rho * cos) / cableSize;
+    } else {
+      dU = (Math.sqrt(3) * len * I * rho * cos) / cableSize;
+    }
+  }
+  const dU_percent = (dU / U) * 100;
+
+  let html = 
+    box('Ток нагрузки', f(I, 1), 'А', 1) +
+    box('Автомат (с запасом 25%)', breaker, 'А', 1) +
+    box('Кабель (' + (mat === 'cu' ? 'Cu' : 'Al') + ')', cableSize, 'мм²', 1) +
+    box('Падение напряжения', f(dU, 1), 'В') +
+    box('Падение U (%)', f(dU_percent, 1), '%');
+
+  if (dU_percent > 5) {
+    html += `<p class="note warn">Падение напряжения больше 5%. Увеличьте сечение кабеля или уменьшите длину линии.</p>`;
+  }
+  
+  $('el_res').innerHTML = html;
+}
+
+/* 13. ФОТО */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -595,12 +691,14 @@ bind(['b_a','b_b','b_tw','b_t','b_rh','b_v','b_n','b_t1','b_rh1','b_tsup','b_eff
 bind(['e_l','e_d','e_w','e_h','e_len','e_k','e_zeta'], calcE);
 bind(['o_s','o_h','o_ins','o_tin','o_tout','o_rad'], calcO);
 bind(['g_q','g_dt','g_len','g_pipe','g_zeta'], calcG);
+bind(['fc_q','fc_tws','fc_twr','fc_tas','fc_tar'], calcFC);
+bind(['el_p','el_ph','el_cos','el_mat','el_l'], calcEL);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); fillU(); renderPhotos();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); fillU(); renderPhotos();
 
 /* журнал */
 let LOG = [];
@@ -632,7 +730,7 @@ function renderTot() {
   const k = Object.keys(s);
   $('lg_f').innerHTML = k.length ? '<tr><th colspan="6">Итого</th><th colspan="2">' + k.map(n => n + ': ' + f(s[n].v, 2) + ' ' + s[n].u + ' (' + s[n].k + ' поз.)').join('<br>') + '</th></tr>' : '';
 }
-const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'] };
+const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'], 9: ['Расход воздуха', 'м³/ч'], 10: ['Ток нагрузки', 'А'] };
 function sv(section, i) {
   const d = SUM[i]; if (!d) return {};
   const r = [...section.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === d[0]);
@@ -641,7 +739,7 @@ function sv(section, i) {
   return isFinite(v) ? { v: v, u: d[1] } : {};
 }
 panels.forEach((s, i) => {
-  if (i === 9) return; // Пропускаем добавление кнопки журнала для вкладки Фото
+  if (i === 11) return; // Пропускаем добавление кнопки журнала для вкладки Фото
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
