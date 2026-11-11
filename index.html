@@ -125,6 +125,22 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="z_res"></div>
 <p class="note">Расчёт по формуле L = 3600 · v · P · H, где P — открытый периметр зонта, H — высота над источником. Держите H не более 0,6–0,7 м, вылет не менее 150 мм. Для мощных тепловых источников дополнительно проверьте расход по тепловыделению.</p></section>
+<section id="t6" role="tabpanel"><h2>Бассейн</h2><p class="hint">Расход воздуха по влаговыделениям с зеркала воды и от купающихся, проверка точки росы, нагрев приточного воздуха.</p>
+<div class="grid">
+<label>Длина зеркала, м<input id="b_a" type="number" value="10" min="0" step="0.1" inputmode="decimal"></label>
+<label>Ширина зеркала, м<input id="b_b" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
+<label>t воды, °C<input id="b_tw" type="number" value="28" step="0.5" inputmode="decimal"></label>
+<label>t воздуха в помещении, °C<input id="b_t" type="number" value="30" step="0.5" inputmode="decimal"></label>
+<label>Влажность в помещении, %<input id="b_rh" type="number" value="60" min="10" max="95" inputmode="numeric"></label>
+<label>Скорость воздуха над водой, м/с<input id="b_v" type="number" value="0.15" step="0.05" min="0" inputmode="decimal"></label>
+<label>Купающихся, чел.<input id="b_n" type="number" value="5" min="0" inputmode="numeric"></label>
+<label>t наружная, °C<input id="b_t1" type="number" value="-26" inputmode="decimal"></label>
+<label>Влажность наружная, %<input id="b_rh1" type="number" value="85" min="10" max="100" inputmode="numeric"></label>
+<label>Запас, %<input id="b_r" type="number" value="10" min="0" inputmode="numeric"></label>
+</div>
+<div class="res" id="b_res"></div>
+<p class="note">Испарение: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r, где r = 2450 кДж/кг. От людей — 0,2 кг/ч на человека. Расход воздуха — по разнице влагосодержаний внутри и снаружи. Температура воздуха обычно на 1–2 °C выше воды; точка росы должна быть ниже температуры любых холодных поверхностей (окна, стены) — иначе конденсат. Для больших SPA и аквапарков нужен полный расчёт по СП 31-113-2004.</p></section>
+
 <div id="log"><h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту и копируйте таблицу в Excel или мессенджер.</p>
 <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
 <div class="tw"><table><thead><tr><th>№</th><th>Время</th><th>Расчёт</th><th>Пометка</th><th>Исходные данные</th><th>Результат</th><th>Значение</th><th></th></tr></thead><tbody id="lg_b"></tbody><tfoot id="lg_f"></tfoot></table></div>
@@ -135,7 +151,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 const $=id=>document.getElementById(id);
 const f=(x,d=1)=>isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:d}):'—';
 const box=(l,v,u,m)=>`<div class="r${m?' main':''}"><small>${l}</small><b>${v}</b> <span>${u||''}</span></div>`;
-const names=['Воздухообмен','Воздуховод','Кондиционер','Нагрев','Единицы','Зонт отсоса'];
+const names=['Воздухообмен','Воздуховод','Кондиционер','Нагрев','Единицы','Зонт отсоса','Бассейн'];
 const tabs=$('tabs');
 names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.setAttribute('role','tab');b.onclick=()=>show(i);tabs.appendChild(b)});
 function show(i){[...tabs.children].forEach((b,j)=>b.setAttribute('aria-selected',i===j));document.querySelectorAll('section').forEach((s,j)=>s.classList.toggle('on',i===j));try{history.replaceState(null,'','#t'+i)}catch(e){}}
@@ -166,11 +182,42 @@ function calcZ(){const a=+$('z_a').value/1000,b=+$('z_b').value/1000,h=+$('z_h')
 const A=a+(t>=3?2*e:e),B=b+(t===4?2*e:e),P=t===4?2*(A+B):t===3?A+2*B:A+B;
 const L0=3600*v*P*h,L=L0*(1+r/100),vf=L/3600/(A*B),D=Math.sqrt(4*L/3600/vs/Math.PI)*1000,s=STD.find(x=>x>=D)||STD[STD.length-1],vp=L/3600/(Math.PI*(s/1000)**2/4);
 $('z_res').innerHTML=box('Размер зонта',f(A*1000,0)+' × '+f(B*1000,0),'мм')+box('Открытый периметр',f(P,2),'м')+box('Расход расчётный',f(L0,0),'м³/ч')+box('Расход с запасом',f(L,0),'м³/ч',1)+box('Скорость в плоскости зонта',f(vf,2),'м/с')+box('Расчётный Ø патрубка',f(D,0),'мм')+box('Стандартный Ø патрубка',s,'мм',1)+box('Скорость в нём',f(vp),'м/с');}
+function Psat(t){if(t>=0)return 0.6108*Math.exp(17.27*t/(t+237.3));return 0.6108*Math.exp(21.875*t/(t+265.5));}
+function dFrom(t,rh){const Ps=Psat(t),Pp=Math.max(rh,0)/100*Ps;return 622*Pp/(101.325-Pp);}
+function dewPoint(d){const Pp=d*101.325/(622+d);if(Pp<=0.01)return -60;const a=Math.log(Pp/0.6108);return 237.3*a/(17.27-a);}
+function calcB(){const a=val('b_a'),b=val('b_b'),tw=val('b_tw'),t=val('b_t'),rh=val('b_rh'),v=val('b_v'),n=val('b_n'),t1=val('b_t1'),rh1=val('b_rh1'),r=val('b_r');
+const A=a*b;
+const Pp=rh/100*Psat(t);
+const Wisp=A*(0.089+0.0782*v)*Math.max(Psat(tw)-Pp,0);
+const Wppl=n*0.2;
+const W=(Wisp+Wppl)*(1+r/100);
+const dIn=dFrom(t,rh),dOut=dFrom(t1,rh1);
+const dd=Math.max(dIn-dOut,0.1);
+const Lm=W*1000/dd;
+const Lv=Lm/1.2;
+const tr=dewPoint(dIn);
+const Q=Lv*1.2*1.005*(t-t1)/3600;
+let html=
+box('Площадь зеркала',f(A,1),'м²')+
+box('Испарение с зеркала',f(Wisp,2),'кг/ч')+
+box('От купающихся',f(Wppl,2),'кг/ч')+
+box('Всего влаговыделений',f(W,2),'кг/ч',1)+
+box('Влагосодержание внутри',f(dIn,1),'г/кг')+
+box('Влагосодержание снаружи',f(dOut,1),'г/кг')+
+box('Расход воздуха',f(Lv,0),'м³/ч',1)+
+box('Масса сухого воздуха',f(Lm,0),'кг/ч')+
+box('Точка росы',f(tr,1),'°C')+
+box('Нагрев приточного воздуха',f(Q,2),'кВт');
+if(tr>t-1)html+=`<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха — конденсат на холодных поверхностях и окнах. Снизьте влажность в помещении или поднимите температуру воздуха.</p>`;
+if(dd<0.5)html+=`<p class="note warn">Влагосодержание снаружи почти равно внутреннему — расчёт по влаге даёт огромный расход. Обычно в этом случае воздухообмен принимают по санитарным нормам (кратность 2–4) и осушают воздух.</p>`;
+$('b_res').innerHTML=html;}
+
 const bind=(ids,fn)=>ids.forEach(i=>{$(i).addEventListener('input',fn)});
+bind(['b_a','b_b','b_tw','b_t','b_rh','b_v','b_n','b_t1','b_rh1','b_r'],calcB);
 bind(['a_s','a_h','a_k','a_n','a_p'],calcA);bind(['d_l','d_v','d_d','d_w','d_h','d_n'],calcD);
 bind(['c_s','c_h','c_q','c_n','c_e','c_r'],calcC);bind(['h_l','h_t1','h_t2'],calcH);bind(['z_a','z_b','z_h','z_e','z_t','z_v','z_r','z_s'],calcZ);
 $('u_c').addEventListener('input',fillU);bind(['u_v','u_u'],calcU);
-calcA();calcD();calcC();calcH();calcZ();fillU();
+calcA();calcD();calcC();calcH();calcZ();calcB();fillU();
 let LOG=[];try{LOG=JSON.parse(localStorage.getItem('hvaclog')||'[]')}catch(e){}
 const save=()=>{try{localStorage.setItem('hvaclog',JSON.stringify(LOG))}catch(e){}};
 const say=t=>{$('lg_s').textContent=t;setTimeout(()=>$('lg_s').textContent='',2500)};
@@ -186,7 +233,7 @@ LOG.push({t:new Date().toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'shor
 $('lg_c').onclick=async()=>{const tsv=['№\tВремя\tРасчёт\tПометка\tИсходные данные\tРезультат\tЗначение'].concat(LOG.map((r,i)=>[i+1,r.t,r.n,r.o,r.i,r.r,r.v!=null?f(r.v,2)+' '+r.u:''].join('\t'))).join('\n');try{await navigator.clipboard.writeText(tsv);say('Скопировано')}catch(e){say('Не удалось скопировать')}};
 let armed=0;$('lg_x').onclick=()=>{if(!armed){armed=1;$('lg_x').textContent='Точно очистить?';setTimeout(()=>{armed=0;$('lg_x').textContent='Очистить журнал'},3000)}else{LOG=[];save();renderLog();armed=0;$('lg_x').textContent='Очистить журнал'}};
 renderLog();
-const m=/^#t([0-5])$/.exec(location.hash);show(m?+m[1]:0);
+const m=/^#t([0-6])$/.exec(location.hash);show(m?+m[1]:0);
 </script>
 </body>
 </html>
