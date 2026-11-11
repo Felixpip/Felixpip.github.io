@@ -64,8 +64,8 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="wrap">
 <div class="head">
   <div>
-    <h1>Калькулятор вентиляции и кондиционирования</h1>
-    <p class="sub">Быстрые прикидки на объекте: воздухообмен, воздуховоды, холод, нагрев, единицы.</p>
+    <h1>Калькулятор вентиляции и отопления</h1>
+    <p class="sub">Быстрые прикидки на объекте: воздухообмен, аэродинамика, гидравлика, холод, нагрев.</p>
   </div>
   <button id="theme" type="button" title="Переключить тему">Тема: авто</button>
 </div>
@@ -144,7 +144,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Запас, %<input id="b_r" type="number" value="10" min="0" inputmode="numeric"></label>
 </div>
 <div class="res" id="b_res"></div>
-<p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека. Вытяжка обычно на 10–15% меньше притока. Нагрев ПВУ с учётом КПД рекуператора. Для аквапарков — полный расчёт по СП 31-113-2004.</p></section>
+<p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека. Вытяжка обычно на 10–15% меньше притока. Нагрев ПВУ с учётом КПД рекуператора.</p></section>
 
 <section id="t6" role="tabpanel"><h2>Аэродинамика</h2><p class="hint">Расчёт потерь давления в воздуховоде на трение и в местных сопротивлениях.</p>
 <div class="grid">
@@ -160,7 +160,30 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="e_res"></div>
 <p class="note">Расчёт по формуле Дарси-Вейсбаха. Коэффициент трения — по формуле Альтшуля. Динамическое давление Pd = 0.6 · v². Потери: ΔP = (λ/d · L + Σζ) · Pd.</p></section>
 
-<section id="t7" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<section id="t7" role="tabpanel"><h2>Отопление</h2><p class="hint">Расчёт теплопотерь помещения, подбор радиаторов и расхода теплоносителя.</p>
+<div class="grid">
+<label>Площадь помещения, м²<input id="o_s" type="number" value="30" min="0" inputmode="decimal"></label>
+<label>Высота потолка, м<input id="o_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
+<label>Тип изоляции<select id="o_ins"><option value="0.04">Хорошая (новостройка, пенопласт)</option><option value="0.06" selected>Средняя (кирпич, старый фонд)</option><option value="0.09">Плохая (дерево, щели)</option></select></label>
+<label>t внутри, °C<input id="o_tin" type="number" value="20" inputmode="decimal"></label>
+<label>t улицы (расчётная), °C<input id="o_tout" type="number" value="-26" inputmode="decimal"></label>
+<label>Мощность 1 секции, Вт<input id="o_rad" type="number" value="180" min="50" inputmode="numeric"></label>
+</div>
+<div class="res" id="o_res"></div>
+<p class="note">Теплопотери: Q = V · q_уд · (t_вн − t_нар), где q_уд — удельная тепловая характеристика здания (Вт/м³·°C). Добавлен запас 15% на угловые комнаты и плохие окна.</p></section>
+
+<section id="t8" role="tabpanel"><h2>Гидродинамика</h2><p class="hint">Подбор диаметра трубы для системы отопления и расчёт потерь напора.</p>
+<div class="grid">
+<label>Тепловая нагрузка, кВт<input id="g_q" type="number" value="15" min="0" inputmode="decimal"></label>
+<label>Перепад t (подача-обратка), °C<input id="g_dt" type="number" value="20" min="1" inputmode="decimal"></label>
+<label>Длина магистрали, м<input id="g_len" type="number" value="30" min="0" step="0.5" inputmode="decimal"></label>
+<label>Тип трубы<select id="g_pipe"><option value="0.01">Полипропилен / PEX (гладкая)</option><option value="0.1" selected>Сталь (новая)</option><option value="0.5">Сталь (старая, с отложениями)</option></select></label>
+<label>Сумма КМС (Σζ)<input id="g_zeta" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
+</div>
+<div class="res" id="g_res"></div>
+<p class="note">Расход воды G = 0.86 · Q / Δt. Подбор диаметра идёт по рекомендуемой скорости 0.5–1.5 м/с. Потери давления считаются как в аэродинамике, но для воды (плотность 1000 кг/м³).</p></section>
+
+<section id="t9" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
 <div class="grid">
 <label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
 <label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
@@ -208,7 +231,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт отсоса', 'Бассейн', 'Аэродинамика', 'Конвертер'];
+const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт отсоса', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидродинамика', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -410,6 +433,76 @@ function calcE() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
+/* 9. Отопление */
+function calcO() {
+  const s = val('o_s'), h = val('o_h'), ins = val('o_ins'), tin = val('o_tin'), tout = val('o_tout'), prad = val('o_rad');
+  const V = s * h;
+  const dt = tin - tout;
+  let q = V * ins * dt; // Вт
+  q = q * 1.15; // запас 15%
+  const sections = Math.ceil(q / prad);
+  const G = 0.86 * (q / 1000) / 20; // расход при dt=20
+  
+  $('o_res').innerHTML = 
+    box('Объём помещения', f(V, 1), 'м³') +
+    box('Теплопотери с запасом', f(q / 1000, 2), 'кВт', 1) +
+    box('Нужно секций (по ' + prad + ' Вт)', sections, 'шт', 1) +
+    box('Расход теплоносителя', f(G, 2), 'м³/ч');
+}
+
+/* 10. Гидродинамика */
+const PIPE_STD = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200];
+function calcG() {
+  const Q = val('g_q');
+  const dt = Math.max(val('g_dt'), 1);
+  const len = val('g_len');
+  const k = val('g_pipe');
+  const zeta = val('g_zeta');
+  
+  const G_m3h = 0.86 * Q / dt;
+  const G_ls = G_m3h / 3.6;
+  
+  let target_v = 0.8; // целевая скорость
+  let best_d = 15;
+  let best_v = 0;
+  
+  for (let d of PIPE_STD) {
+    const area = Math.PI * Math.pow(d / 1000, 2) / 4;
+    const v = (G_m3h / 3600) / area;
+    if (v <= 1.2) {
+      best_d = d;
+      best_v = v;
+      break;
+    }
+  }
+  
+  const area = Math.PI * Math.pow(best_d / 1000, 2) / 4;
+  const v = (G_m3h / 3600) / area;
+  const Pd = 1000 * v * v / 2; // Па, для воды
+  
+  const nu = 1e-6;
+  const Re = v * (best_d / 1000) / nu;
+  let lambda = 0;
+  if (Re > 0) {
+    lambda = 0.11 * Math.pow((k / 1000 / (best_d / 1000)) + (68 / Re), 0.25);
+  }
+  
+  const R = (lambda / (best_d / 1000)) * Pd;
+  const P_friction = R * len;
+  const P_local = zeta * Pd;
+  const P_total = P_friction + P_local;
+  
+  $('g_res').innerHTML = 
+    box('Расход воды', f(G_m3h, 2), 'м³/ч', 1) +
+    box('Расход воды', f(G_ls, 2), 'л/с') +
+    box('Рекомендуемый диаметр', best_d, 'мм', 1) +
+    box('Скорость воды', f(v, 2), 'м/с') +
+    box('Удельные потери', f(R, 1), 'Па/м') +
+    box('Потери на трение', f(P_friction, 0), 'Па') +
+    box('Потери на местные', f(P_local, 0), 'Па') +
+    box('Суммарные потери', f(P_total, 0), 'Па', 1);
+}
+
 /* привязка */
 function bind(ids, fn) { ids.forEach(i => { const el = $(i); el.addEventListener('input', fn); el.addEventListener('change', fn); }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
@@ -419,12 +512,14 @@ bind(['h_l', 'h_t1', 'h_t2'], calcH);
 bind(['z_a', 'z_b', 'z_h', 'z_e', 'z_t', 'z_v', 'z_r', 'z_s'], calcZ);
 bind(['b_a','b_b','b_tw','b_t','b_rh','b_v','b_n','b_t1','b_rh1','b_tsup','b_eff','b_r'], calcB);
 bind(['e_l','e_d','e_w','e_h','e_len','e_k','e_zeta'], calcE);
+bind(['o_s','o_h','o_ins','o_tin','o_tout','o_rad'], calcO);
+bind(['g_q','g_dt','g_len','g_pipe','g_zeta'], calcG);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); fillU();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); fillU();
 
 /* журнал */
 let LOG = [];
@@ -456,7 +551,7 @@ function renderTot() {
   const k = Object.keys(s);
   $('lg_f').innerHTML = k.length ? '<tr><th colspan="6">Итого</th><th colspan="2">' + k.map(n => n + ': ' + f(s[n].v, 2) + ' ' + s[n].u + ' (' + s[n].k + ' поз.)').join('<br>') + '</th></tr>' : '';
 }
-const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'] };
+const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'] };
 function sv(section, i) {
   const d = SUM[i]; if (!d) return {};
   const r = [...section.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === d[0]);
@@ -535,7 +630,7 @@ $('lg_fi').onchange = async (e) => {
 renderLog();
 
 /* старт */
-const m = /^#t([0-7])$/.exec(location.hash);
+const m = /^#t(\d+)$/.exec(location.hash);
 show(m ? +m[1] : 0);
 })();
 
