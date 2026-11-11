@@ -58,14 +58,20 @@ th{background:var(--acs)}
 td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;cursor:pointer;line-height:1}
 .empty{color:var(--mut);text-align:center}
 #lg_s{margin-left:10px;color:var(--mut);font-size:.85rem}
+
+/* Стили для галереи */
+.photo-card{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card); margin-bottom:10px;}
+.photo-card img{width:100%; display:block;}
+.photo-info{padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--mut); background:var(--bg);}
+.photo-del{background:none; border:0; color:var(--hot); font-size:1.4rem; cursor:pointer; padding:0 5px; line-height:1;}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="head">
   <div>
-    <h1>Калькулятор вентиляции и отопления</h1>
-    <p class="sub">Быстрые прикидки на объекте: воздухообмен, аэродинамика, гидравлика, холод, нагрев.</p>
+    <h1>Калькулятор ОВиК</h1>
+    <p class="sub">Инструменты проектировщика: аэродинамика, гидравлика, холод, тепло.</p>
   </div>
   <button id="theme" type="button" title="Переключить тему">Тема: авто</button>
 </div>
@@ -144,7 +150,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Запас, %<input id="b_r" type="number" value="10" min="0" inputmode="numeric"></label>
 </div>
 <div class="res" id="b_res"></div>
-<p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека. Вытяжка обычно на 10–15% меньше притока. Нагрев ПВУ с учётом КПД рекуператора.</p></section>
+<p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека.</p></section>
 
 <section id="t6" role="tabpanel"><h2>Аэродинамика</h2><p class="hint">Расчёт потерь давления в воздуховоде на трение и в местных сопротивлениях.</p>
 <div class="grid">
@@ -170,7 +176,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Мощность 1 секции, Вт<input id="o_rad" type="number" value="180" min="50" inputmode="numeric"></label>
 </div>
 <div class="res" id="o_res"></div>
-<p class="note">Теплопотери: Q = V · q_уд · (t_вн − t_нар), где q_уд — удельная тепловая характеристика здания (Вт/м³·°C). Добавлен запас 15% на угловые комнаты и плохие окна.</p></section>
+<p class="note">Теплопотери: Q = V · q_уд · (t_вн − t_нар), где q_уд — удельная тепловая характеристика здания (Вт/м³·°C). Добавлен запас 15%.</p></section>
 
 <section id="t8" role="tabpanel"><h2>Гидродинамика</h2><p class="hint">Подбор диаметра трубы для системы отопления и расчёт потерь напора.</p>
 <div class="grid">
@@ -183,7 +189,17 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="g_res"></div>
 <p class="note">Расход воды G = 0.86 · Q / Δt. Подбор диаметра идёт по рекомендуемой скорости 0.5–1.5 м/с. Потери давления считаются как в аэродинамике, но для воды (плотность 1000 кг/м³).</p></section>
 
-<section id="t9" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<section id="t9" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
+<div style="text-align:center; margin-bottom: 20px;">
+    <input type="file" id="photo_input" accept="image/*" capture="environment" style="display:none">
+    <button class="tool" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">
+        📷 Сделать фото
+    </button>
+</div>
+<div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
+</section>
+
+<section id="t10" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
 <div class="grid">
 <label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
 <label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
@@ -231,7 +247,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт отсоса', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидродинамика', 'Конвертер'];
+const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт отсоса', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидродинамика', 'Фото', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -438,10 +454,10 @@ function calcO() {
   const s = val('o_s'), h = val('o_h'), ins = val('o_ins'), tin = val('o_tin'), tout = val('o_tout'), prad = val('o_rad');
   const V = s * h;
   const dt = tin - tout;
-  let q = V * ins * dt; // Вт
-  q = q * 1.15; // запас 15%
+  let q = V * ins * dt;
+  q = q * 1.15;
   const sections = Math.ceil(q / prad);
-  const G = 0.86 * (q / 1000) / 20; // расход при dt=20
+  const G = 0.86 * (q / 1000) / 20;
   
   $('o_res').innerHTML = 
     box('Объём помещения', f(V, 1), 'м³') +
@@ -462,7 +478,7 @@ function calcG() {
   const G_m3h = 0.86 * Q / dt;
   const G_ls = G_m3h / 3.6;
   
-  let target_v = 0.8; // целевая скорость
+  let target_v = 0.8;
   let best_d = 15;
   let best_v = 0;
   
@@ -478,7 +494,7 @@ function calcG() {
   
   const area = Math.PI * Math.pow(best_d / 1000, 2) / 4;
   const v = (G_m3h / 3600) / area;
-  const Pd = 1000 * v * v / 2; // Па, для воды
+  const Pd = 1000 * v * v / 2;
   
   const nu = 1e-6;
   const Re = v * (best_d / 1000) / nu;
@@ -503,6 +519,71 @@ function calcG() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
+/* 11. ФОТО */
+let PHOTOS = [];
+try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
+
+$('photo_input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const max = 800;
+            if (width > height && width > max) { height *= max / width; width = max; }
+            else if (height > max) { width *= max / height; height = max; }
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+            const photo = {
+                id: Date.now(),
+                date: new Date().toLocaleString('ru-RU', {dateStyle:'short', timeStyle:'short'}),
+                data: dataUrl
+            };
+            PHOTOS.unshift(photo);
+            try {
+                localStorage.setItem('hvac_photos', JSON.stringify(PHOTOS));
+                renderPhotos();
+            } catch(err) {
+                alert('Не хватает памяти для сохранения фото. Удалите старые снимки.');
+            }
+        };
+        img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+});
+
+function renderPhotos() {
+    const g = $('photo_gallery');
+    if (!PHOTOS.length) {
+        g.innerHTML = '<div class="empty" style="grid-column:1/-1; text-align:center; padding:20px;">Нет сохраненных фотографий</div>';
+        return;
+    }
+    g.innerHTML = PHOTOS.map(p => `
+        <div class="photo-card">
+            <img src="${p.data}" alt="Фото">
+            <div class="photo-info">
+                <span>${p.date}</span>
+                <button class="photo-del" onclick="delPhoto(${p.id})" aria-label="Удалить">&times;</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.delPhoto = function(id) {
+    if (!confirm('Удалить это фото?')) return;
+    PHOTOS = PHOTOS.filter(p => p.id !== id);
+    localStorage.setItem('hvac_photos', JSON.stringify(PHOTOS));
+    renderPhotos();
+};
+
 /* привязка */
 function bind(ids, fn) { ids.forEach(i => { const el = $(i); el.addEventListener('input', fn); el.addEventListener('change', fn); }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
@@ -519,7 +600,7 @@ $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); fillU();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); fillU(); renderPhotos();
 
 /* журнал */
 let LOG = [];
@@ -560,6 +641,7 @@ function sv(section, i) {
   return isFinite(v) ? { v: v, u: d[1] } : {};
 }
 panels.forEach((s, i) => {
+  if (i === 9) return; // Пропускаем добавление кнопки журнала для вкладки Фото
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
