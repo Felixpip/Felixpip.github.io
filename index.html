@@ -12,28 +12,33 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e9eff2;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#c9d6dc;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* ОБНОВЛЕННЫЙ ЦВЕТ ФОНА: мятный оттенок */
+:root{--bg:#e3efe9;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#bcd6c9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 8px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px); overflow-x:hidden; touch-action:pan-y;}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10;pointer-events:none}
+
+/* Исправлена шапка, чтобы кнопки не прятались */
 .wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
-.head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
-h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.1;margin:8px 0 4px;letter-spacing:-.02em}
-.sub{color:var(--mut);margin:0 0 18px}
+.head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;position:relative;z-index:20}
+.head > div:first-child{flex:1; min-width:0}
+h1{font-size:clamp(1.4rem,4vw,2.4rem);line-height:1.1;margin:8px 0 4px;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 18px;font-size:0.9rem}
 .head-actions{display:flex; flex-direction:column; gap:8px; align-items:flex-end; flex:none; margin-top:10px}
-#theme,#btn-photo{font:inherit; font-size:.82rem; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:7px 12px; cursor:pointer; white-space:nowrap; transition:filter .15s}
+#theme,#btn-photo{font:inherit; font-size:.82rem; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:7px 12px; cursor:pointer; white-space:nowrap; transition:filter .15s; box-shadow:0 2px 5px rgba(0,0,0,0.05)}
 #btn-photo{background:var(--ac); color:var(--ac-ink); border-color:var(--ac); font-weight:700; display:flex; align-items:center; justify-content:center; gap:4px;}
 #btn-photo.active{outline:3px solid var(--hot); outline-offset:2px;}
 #theme:hover,#btn-photo:hover{filter:brightness(1.1)}
-nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin; touch-action:pan-x;}
+
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin;}
 nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 nav button:hover{border-color:var(--ac)}
 nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
-section{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px; touch-action:pan-y;}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;}
 section.on{display:block;animation:fade .18s ease-out}
 @keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
 h2{margin:0 0 4px;font-size:1.25rem}
@@ -55,7 +60,7 @@ footer{margin-top:18px;font-size:.8rem;color:var(--mut)}
 .tool.sec{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:400}
 .add:hover,.tool:hover{filter:brightness(1.08)}
 #log{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
-.tw{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch; touch-action:pan-x;}
+.tw{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch;}
 table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
 th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
 th{background:var(--acs)}
@@ -63,7 +68,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 .empty{color:var(--mut);text-align:center}
 #lg_s{margin-left:10px;color:var(--mut);font-size:.85rem}
 
-/* Стили для галереи */
 .photo-card{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card); margin-bottom:10px;}
 .photo-card img{width:100%; display:block;}
 .photo-info{padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--mut); background:var(--bg);}
@@ -78,7 +82,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <p class="sub">Инструменты проектировщика: вентиляция, холод, тепло, вода и электрика.</p>
   </div>
   <div class="head-actions">
-    <button id="theme" type="button" title="Переключить тему">Тема: авто</button>
+    <button id="theme" type="button" title="Переключить тему">Тема</button>
     <button id="btn-photo" type="button" title="Фото объекта">📷 Фото</button>
   </div>
 </div>
@@ -260,7 +264,7 @@ const val = id => num($(id).value);
 
 /* тема */
 const themeBtn = $('theme');
-const THEME_LABEL = { auto: 'Тема: авто', light: 'Тема: светлая', dark: 'Тема: тёмная' };
+const THEME_LABEL = { auto: 'Тема', light: 'Светлая', dark: 'Тёмная' };
 let theme = 'auto';
 try { theme = localStorage.getItem('hvac-theme') || 'auto'; } catch (e) {}
 function applyTheme() {
@@ -833,52 +837,44 @@ if (location.hash === '#photo') {
   show(m ? +m[1] : 0);
 }
 
-/* Свайпы влево/вправо */
+/* Свайпы влево/вправо (Исправлено) */
 (function(){
-  let sx = 0, sy = 0, st = 0, swOn = false;
-  const skip = el => !el ? true : !!el.closest('input,select,textarea,button,nav,.tw,label,a');
+  let startX = 0, startY = 0;
   
-  function handleStart(x, y, target) {
-    if (skip(target)) { swOn = false; return; }
-    sx = x; sy = y; st = Date.now(); swOn = true;
-  }
-  
-  function handleEnd(x, y) {
-    if (!swOn) return;
-    swOn = false;
-    if (Date.now() - st > 800) return;
-    const dx = x - sx, dy = y - sy;
-    if (Math.abs(dx) < 60) return;
-    if (Math.abs(dy) > Math.abs(dx) * 0.6) return;
-    
-    const cur = panels.findIndex(p => p.classList.contains('on'));
-    if (cur < 0) return;
-    const next = cur + (dx < 0 ? 1 : -1);
-    if (next < 0 || next >= panels.length) return;
-    
-    show(next);
-    if (next < tabBtns.length) {
-      tabBtns[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-  }
-
   document.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) handleStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
-  }, { passive: true });
-  
-  document.addEventListener('touchend', e => {
-    if (e.changedTouches.length === 1) handleEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    if (e.touches.length !== 1) return;
+    const target = e.target;
+    // Игнорируем свайп, если он начат на инпуте, кнопке, меню или скроллящейся таблице
+    if (target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
+    
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
   }, { passive: true });
 
-  // Для мыши (при тестировании на ПК)
-  document.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'mouse' && e.button === 0) handleStart(e.clientX, e.clientY, e.target);
-  });
-  document.addEventListener('pointerup', e => {
-    if (e.pointerType === 'mouse') handleEnd(e.clientX, e.clientY);
-  });
+  document.addEventListener('touchend', e => {
+    if (e.changedTouches.length !== 1) return;
+    const target = e.target;
+    if (target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
+
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+
+    // Если сдвиг по горизонтали больше 60px, а по вертикали меньше 40px — это свайп
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 40) {
+      const cur = panels.findIndex(p => p.classList.contains('on'));
+      if (cur < 0) return;
+      
+      const next = cur + (dx < 0 ? 1 : -1);
+      if (next >= 0 && next < panels.length) {
+        show(next);
+        if (next < tabBtns.length) {
+          tabBtns[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+    }
+  }, { passive: true });
 })();
-}
+
 })();
 
 /* PWA: обновления */
