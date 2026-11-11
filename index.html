@@ -23,7 +23,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
 h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.1;margin:8px 0 4px;letter-spacing:-.02em}
 .sub{color:var(--mut);margin:0 0 18px}
-#theme{flex:none;margin-top:10px;font:inherit;font-size:.82rem;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.head-actions{display:flex; flex-direction:column; gap:8px; align-items:flex-end; flex:none; margin-top:10px}
+#theme,#btn-photo{font:inherit; font-size:.82rem; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:7px 12px; cursor:pointer; white-space:nowrap; transition:filter .15s}
+#btn-photo{background:var(--ac); color:var(--ac-ink); border-color:var(--ac); font-weight:700; display:flex; align-items:center; justify-content:center; gap:4px;}
+#btn-photo.active{outline:3px solid var(--hot); outline-offset:2px;}
+#theme:hover,#btn-photo:hover{filter:brightness(1.1)}
 nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin}
 nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 nav button:hover{border-color:var(--ac)}
@@ -73,7 +77,10 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <h1>Калькулятор ОВиК</h1>
     <p class="sub">Инструменты проектировщика: вентиляция, холод, тепло, вода и электрика.</p>
   </div>
-  <button id="theme" type="button" title="Переключить тему">Тема: авто</button>
+  <div class="head-actions">
+    <button id="theme" type="button" title="Переключить тему">Тема: авто</button>
+    <button id="btn-photo" type="button" title="Фото объекта">📷 Фото</button>
+  </div>
 </div>
 <nav role="tablist" aria-label="Разделы калькулятора" id="tabs"></nav>
 
@@ -211,7 +218,17 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="el_res"></div>
 <p class="note">Автомат подбирается с запасом 25% от тока нагрузки. Кабель подбирается по номиналу автомата (ПУЭ). Падение напряжения не должно превышать 5%.</p></section>
 
-<section id="t11" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
+<!-- Конвертер теперь идет под индексом 11 -->
+<section id="t11" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<div class="grid">
+<label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
+<label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
+<label>Единица<select id="u_u"></select></label>
+</div>
+<div class="res" id="u_r"></div></section>
+
+<!-- Фото теперь идет под индексом 12 (открывается кнопкой) -->
+<section id="t12" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
 <div style="text-align:center; margin-bottom: 20px;">
     <input type="file" id="photo_input" accept="image/*" capture="environment" style="display:none">
     <button class="tool" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">
@@ -220,14 +237,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
 </section>
-
-<section id="t12" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
-<div class="grid">
-<label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
-<label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
-<label>Единица<select id="u_u"></select></label>
-</div>
-<div class="res" id="u_r"></div></section>
 
 <div id="log"><h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
 <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
@@ -269,7 +278,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Фото', 'Конвертер'];
+const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -279,12 +288,21 @@ const tabBtns = names.map((n, i) => {
   tabs.appendChild(b); return b;
 });
 const panels = [...document.querySelectorAll('section')];
-panels.forEach((s, i) => s.setAttribute('aria-labelledby', 'tb' + i));
+for (let i = 0; i < names.length; i++) {
+  if (panels[i]) panels[i].setAttribute('aria-labelledby', 'tb' + i);
+}
+if (panels[12]) panels[12].setAttribute('aria-label', 'Фото объекта');
+
 function show(i) {
   tabBtns.forEach((b, j) => { const on = i === j; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
   panels.forEach((s, j) => { s.classList.toggle('on', i === j); s.hidden = i !== j; });
-  try { history.replaceState(null, '', '#t' + i); } catch (e) {}
+  const pb = $('btn-photo');
+  if (pb) pb.classList.toggle('active', i === 12);
+  try { history.replaceState(null, '', i === 12 ? '#photo' : '#t' + i); } catch (e) {}
 }
+
+$('btn-photo').onclick = () => show(12);
+
 tabs.addEventListener('keydown', e => {
   const cur = tabBtns.findIndex(b => b.getAttribute('aria-selected') === 'true');
   let next = -1;
@@ -739,7 +757,7 @@ function sv(section, i) {
   return isFinite(v) ? { v: v, u: d[1] } : {};
 }
 panels.forEach((s, i) => {
-  if (i === 11) return; // Пропускаем добавление кнопки журнала для вкладки Фото
+  if (i === 12) return; // Пропускаем добавление кнопки журнала для вкладки Фото
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
@@ -810,8 +828,12 @@ $('lg_fi').onchange = async (e) => {
 renderLog();
 
 /* старт */
-const m = /^#t(\d+)$/.exec(location.hash);
-show(m ? +m[1] : 0);
+if (location.hash === '#photo') {
+  show(12);
+} else {
+  const m = /^#t(\d+)$/.exec(location.hash);
+  show(m ? +m[1] : 0);
+}
 })();
 
 /* PWA: обновления */
