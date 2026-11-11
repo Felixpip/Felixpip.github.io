@@ -12,22 +12,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* НОВЫЙ ЦВЕТ ФОНА: светло-зеленый */
-:root{--bg:#e8f5e9;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#c8e6c9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* НОВЫЙ ЦВЕТ ФОНА: светло-желтый */
+:root{--bg:#fffde7;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f9e79f;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 8px)}
-
-/* ЖЕСТКОЕ ИСПРАВЛЕНИЕ СВАЙПОВ */
-body{
-  margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
-  touch-action: pan-y; /* Разрешаем только вертикальный скролл */
-  overscroll-behavior-x: none; /* Запрещаем браузеру "оттягивать" страницу по горизонтали */
-}
-
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);touch-action:pan-y;overscroll-behavior-x:none}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10;pointer-events:none}
 .wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
 .head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;position:relative;z-index:20}
@@ -39,13 +30,11 @@ h1{font-size:clamp(1.4rem,4vw,2.4rem);line-height:1.1;margin:8px 0 4px;letter-sp
 #btn-photo{background:var(--ac); color:var(--ac-ink); border-color:var(--ac); font-weight:700; display:flex; align-items:center; justify-content:center; gap:4px;}
 #btn-photo.active{outline:3px solid var(--hot); outline-offset:2px;}
 #theme:hover,#btn-photo:hover{filter:brightness(1.1)}
-
 nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin;touch-action:pan-x;}
 nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 nav button:hover{border-color:var(--ac)}
 nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
-
 section{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;touch-action:pan-y;}
 section.on{display:block;animation:fade .18s ease-out}
 @keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
@@ -75,7 +64,6 @@ th{background:var(--acs)}
 td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;cursor:pointer;line-height:1}
 .empty{color:var(--mut);text-align:center}
 #lg_s{margin-left:10px;color:var(--mut);font-size:.85rem}
-
 .photo-card{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card); margin-bottom:10px;}
 .photo-card img{width:100%; display:block;}
 .photo-info{padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--mut); background:var(--bg);}
@@ -230,7 +218,77 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="el_res"></div>
 <p class="note">Автомат подбирается с запасом 25% от тока нагрузки. Кабель подбирается по номиналу автомата (ПУЭ). Падение напряжения не должно превышать 5%.</p></section>
 
-<section id="t11" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<section id="t11" role="tabpanel"><h2>Воздухораспределители</h2><p class="hint">Подбор решёток и диффузоров по расходу и скорости.</p>
+<div class="grid">
+<label>Расход, м³/ч<input id="vd_l" type="number" value="500" min="0" inputmode="decimal"></label>
+<label>Ширина, мм<input id="vd_w" type="number" value="400" min="50" inputmode="numeric"></label>
+<label>Высота, мм<input id="vd_h" type="number" value="200" min="50" inputmode="numeric"></label>
+<label>Живое сечение, %<input id="vd_k" type="number" value="70" min="10" max="100" inputmode="numeric"></label>
+<label>КМС (Σζ)<input id="vd_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
+</div>
+<div class="res" id="vd_res"></div>
+<p class="note">Скорость в сечении = L / (3600 · A). Скорость в живом сечении = V / (k/100). Потери = Σζ · 0.6 · V².</p></section>
+
+<section id="t12" role="tabpanel"><h2>Шумоглушители</h2><p class="hint">Расчёт требуемого затухания шума.</p>
+<div class="grid">
+<label>Уровень шума вентилятора, дБ(А)<input id="sl_l1" type="number" value="75" inputmode="decimal"></label>
+<label>Требуемый уровень в помещении, дБ(А)<input id="sl_l2" type="number" value="45" inputmode="decimal"></label>
+<label>Затухание в воздуховодах (без глушителя), дБ<input id="sl_att" type="number" value="10" inputmode="decimal"></label>
+</div>
+<div class="res" id="sl_res"></div>
+<p class="note">Требуемое затухание = L_вент - L_треб - L_воздуховоды. Подбирайте шумоглушитель с запасом 2-3 дБ.</p></section>
+
+<section id="t13" role="tabpanel"><h2>Фильтры</h2><p class="hint">Подбор площади фильтрации и скорости.</p>
+<div class="grid">
+<label>Расход, м³/ч<input id="fl_l" type="number" value="1000" min="0" inputmode="decimal"></label>
+<label>Класс фильтра<select id="fl_c"><option value="2.5">G3 (грубая очистка)</option><option value="2.0">G4</option><option value="1.5">F5-F7 (тонкая)</option><option value="1.0">F8-F9 (высокая)</option><option value="0.5">H11-H13 (абс. HEPA)</option></select></label>
+<label>Конечное сопротивление, Па<input id="fl_dp" type="number" value="250" min="0" inputmode="numeric"></label>
+</div>
+<div class="res" id="fl_res"></div>
+<p class="note">Площадь = L / (3600 · V_доп). Скорость рекомендуется: G3 - 2.5 м/с, F7 - 1.5 м/с, H11 - 0.5 м/с.</p></section>
+
+<section id="t14" role="tabpanel"><h2>Водяные калориферы</h2><p class="hint">Расчёт расхода воды и воздуха для водяного нагревателя.</p>
+<div class="grid">
+<label>Тепловая мощность, кВт<input id="wc_q" type="number" value="20" min="0" step="0.1" inputmode="decimal"></label>
+<label>t воздуха на входе, °C<input id="wc_tin" type="number" value="-10" inputmode="decimal"></label>
+<label>t воздуха на выходе, °C<input id="wc_tout" type="number" value="20" inputmode="decimal"></label>
+<label>t воды подача, °C<input id="wc_tws" type="number" value="90" inputmode="decimal"></label>
+<label>t воды обратка, °C<input id="wc_twr" type="number" value="70" inputmode="decimal"></label>
+</div>
+<div class="res" id="wc_res"></div>
+<p class="note">Расход воды G = 0.86 · Q / Δt_воды. Расход воздуха L = Q · 3600 / (1.2 · 1.005 · Δt_воздуха).</p></section>
+
+<section id="t15" role="tabpanel"><h2>Пусконаладка</h2><p class="hint">Проверка соответствия фактического расхода проектному.</p>
+<div class="grid">
+<label>Проектный расход, м³/ч<input id="pn_l_proj" type="number" value="1000" min="0" inputmode="decimal"></label>
+<label>Фактический расход (замер), м³/ч<input id="pn_l_fact" type="number" value="920" min="0" inputmode="decimal"></label>
+<label>Допустимое отклонение, %<input id="pn_tol" type="number" value="10" min="0" inputmode="numeric"></label>
+</div>
+<div class="res" id="pn_res"></div>
+<p class="note">Отклонение = (Факт - Проект) / Проект · 100%. По СП 73 допустимое отклонение обычно ±10% (для систем с автоматикой) или ±15% (без).</p></section>
+
+<section id="t16" role="tabpanel"><h2>Смета</h2><p class="hint">Прикидочная стоимость оборудования и монтажа.</p>
+<div class="grid">
+<label>Длина воздуховодов, м<input id="sm_duct" type="number" value="50" min="0" inputmode="numeric"></label>
+<label>Цена 1 м воздуховода, руб<input id="sm_p_duct" type="number" value="1200" min="0" inputmode="numeric"></label>
+<label>Кол-во решеток/диффузоров, шт<input id="sm_grille" type="number" value="5" min="0" inputmode="numeric"></label>
+<label>Цена 1 решетки, руб<input id="sm_p_grille" type="number" value="2000" min="0" inputmode="numeric"></label>
+<label>Кол-во вентиляторов / ПВУ, шт<input id="sm_unit" type="number" value="1" min="0" inputmode="numeric"></label>
+<label>Цена 1 установки, руб<input id="sm_p_unit" type="number" value="150000" min="0" inputmode="numeric"></label>
+</div>
+<div class="res" id="sm_res"></div>
+<p class="note">Расчёт очень грубый, для быстрой оценки бюджета заказчиком. Не учитывает фасонину, изоляцию, автоматику, крепёж и пусконаладку.</p></section>
+
+<section id="t17" role="tabpanel"><h2>Осушители / Увлажнители</h2><p class="hint">Расчёт количества влаги для осушения или увлажнения.</p>
+<div class="grid">
+<label>Расход воздуха, м³/ч<input id="ou_l" type="number" value="1000" min="0" inputmode="decimal"></label>
+<label>Влагосодержание на входе, г/кг<input id="ou_d1" type="number" value="15" step="0.1" inputmode="decimal"></label>
+<label>Влагосодержание на выходе, г/кг<input id="ou_d2" type="number" value="8" step="0.1" inputmode="decimal"></label>
+</div>
+<div class="res" id="ou_res"></div>
+<p class="note">Количество влаги W = L · 1.2 · |d1 - d2| / 1000 (кг/ч). Если d1 > d2 — нужно осушать, если d1 < d2 — увлажнять.</p></section>
+
+<section id="t18" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
 <div class="grid">
 <label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
 <label>Значение<input id="u_v" type="number" value="500" inputmode="decimal"></label>
@@ -238,7 +296,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="u_r"></div></section>
 
-<section id="t12" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
+<section id="t19" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
 <div style="text-align:center; margin-bottom: 20px;">
     <input type="file" id="photo_input" accept="image/*" capture="environment" style="display:none">
     <button class="tool" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">
@@ -288,7 +346,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Подбор', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Конвертер'];
+const names = ['Воздухообмен', 'Подбор', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Воздухораспр.', 'Шумоглушители', 'Фильтры', 'Водяные калориферы', 'Пусконаладка', 'Смета', 'Осушители', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -301,17 +359,17 @@ const panels = [...document.querySelectorAll('section')];
 for (let i = 0; i < names.length; i++) {
   if (panels[i]) panels[i].setAttribute('aria-labelledby', 'tb' + i);
 }
-if (panels[12]) panels[12].setAttribute('aria-label', 'Фото объекта');
+if (panels[19]) panels[19].setAttribute('aria-label', 'Фото объекта');
 
 function show(i) {
   tabBtns.forEach((b, j) => { const on = i === j; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
   panels.forEach((s, j) => { s.classList.toggle('on', i === j); s.hidden = i !== j; });
   const pb = $('btn-photo');
-  if (pb) pb.classList.toggle('active', i === 12);
-  try { history.replaceState(null, '', i === 12 ? '#photo' : '#t' + i); } catch (e) {}
+  if (pb) pb.classList.toggle('active', i === 19);
+  try { history.replaceState(null, '', i === 19 ? '#photo' : '#t' + i); } catch (e) {}
 }
 
-$('btn-photo').onclick = () => show(12);
+$('btn-photo').onclick = () => show(19);
 
 tabs.addEventListener('keydown', e => {
   const cur = tabBtns.findIndex(b => b.getAttribute('aria-selected') === 'true');
@@ -643,7 +701,110 @@ function calcEL() {
   $('el_res').innerHTML = html;
 }
 
-/* 13. ФОТО */
+/* 13. Воздухораспределители */
+function calcVD() {
+  const L = val('vd_l'), w = Math.max(val('vd_w'), 10) / 1000, h = Math.max(val('vd_h'), 10) / 1000;
+  const k = Math.max(val('vd_k'), 10), zeta = val('vd_zeta');
+  const A = w * h;
+  const v = L / 3600 / A;
+  const v_live = v / (k / 100);
+  const Pd = 0.6 * v * v;
+  const dP = zeta * Pd;
+  $('vd_res').innerHTML = 
+    box('Площадь сечения', f(A * 1e6, 0), 'см²') +
+    box('Скорость в сечении', f(v, 2), 'м/с', 1) +
+    box('Скорость в живом сечении', f(v_live, 2), 'м/с', 1) +
+    box('Потери давления', f(dP, 0), 'Па', 1);
+}
+
+/* 14. Шумоглушители */
+function calcSL() {
+  const l1 = val('sl_l1'), l2 = val('sl_l2'), att = val('sl_att');
+  const req = l1 - l2 - att;
+  $('sl_res').innerHTML = 
+    box('Требуемое затухание', f(req, 0), 'дБ', 1);
+}
+
+/* 15. Фильтры */
+function calcFL() {
+  const L = val('fl_l'), v = val('fl_c'), dp = val('fl_dp');
+  const A = L / 3600 / v;
+  $('fl_res').innerHTML = 
+    box('Требуемая площадь', f(A, 2), 'м²', 1) +
+    box('Скорость воздуха', f(v, 1), 'м/с') +
+    box('Сопротивление', dp, 'Па');
+}
+
+/* 16. Водяные калориферы */
+function calcWC() {
+  const Q = val('wc_q'), tin = val('wc_tin'), tout = val('wc_tout'), tws = val('wc_tws'), twr = val('wc_twr');
+  const dta = Math.max(tout - tin, 0.1);
+  const dtw = Math.max(tws - twr, 0.1);
+  
+  const G = (0.86 * Q) / dtw;
+  const L = (Q * 3600) / (1.2 * 1.005 * dta);
+  
+  $('wc_res').innerHTML = 
+    box('Расход воды', f(G, 2), 'м³/ч', 1) +
+    box('Расход воздуха', f(L, 0), 'м³/ч', 1) +
+    box('Перепад t воздуха', f(dta, 1), '°C') +
+    box('Перепад t воды', f(dtw, 1), '°C');
+}
+
+/* 17. Пусконаладка */
+function calcPN() {
+  const proj = Math.max(val('pn_l_proj'), 1);
+  const fact = val('pn_l_fact');
+  const tol = Math.max(val('pn_tol'), 0);
+  
+  const dev = ((fact - proj) / proj) * 100;
+  const isPass = Math.abs(dev) <= tol;
+  
+  let html = 
+    box('Отклонение', f(dev, 1), '%', 1) +
+    box('Вердикт', isPass ? 'ГОДЕН' : 'НЕ ГОДЕН', '', 1);
+    
+  if (!isPass) {
+    html += `<p class="note warn">Отклонение превышает допустимое (${tol}%). Требуется регулировка воздуховодов или заслонок.</p>`;
+  }
+  $('pn_res').innerHTML = html;
+}
+
+/* 18. Смета */
+function calcSM() {
+  const duct = val('sm_duct'), p_duct = val('sm_p_duct');
+  const grille = val('sm_grille'), p_grille = val('sm_p_grille');
+  const unit = val('sm_unit'), p_unit = val('sm_p_unit');
+  
+  const cost_duct = duct * p_duct;
+  const cost_grille = grille * p_grille;
+  const cost_unit = unit * p_unit;
+  const total = cost_duct + cost_grille + cost_unit;
+  
+  $('sm_res').innerHTML = 
+    box('Стоимость воздуховодов', f(cost_duct, 0), 'руб.') +
+    box('Стоимость решеток', f(cost_grille, 0), 'руб.') +
+    box('Стоимость оборудования', f(cost_unit, 0), 'руб.') +
+    box('ИТОГО', f(total, 0), 'руб.', 1);
+}
+
+/* 19. Осушители / Увлажнители */
+function calcOU() {
+  const L = val('ou_l');
+  const d1 = val('ou_d1');
+  const d2 = val('ou_d2');
+  
+  const delta = Math.abs(d1 - d2);
+  const W = (L * 1.2 * delta) / 1000;
+  const verdict = d1 > d2 ? 'Осушать' : (d1 < d2 ? 'Увлажнять' : 'Без изменений');
+  
+  $('ou_res').innerHTML = 
+    box('Влага', f(W, 2), 'кг/ч', 1) +
+    box('Влага', f(W * 24, 1), 'л/сутки') +
+    box('Действие', verdict, '', 1);
+}
+
+/* 20. ФОТО */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -721,12 +882,19 @@ bind(['o_s','o_h','o_ins','o_tin','o_tout','o_rad'], calcO);
 bind(['g_q','g_dt','g_len','g_pipe','g_zeta'], calcG);
 bind(['fc_q','fc_tws','fc_twr','fc_tas','fc_tar'], calcFC);
 bind(['el_p','el_ph','el_cos','el_mat','el_l'], calcEL);
+bind(['vd_l','vd_w','vd_h','vd_k','vd_zeta'], calcVD);
+bind(['sl_l1','sl_l2','sl_att'], calcSL);
+bind(['fl_l','fl_c','fl_dp'], calcFL);
+bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
+bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
+bind(['sm_duct','sm_p_duct','sm_grille','sm_p_grille','sm_unit','sm_p_unit'], calcSM);
+bind(['ou_l','ou_d1','ou_d2'], calcOU);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); fillU(); renderPhotos();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); fillU(); renderPhotos();
 
 /* журнал */
 let LOG = [];
@@ -758,7 +926,7 @@ function renderTot() {
   const k = Object.keys(s);
   $('lg_f').innerHTML = k.length ? '<tr><th colspan="6">Итого</th><th colspan="2">' + k.map(n => n + ': ' + f(s[n].v, 2) + ' ' + s[n].u + ' (' + s[n].k + ' поз.)').join('<br>') + '</th></tr>' : '';
 }
-const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'], 9: ['Расход воздуха', 'м³/ч'], 10: ['Ток нагрузки', 'А'] };
+const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'], 9: ['Расход воздуха', 'м³/ч'], 10: ['Ток нагрузки', 'А'], 11: ['Скорость в сечении', 'м/с'], 12: ['Требуемое затухание', 'дБ'], 13: ['Требуемая площадь', 'м²'], 14: ['Расход воды', 'м³/ч'], 15: ['Отклонение', '%'], 16: ['ИТОГО', 'руб.'], 17: ['Влага', 'кг/ч'] };
 function sv(section, i) {
   const d = SUM[i]; if (!d) return {};
   const r = [...section.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === d[0]);
@@ -767,7 +935,7 @@ function sv(section, i) {
   return isFinite(v) ? { v: v, u: d[1] } : {};
 }
 panels.forEach((s, i) => {
-  if (i === 12) return;
+  if (i === 19) return;
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
@@ -839,13 +1007,13 @@ renderLog();
 
 /* старт */
 if (location.hash === '#photo') {
-  show(12);
+  show(19);
 } else {
   const m = /^#t(\d+)$/.exec(location.hash);
   show(m ? +m[1] : 0);
 }
 
-/* ЖЕСТКИЙ ПЕРЕХВАТ СВАЙПОВ (Работает в любой точке) */
+/* Свайпы в любой точке экрана */
 (function() {
     let xDown = null;
     let yDown = null;
@@ -853,13 +1021,12 @@ if (location.hash === '#photo') {
 
     document.addEventListener('touchstart', function(evt) {
         if (evt.touches.length !== 1) return;
-        // Игнорируем элементы с горизонтальным скроллом или интерактивом
         if (evt.target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
         
         xDown = evt.touches[0].clientX;
         yDown = evt.touches[0].clientY;
         isSwiping = false;
-    }, { passive: true }); // На старте пассивный, чтобы не блокировать скролл
+    }, { passive: true });
 
     document.addEventListener('touchmove', function(evt) {
         if (!xDown || !yDown || evt.touches.length !== 1) return;
@@ -870,12 +1037,10 @@ if (location.hash === '#photo') {
         let xDiff = xDown - xUp;
         let yDiff = yDown - yUp;
 
-        // Если движение по горизонтали больше, чем по вертикали — это свайп
         if (Math.abs(xDiff) > Math.abs(yDiff)) {
-            // Блокируем скролл страницы и навигацию браузера
             if (evt.cancelable) evt.preventDefault();
             
-            if (Math.abs(xDiff) > 40) { // Порог срабатывания
+            if (Math.abs(xDiff) > 40) {
                 isSwiping = true;
                 const cur = panels.findIndex(p => p.classList.contains('on'));
                 if (cur < 0) return;
@@ -889,12 +1054,11 @@ if (location.hash === '#photo') {
                 }
             }
         }
-    }, { passive: false }); // ВАЖНО: passive: false для preventDefault()
+    }, { passive: false });
 
     document.addEventListener('touchend', function() {
         xDown = null;
         yDown = null;
-        // Небольшая задержка, чтобы не сработало дважды
         setTimeout(() => { isSwiping = false; }, 100);
     }, { passive: true });
 })();
