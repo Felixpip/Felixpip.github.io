@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ОБНОВЛЕННЫЙ ЦВЕТ ФОНА: мятный оттенок */
-:root{--bg:#e3efe9;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#bcd6c9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* НОВЫЙ ЦВЕТ ФОНА: светло-голубой */
+:root{--bg:#e3e8f0;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#c9d6dc;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -21,7 +21,6 @@ html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 8px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10;pointer-events:none}
 
-/* Исправлена шапка, чтобы кнопки не прятались */
 .wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
 .head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;position:relative;z-index:20}
 .head > div:first-child{flex:1; min-width:0}
@@ -99,13 +98,14 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="a_r"></div>
 <p class="note">Кратности ориентировочные. Для проекта используйте действующие СП/СНиП и задание заказчика.</p></section>
 
-<section id="t1" role="tabpanel"><h2>Воздуховод</h2><p class="hint">Подбор сечения по скорости, а также проверка своего круглого и прямоугольного воздуховода: скорость, сечение, давление и площадь поверхности по длине участка.</p>
+<!-- Раздел "Воздуховод" переименован в "Подбор" и изменены значения по умолчанию -->
+<section id="t1" role="tabpanel"><h2>Подбор</h2><p class="hint">Подбор сечения по скорости, а также проверка своего круглого и прямоугольного воздуховода: скорость, сечение, давление и площадь поверхности по длине участка.</p>
 <div class="grid">
-<label>Расход, м³/ч<input id="d_l" type="number" value="1000" min="0" inputmode="decimal"></label>
+<label>Расход, м³/ч<input id="d_l" type="number" value="500" min="0" inputmode="decimal"></label>
 <label>Скорость, м/с<input id="d_v" type="number" value="5" step="0.5" min="0.1" inputmode="decimal"></label>
-<label>Диаметр круглого, мм<input id="d_d" type="number" value="250" min="50" inputmode="numeric"></label>
-<label>Ширина прямоугольного, мм<input id="d_w" type="number" value="400" min="50" inputmode="numeric"></label>
-<label>Высота прямоугольного, мм<input id="d_h" type="number" value="200" min="50" inputmode="numeric"></label>
+<label>Диаметр круглого, мм<input id="d_d" type="number" value="160" min="50" inputmode="numeric"></label>
+<label>Ширина прямоугольного, мм<input id="d_w" type="number" value="300" min="50" inputmode="numeric"></label>
+<label>Высота прямоугольного, мм<input id="d_h" type="number" value="150" min="50" inputmode="numeric"></label>
 <label>Длина участка, м<input id="d_n" type="number" value="10" min="0" step="0.5" inputmode="decimal"></label>
 </div>
 <div class="res" id="d_r"></div>
@@ -163,11 +163,12 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="b_res"></div>
 <p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека.</p></section>
 
+<!-- Аэродинамика: значения 500 и 160 -->
 <section id="t6" role="tabpanel"><h2>Аэродинамика</h2><p class="hint">Расчёт потерь давления в воздуховоде на трение и в местных сопротивлениях.</p>
 <div class="grid">
-<label>Расход воздуха, м³/ч<input id="e_l" type="number" value="2000" min="0" inputmode="decimal"></label>
+<label>Расход воздуха, м³/ч<input id="e_l" type="number" value="500" min="0" inputmode="decimal"></label>
 <label>Форма сечения<select id="e_shape"><option value="round">Круглый</option><option value="rect">Прямоугольный</option></select></label>
-<label id="lbl_e_d">Диаметр, мм<input id="e_d" type="number" value="400" min="50" inputmode="numeric"></label>
+<label id="lbl_e_d">Диаметр, мм<input id="e_d" type="number" value="160" min="50" inputmode="numeric"></label>
 <label id="lbl_e_w" style="display:none">Ширина, мм<input id="e_w" type="number" value="500" min="50" inputmode="numeric"></label>
 <label id="lbl_e_h" style="display:none">Высота, мм<input id="e_h" type="number" value="300" min="50" inputmode="numeric"></label>
 <label>Длина участка, м<input id="e_len" type="number" value="20" min="0" step="0.5" inputmode="decimal"></label>
@@ -211,9 +212,10 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="fc_res"></div>
 <p class="note">Расход воды G = 0.86 · Q / Δt_воды. Расход воздуха L = Q · 3600 / (1.2 · 1.005 · Δt_воздуха).</p></section>
 
+<!-- Электрика: значение по умолчанию 3.5 -->
 <section id="t10" role="tabpanel"><h2>Электрика</h2><p class="hint">Расчёт тока нагрузки, подбор автомата и сечения кабеля.</p>
 <div class="grid">
-<label>Мощность нагрузки, кВт<input id="el_p" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Мощность нагрузки, кВт<input id="el_p" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
 <label>Тип сети<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (380 В)</option></select></label>
 <label>cosφ (коэфф. мощности)<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
 <label>Материал жилы<select id="el_mat"><option value="cu">Медь (Cu)</option><option value="al">Алюминий (Al)</option></select></label>
@@ -222,10 +224,11 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="el_res"></div>
 <p class="note">Автомат подбирается с запасом 25% от тока нагрузки. Кабель подбирается по номиналу автомата (ПУЭ). Падение напряжения не должно превышать 5%.</p></section>
 
+<!-- Конвертер: значение по умолчанию 500 -->
 <section id="t11" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
 <div class="grid">
 <label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
-<label>Значение<input id="u_v" type="number" value="1000" inputmode="decimal"></label>
+<label>Значение<input id="u_v" type="number" value="500" inputmode="decimal"></label>
 <label>Единица<select id="u_u"></select></label>
 </div>
 <div class="res" id="u_r"></div></section>
@@ -280,7 +283,7 @@ themeBtn.onclick = () => {
 applyTheme();
 
 /* вкладки */
-const names = ['Воздухообмен', 'Воздуховод', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Конвертер'];
+const names = ['Воздухообмен', 'Подбор', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Конвертер'];
 const tabs = $('tabs');
 const tabBtns = names.map((n, i) => {
   const b = document.createElement('button');
@@ -325,7 +328,7 @@ function calcA() {
   $('a_r').innerHTML = box('Объём', f(V), 'м³') + box('По кратности', f(L1, 0), 'м³/ч') + box('По людям', f(L2, 0), 'м³/ч') + box('Требуемый расход', f(L, 0), 'м³/ч', 1) + box('Расход', f(L / 3.6, 0), 'л/с');
 }
 
-/* 2. воздуховод */
+/* 2. подбор (бывший воздуховод) */
 const STD = [100, 125, 160, 200, 250, 315, 400, 500, 630, 710, 800, 1000, 1250];
 function calcD() {
   const L = val('d_l'), v = Math.max(val('d_v'), 0.1);
@@ -583,12 +586,12 @@ function calcFC() {
     box('Перепад t воздуха', f(dta, 1), '°C');
 }
 
-/* 12. Электрика */
+/* 12. Электрика (ИСПРАВЛЕН БАГ СО СМЕНОЙ СЕТИ И МАТЕРИАЛА) */
 function calcEL() {
   const P = val('el_p');
-  const ph = val('el_ph');
+  const ph = $('el_ph').value;     // Берем строку "1" или "3"
   const cos = Math.max(val('el_cos'), 0.1);
-  const mat = val('el_mat');
+  const mat = $('el_mat').value;   // Берем строку "cu" или "al"
   const len = val('el_l');
 
   const U = ph === '3' ? 380 : 220;
@@ -837,14 +840,13 @@ if (location.hash === '#photo') {
   show(m ? +m[1] : 0);
 }
 
-/* Свайпы влево/вправо (Исправлено) */
+/* Свайпы влево/вправо */
 (function(){
   let startX = 0, startY = 0;
   
   document.addEventListener('touchstart', e => {
     if (e.touches.length !== 1) return;
     const target = e.target;
-    // Игнорируем свайп, если он начат на инпуте, кнопке, меню или скроллящейся таблице
     if (target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
     
     startX = e.touches[0].clientX;
@@ -859,7 +861,6 @@ if (location.hash === '#photo') {
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
 
-    // Если сдвиг по горизонтали больше 60px, а по вертикали меньше 40px — это свайп
     if (Math.abs(dx) > 60 && Math.abs(dy) < 40) {
       const cur = panels.findIndex(p => p.classList.contains('on'));
       if (cur < 0) return;
