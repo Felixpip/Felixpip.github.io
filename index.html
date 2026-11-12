@@ -12,8 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ФОН: светло-бирюзовый */
-:root{--bg:#e0f7fa;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#b2ebf2;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#fff8e1;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#ffecb3;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -302,7 +301,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="pn_res"></div></section>
 
-<!-- ОБНОВЛЁННАЯ СМЕТА -->
 <section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы, оборудование и работы. Итог по объекту.</p>
 
 <div class="gh" style="margin-top:0;">Материалы</div>
@@ -467,7 +465,6 @@ const box = (l, v, u, m) => `<div class="r${m ? ' main' : ''}"><small>${l}</smal
 const num = v => { const n = parseFloat(String(v).replace(/\s|\u00a0|\u202f/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
 const val = id => num($(id).value);
 
-/* Тема */
 const themeBtn = $('theme');
 const THEME_LABEL = { auto: 'Тема', light: 'Светлая', dark: 'Тёмная' };
 let theme = 'auto';
@@ -484,7 +481,6 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* Список расчётов */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -531,7 +527,7 @@ function showView(viewName, catId) {
     $('view-home').classList.add('on');
     document.querySelector('.nav-btn[data-view="home"]').setAttribute('aria-selected', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (viewName === 'cat') {
+  } else if (viewName === 'cat') {
     const items = tools.filter(t => t.cat === catId);
     if (items.length === 1) {
       openTool(items[0].id);
@@ -544,7 +540,6 @@ function showView(viewName, catId) {
       `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
     ).join('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
   } else if (viewName === 'log') {
     $('log-view').classList.add('on');
     document.querySelector('.nav-btn[data-view="log"]').setAttribute('aria-selected', 'true');
@@ -625,8 +620,6 @@ document.querySelectorAll('.back-btn').forEach(btn => {
 });
 
 $('btn-photo').onclick = () => openTool('t19');
-
-/* ============ РАСЧЁТЫ ============ */
 
 const rooms = [
   ['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Кухня (газ)', 8],
@@ -987,7 +980,6 @@ function calcPN() {
   $('pn_res').innerHTML = html;
 }
 
-/* ОБНОВЛЁННАЯ СМЕТА */
 function updateUnitHint() {
   const type = $('sm_unit_type').value;
   const hint = $('sm_unit_hint');
@@ -997,28 +989,23 @@ function updateUnitHint() {
 }
 
 function calcSM() {
-  // Материалы
   const cost_duct = val('sm_duct') * val('sm_p_duct');
   const cost_fit = cost_duct * (val('sm_fit') / 100);
   const cost_ins = val('sm_ins') * val('sm_p_ins');
   const cost_grille = val('sm_grille') * val('sm_p_grille');
   const material_total = cost_duct + cost_fit + cost_ins + cost_grille;
   
-  // Оборудование
-  const unit_price = val('sm_unit_price'); // 1 шт всегда
+  const unit_price = val('sm_unit_price');
   const cond_cost = val('sm_cond_price') * val('sm_cond_qty');
   const fan_cost = val('sm_fan_price') * val('sm_fan_qty');
   const equipment_total = unit_price + cond_cost + fan_cost;
   
-  // Работы
   const cost_hw = material_total * (val('sm_hw') / 100);
   const cost_work = (material_total + equipment_total) * (val('sm_work') / 100);
   const cost_pnr = cost_work * (val('sm_pnr') / 100);
   const labor_total = cost_hw + cost_work + cost_pnr;
   
-  // Итого
   const grand_total = material_total + equipment_total + labor_total;
-  
   const unit_label = $('sm_unit_type').selectedOptions[0].text;
   
   $('sm_res').innerHTML = 
