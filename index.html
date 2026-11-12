@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f9fbe7;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f0f4c3;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#e0f2f1;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#b2dfdb;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -117,8 +117,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <div class="home-btn" data-tool="t0"><span class="icon">🌬️</span><span class="title">Воздухообмен</span></div>
     <div class="home-btn" data-tool="t1"><span class="icon">📏</span><span class="title">Подбор сечения</span></div>
     <div class="home-btn" data-tool="t2"><span class="icon">❄️</span><span class="title">Холод</span></div>
-    <div class="home-btn" data-tool="t7"><span class="icon">🏠</span><span class="title">Отопление</span></div>
-    <div class="home-btn" data-tool="t8"><span class="icon">💧</span><span class="title">Гидравлика</span></div>
+    <div class="home-btn" data-tool="t10"><span class="icon">⚡</span><span class="title">Электрика</span></div>
     <div class="home-btn" data-tool="t28"><span class="icon">📋</span><span class="title">Паспорт</span></div>
     <div class="home-btn" data-tool="t16"><span class="icon">💰</span><span class="title">Смета</span></div>
     <div class="home-btn" data-tool="t19"><span class="icon">📷</span><span class="title">Фото</span></div>
@@ -229,27 +228,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="e_res"></div></section>
 
-<section id="t7" class="tool"><button class="back-btn">← Назад</button><h2>Отопление</h2><p class="hint">Теплопотери и радиаторы.</p>
-<div class="grid">
-<label>Площадь, м²<input id="o_s" type="number" value="30" min="0" inputmode="decimal"></label>
-<label>Высота, м<input id="o_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
-<label>Изоляция<select id="o_ins"><option value="0.04">Хорошая</option><option value="0.06" selected>Средняя</option><option value="0.09">Плохая</option></select></label>
-<label>t внутри, °C<input id="o_tin" type="number" value="20" inputmode="decimal"></label>
-<label>t улицы, °C<input id="o_tout" type="number" value="-26" inputmode="decimal"></label>
-<label>Мощность секции, Вт<input id="o_rad" type="number" value="180" min="50" inputmode="numeric"></label>
-</div>
-<div class="res" id="o_res"></div></section>
-
-<section id="t8" class="tool"><button class="back-btn">← Назад</button><h2>Гидродинамика</h2><p class="hint">Подбор труб и потери напора.</p>
-<div class="grid">
-<label>Тепловая нагрузка, кВт<input id="g_q" type="number" value="15" min="0" inputmode="decimal"></label>
-<label>Перепад t, °C<input id="g_dt" type="number" value="20" min="1" inputmode="decimal"></label>
-<label>Длина, м<input id="g_len" type="number" value="30" min="0" step="0.5" inputmode="decimal"></label>
-<label>Тип трубы<select id="g_pipe"><option value="0.01">Полипропилен</option><option value="0.1" selected>Сталь</option><option value="0.5">Старая сталь</option></select></label>
-<label>Сумма КМС<input id="g_zeta" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
-</div>
-<div class="res" id="g_res"></div></section>
-
 <section id="t9" class="tool"><button class="back-btn">← Назад</button><h2>Фанкойлы</h2><p class="hint">Расход воды и воздуха.</p>
 <div class="grid">
 <label>Нагрузка, кВт<input id="fc_q" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
@@ -348,11 +326,9 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Пусконаладка, % от монтажа<input id="sm_pnr" type="number" value="8" min="0" inputmode="numeric"></label>
 </div>
 
-<div class="res" id="sm_res"></div>
-<p class="note">Быстрая прикидка для заказчика.</p></section>
+<div class="res" id="sm_res"></div></section>
 
-<!-- ПАСПОРТ ОБЪЕКТА -->
-<section id="t28" class="tool"><button class="back-btn">← Назад</button><h2>Паспорт объекта</h2><p class="hint">Краткая характеристика объекта для проекта и монтажа.</p>
+<section id="t28" class="tool"><button class="back-btn">← Назад</button><h2>Паспорт объекта</h2><p class="hint">Краткая характеристика объекта.</p>
 <div class="grid">
 <label>Название / адрес<input id="po_name" type="text" placeholder="Например: ООО «Ромашка», ул. Ленина 5"></label>
 <label>Помещение / этаж<input id="po_room" type="text" placeholder="Кабинет 12, 2 этаж"></label>
@@ -379,7 +355,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <option value="2kam">Стеклопакет 2-кам.</option>
 <option value="vitrage">Витраж</option>
 </select></label>
-<label>Электрическая мощность выделенная, кВт<input id="po_pwr_total" type="number" value="10" min="0" step="0.5" inputmode="decimal"></label>
+<label>Эл. мощность выделенная, кВт<input id="po_pwr_total" type="number" value="10" min="0" step="0.5" inputmode="decimal"></label>
 <label>Уже занято электроэнергией, кВт<input id="po_pwr_used" type="number" value="4" min="0" step="0.5" inputmode="decimal"></label>
 <label>Существующая вентиляция<select id="po_vent">
 <option value="no" selected>Нет</option>
@@ -396,16 +372,15 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="po_res"></div>
 <p class="note">Сохраняется автоматически. Используйте для заметок на объекте.</p></section>
 
-<!-- СПЕЦИФИКАЦИЯ -->
-<section id="t29" class="tool"><button class="back-btn">← Назад</button><h2>Спецификация оборудования</h2><p class="hint">Список для закупки и монтажа. Заполняйте только нужные позиции.</p>
+<section id="t29" class="tool"><button class="back-btn">← Назад</button><h2>Спецификация оборудования</h2><p class="hint">Список для закупки и монтажа.</p>
 <div class="gh">Воздуховоды и арматура</div>
 <div class="grid">
-<label>Воздуховод круглый Ø100, м<input id="sp_100" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
-<label>Воздуховод круглый Ø125, м<input id="sp_125" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
-<label>Воздуховод круглый Ø160, м<input id="sp_160" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
-<label>Воздуховод круглый Ø200, м<input id="sp_200" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
-<label>Воздуховод круглый Ø250, м<input id="sp_250" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
-<label>Воздуховод прямоуг., м²<input id="sp_rect" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Ø100, м<input id="sp_100" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Ø125, м<input id="sp_125" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Ø160, м<input id="sp_160" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Ø200, м<input id="sp_200" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Ø250, м<input id="sp_250" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Прямоуг., м²<input id="sp_rect" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
 <label>Фасонина, шт<input id="sp_fit" type="number" value="0" min="0" inputmode="numeric"></label>
 <label>Изоляция, м²<input id="sp_ins" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
 </div>
@@ -419,7 +394,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="gh">Оборудование</div>
 <div class="grid">
 <label>Приточная установка, шт<input id="sp_ahu" type="number" value="0" min="0" inputmode="numeric"></label>
-<label>Приточно-вытяжная установка, шт<input id="sp_ahu_pv" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>ПВУ, шт<input id="sp_ahu_pv" type="number" value="0" min="0" inputmode="numeric"></label>
 <label>Кондиционеры, шт<input id="sp_ac" type="number" value="0" min="0" inputmode="numeric"></label>
 <label>Канальные вентиляторы, шт<input id="sp_fan" type="number" value="0" min="0" inputmode="numeric"></label>
 <label>Калориферы, шт<input id="sp_heater" type="number" value="0" min="0" inputmode="numeric"></label>
@@ -431,7 +406,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Дренаж, м<input id="sp_drain" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
 <label>Кабель, м<input id="sp_cable" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
 <label>Автоматика, компл.<input id="sp_auto" type="number" value="0" min="0" inputmode="numeric"></label>
-<label>Прочее (свободный текст)<input id="sp_other" type="text" placeholder="Кронштейны, крепёж и т.д."></label>
+<label>Прочее<input id="sp_other" type="text" placeholder="Кронштейны, крепёж и т.д."></label>
 </div>
 <div class="res" id="sp_res"></div>
 <div class="log-actions">
@@ -439,16 +414,15 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="tool-btn" id="sp_share" type="button">📤 Поделиться</button>
 </div></section>
 
-<!-- ТРАССА КОНДИЦИОНЕРА -->
-<section id="t30" class="tool"><button class="back-btn">← Назад</button><h2>Трасса кондиционера</h2><p class="hint">Проверка длины фреоновой трассы и перепада высот.</p>
+<section id="t30" class="tool"><button class="back-btn">← Назад</button><h2>Трасса кондиционера</h2><p class="hint">Проверка длины трассы и перепада высот.</p>
 <div class="grid">
-<label>Мощность кондиционера, кВт<input id="tr_pwr" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Мощность, кВт<input id="tr_pwr" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
 <label>Длина трассы, м<input id="tr_len" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
-<label>Перепад высот, м<input id="tr_h" type="number" value="0" step="0.5" inputmode="decimal"><span class="hint-inline">Плюс — внутренний выше, минус — ниже</span></label>
-<label>Количество поворотов, шт<input id="tr_turns" type="number" value="2" min="0" inputmode="numeric"></label>
+<label>Перепад высот, м<input id="tr_h" type="number" value="0" step="0.5" inputmode="decimal"><span class="hint-inline">Плюс — внутренний выше</span></label>
+<label>Поворотов, шт<input id="tr_turns" type="number" value="2" min="0" inputmode="numeric"></label>
 </div>
 <div class="res" id="tr_res"></div>
-<p class="note">Ориентиры для бытовых сплитов: длина без дозаправки 5 м (≤3,5 кВт), 7 м (5–7 кВт), 10 м (10+ кВт). Перепад высот: до 5 м внутренний выше, до 15 м наружный выше. Дозаправка ~20 г/м сверх нормы.</p></section>
+<p class="note">Ориентиры: без дозаправки 5 м (до 3,5 кВт), 7 м (5–7 кВт), 10 м (10+ кВт). Перепад: внутр. выше до 5 м, наружн. выше до 15 м. Дозаправка ~20 г/м.</p></section>
 
 <section id="t17" class="tool"><button class="back-btn">← Назад</button><h2>Осушители</h2><p class="hint">Подбор осушителя.</p>
 <div class="grid">
@@ -590,7 +564,7 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* СПИСОК */
+/* СПИСОК (без Отопления и Гидравлики) */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -599,8 +573,6 @@ const tools = [
   { id: 't4', name: 'Зонт', cat: 'vent', icon: '🍳' },
   { id: 't5', name: 'Бассейн', cat: 'vent', icon: '🏊' },
   { id: 't6', name: 'Аэродинамика', cat: 'vent', icon: '💨' },
-  { id: 't7', name: 'Отопление', cat: 'heat', icon: '🏠' },
-  { id: 't8', name: 'Гидравлика', cat: 'heat', icon: '💧' },
   { id: 't9', name: 'Фанкойлы', cat: 'heat', icon: '🌀' },
   { id: 't10', name: 'Электрика', cat: 'elec', icon: '⚡' },
   { id: 't11', name: 'Воздухораспр.', cat: 'vent', icon: '🌪️' },
@@ -859,32 +831,6 @@ function calcE() {
   $('e_res').innerHTML = box('Скорость', f(v, 2), 'м/с', 1) + box('Дин. давление', f(Pd, 1), 'Па') + box('Эквив. диаметр', f(d_eq * 1000, 0), 'мм') + box('Удельные потери', f(R, 2), 'Па/м') + box('Трение', f(P_friction, 0), 'Па') + box('Местные', f(P_local, 0), 'Па') + box('Суммарные', f(P_total, 0), 'Па', 1);
 }
 
-function calcO() {
-  const s = val('o_s'), h = val('o_h'), ins = val('o_ins'), tin = val('o_tin'), tout = val('o_tout'), prad = val('o_rad');
-  const V = s * h, dt = tin - tout;
-  let q = V * ins * dt * 1.15;
-  const sections = Math.ceil(q / prad), G = 0.86 * (q / 1000) / 20;
-  $('o_res').innerHTML = box('Объём', f(V, 1), 'м³') + box('Теплопотери', f(q / 1000, 2), 'кВт', 1) + box('Секций (по ' + prad + ' Вт)', sections, 'шт', 1) + box('Расход воды', f(G, 2), 'м³/ч');
-}
-
-const PIPE_STD = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200];
-function calcG() {
-  const Q = val('g_q'), dt = Math.max(val('g_dt'), 1), len = val('g_len'), k = val('g_pipe'), zeta = val('g_zeta');
-  const G_m3h = 0.86 * Q / dt, G_ls = G_m3h / 3.6;
-  let best_d = 15;
-  for (let d of PIPE_STD) {
-    const area = Math.PI * Math.pow(d / 1000, 2) / 4;
-    if ((G_m3h / 3600) / area <= 1.2) { best_d = d; break; }
-  }
-  const area = Math.PI * Math.pow(best_d / 1000, 2) / 4, v = (G_m3h / 3600) / area;
-  const Pd = 1000 * v * v / 2, nu = 1e-6, Re = v * (best_d / 1000) / nu;
-  let lambda = 0;
-  if (Re > 0) lambda = 0.11 * Math.pow((k / 1000 / (best_d / 1000)) + (68 / Re), 0.25);
-  const R = (lambda / (best_d / 1000)) * Pd;
-  const P_friction = R * len, P_local = zeta * Pd, P_total = P_friction + P_local;
-  $('g_res').innerHTML = box('Расход воды', f(G_m3h, 2), 'м³/ч', 1) + box('Расход', f(G_ls, 2), 'л/с') + box('Диаметр', best_d, 'мм', 1) + box('Скорость', f(v, 2), 'м/с') + box('Удельные потери', f(R, 1), 'Па/м') + box('Трение', f(P_friction, 0), 'Па') + box('Местные', f(P_local, 0), 'Па') + box('Суммарные', f(P_total, 0), 'Па', 1);
-}
-
 function calcFC() {
   const Q = val('fc_q'), tws = val('fc_tws'), twr = val('fc_twr'), tas = val('fc_tas'), tar = val('fc_tar');
   const dtw = twr - tws, dta = tar - tas;
@@ -1080,7 +1026,6 @@ function calcTL() {
   $('tl_res').innerHTML = box('Стены', f(qw / 1000, 2), 'кВт') + box('Окна', f(qo / 1000, 2), 'кВт') + box('Пол', f(qf / 1000, 2), 'кВт') + box('Потолок', f(qc / 1000, 2), 'кВт') + box('Всего с запасом', f(total / 1000, 2), 'кВт', 1);
 }
 
-/* ПАСПОРТ ОБЪЕКТА */
 function calcPO() {
   const s = val('po_s'), h = val('po_h'), total = val('po_pwr_total'), used = val('po_pwr_used');
   const free = Math.max(total - used, 0);
@@ -1093,7 +1038,6 @@ function calcPO() {
   const name = $('po_name').value || '—';
   const room = $('po_room').value || '—';
   const notes = $('po_notes').value || '';
-  
   let html = `<div class="passport-preview">
 <b>Объект:</b> ${name}<br>
 <b>Помещение:</b> ${room}<br>
@@ -1104,11 +1048,9 @@ function calcPO() {
 <b>Вентиляция:</b> ${ventLabel}<br>
 <b>Кондиционирование:</b> ${acLabel}${notes ? '<br><b>Заметки:</b> ' + notes : ''}
 </div>` + box('Свободная мощность', f(free, 1), 'кВт', 1);
-  
   $('po_res').innerHTML = html;
 }
 
-/* СПЕЦИФИКАЦИЯ */
 function getSpecItems() {
   return [
     ['Воздуховод Ø100', val('sp_100'), 'м'],
@@ -1140,16 +1082,11 @@ function calcSP() {
   const items = getSpecItems();
   const other = $('sp_other').value.trim();
   if (other) items.push(['Прочее', other, '']);
-  
   if (!items.length) {
     $('sp_res').innerHTML = `<div class="spec-preview">Спецификация пуста. Заполните нужные позиции выше.</div>`;
     return;
   }
-  
-  const table = items.map((it, i) => 
-    `${i + 1}. ${it[0]} — ${f(it[1], 1)} ${it[2]}`.trim()
-  ).join('\n');
-  
+  const table = items.map((it, i) => `${i + 1}. ${it[0]} — ${f(it[1], 1)} ${it[2]}`.trim()).join('\n');
   $('sp_res').innerHTML = `<div class="gh">Спецификация (${items.length} позиций)</div><div class="spec-preview">${table}</div>`;
 }
 
@@ -1175,19 +1112,16 @@ $('sp_share').onclick = async () => {
     catch (e) { if (e.name === 'AbortError') return; }
   }
   const ok = await copyText(text);
-  alert(ok ? 'Спецификация скопирована в буфер (поделиться не удалось)' : 'Не удалось поделиться');
+  alert(ok ? 'Спецификация скопирована в буфер' : 'Не удалось поделиться');
 };
 
-/* ТРАССА КОНДИЦИОНЕРА */
 function calcTR() {
   const power = val('tr_pwr'), len = val('tr_len'), h = val('tr_h'), turns = val('tr_turns');
-  
   let standardLength;
   if (power <= 3.5) standardLength = 5;
   else if (power <= 7) standardLength = 7;
   else if (power <= 12) standardLength = 10;
   else standardLength = 15;
-  
   const maxLength = standardLength * 3;
   const extraLength = Math.max(len - standardLength, 0);
   const refillGrams = extraLength * 20;
@@ -1195,19 +1129,16 @@ function calcTR() {
   const heightOk = h <= 5 && -h <= 15;
   const lengthOk = len <= maxLength;
   const pass = lengthOk && heightOk && perfLoss < 20;
-  
   let html = 
     box('Макс. длина без дозаправки', f(standardLength, 0), 'м') +
     box('Макс. допустимая длина', f(maxLength, 0), 'м') +
     box('Дозаправка фреона', refillGrams > 0 ? f(refillGrams, 0) + ' г' : 'не требуется', '') +
     box('Потеря производительности', f(perfLoss, 1), '%') +
     box('Перепад высот', heightOk ? 'в норме' : 'превышен', '', heightOk ? 0 : 1);
-  
   if (!lengthOk) html += `<p class="note warn">Длина ${f(len)} м превышает допустимую ${f(maxLength)} м.</p>`;
-  if (!heightOk) html += `<p class="note warn">Перепад высот ${f(h)} м вне нормы (внутр. выше до 5 м, наружн. выше до 15 м).</p>`;
-  if (perfLoss >= 20) html += `<p class="note warn">Потеря производительности ${f(perfLoss, 1)}% — кондиционер может не справиться.</p>`;
+  if (!heightOk) html += `<p class="note warn">Перепад высот ${f(h)} м вне нормы.</p>`;
+  if (perfLoss >= 20) html += `<p class="note warn">Потеря производительности ${f(perfLoss, 1)}%.</p>`;
   if (pass) html += `<p class="note" style="color:var(--ac);">✓ Трасса в норме</p>`;
-  
   $('tr_res').innerHTML = html;
 }
 
@@ -1393,8 +1324,6 @@ bind(['h_l', 'h_t1', 'h_t2'], calcH);
 bind(['z_a', 'z_b', 'z_h', 'z_e', 'z_t', 'z_v', 'z_r', 'z_s'], calcZ);
 bind(['b_a','b_b','b_tw','b_t','b_rh','b_v','b_n','b_t1','b_rh1','b_tsup','b_eff','b_r'], calcB);
 bind(['e_l','e_d','e_w','e_h','e_len','e_k','e_zeta'], calcE);
-bind(['o_s','o_h','o_ins','o_tin','o_tout','o_rad'], calcO);
-bind(['g_q','g_dt','g_len','g_pipe','g_zeta'], calcG);
 bind(['fc_q','fc_tws','fc_twr','fc_tas','fc_tar'], calcFC);
 bind(['el_p','el_ph','el_cos','el_mat','el_l'], calcEL);
 bind(['vd_l','vd_w','vd_h','vd_k','vd_zeta'], calcVD);
@@ -1419,7 +1348,7 @@ $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 $('sm_unit_type').addEventListener('change', updateUnitHint);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
 
 /* ЖУРНАЛ */
 let LOG = [];
@@ -1454,10 +1383,9 @@ function renderTot() {
 const SUM = { 
   t0: ['Требуемый расход', 'м³/ч'], t2: ['С запасом', 'кВт'], t3: ['Мощность', 'кВт'], 
   t4: ['Расход с запасом', 'м³/ч'], t5: ['Приток', 'м³/ч'], t6: ['Суммарные потери', 'Па'], 
-  t7: ['Теплопотери', 'кВт'], t8: ['Суммарные потери', 'Па'], t9: ['Расход воздуха', 'м³/ч'], 
-  t10: ['Ток', 'А'], t11: ['Скорость', 'м/с'], t12: ['Требуемое затухание', 'дБ'], 
-  t13: ['Требуемая площадь', 'м²'], t14: ['Расход воды', 'м³/ч'], t15: ['Отклонение', '%'], 
-  t16: ['ИТОГО', 'руб.'], t17: ['Удалить влагу', 'кг/ч'],
+  t9: ['Расход воздуха', 'м³/ч'], t10: ['Ток', 'А'], t11: ['Скорость', 'м/с'], 
+  t12: ['Требуемое затухание', 'дБ'], t13: ['Требуемая площадь', 'м²'], t14: ['Расход воды', 'м³/ч'], 
+  t15: ['Отклонение', '%'], t16: ['ИТОГО', 'руб.'], t17: ['Удалить влагу', 'кг/ч'],
   t20: ['Требуется добавить', 'кг/ч'], t21: ['Мощность', 'кВт'], t22: ['Расход воды', 'м³/ч'],
   t23: ['Экономия тепла', 'кВт'], t24: ['Толщина', 'мм'], t26: ['Всего с запасом', 'кВт'],
   t30: ['Дозаправка фреона', 'г']
