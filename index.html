@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ЦВЕТ ФОНА: светло-лавандовый */
-:root{--bg:#ede7f6;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#d1c4e9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* ФОН: светло-лаймовый */
+:root{--bg:#f0f4c3;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#dce775;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -28,8 +28,11 @@ h1{font-size:clamp(1.4rem,4vw,2.4rem);line-height:1.1;margin:8px 0 4px;letter-sp
 .head-actions{display:flex; flex-direction:column; gap:8px; align-items:flex-end; flex:none; margin-top:10px}
 #theme,#btn-photo{font:inherit; font-size:.82rem; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:7px 12px; cursor:pointer; white-space:nowrap; transition:filter .15s; box-shadow:0 2px 5px rgba(0,0,0,0.05)}
 #btn-photo{background:var(--ac); color:var(--ac-ink); border-color:var(--ac); font-weight:700; display:flex; align-items:center; justify-content:center; gap:4px;}
-#btn-photo.active{outline:3px solid var(--hot); outline-offset:2px;}
 #theme:hover,#btn-photo:hover{filter:brightness(1.1)}
+#search{width:100%; margin-bottom:10px; padding:11px 14px; font-size:1rem; background:var(--card); border:1px solid var(--line); border-radius:10px;}
+#search-results{background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; margin-bottom:12px;}
+#search-results .cat-item{border-radius:0; border:0; border-bottom:1px solid var(--line);}
+#search-results .cat-item:last-child{border-bottom:0;}
 nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin;touch-action:pan-x;}
 nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 nav button:hover{border-color:var(--ac)}
@@ -93,6 +96,9 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   </div>
 </div>
 
+<input type="search" id="search" placeholder="🔍 Поиск раздела..." autocomplete="off">
+<div id="search-results" style="display:none;"></div>
+
 <nav role="tablist" id="tabs">
   <button class="nav-btn" data-view="home" aria-selected="true">Главная</button>
   <button class="nav-btn" data-view="vent">Вентиляция</button>
@@ -109,9 +115,9 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <div class="home-btn" data-tool="t0"><span class="icon">🌬️</span><span class="title">Воздухообмен</span></div>
     <div class="home-btn" data-tool="t1"><span class="icon">📏</span><span class="title">Подбор сечения</span></div>
     <div class="home-btn" data-tool="t2"><span class="icon">❄️</span><span class="title">Холод</span></div>
-    <div class="home-btn" data-tool="t3"><span class="icon">🔥</span><span class="title">Нагрев</span></div>
     <div class="home-btn" data-tool="t7"><span class="icon">🏠</span><span class="title">Отопление</span></div>
     <div class="home-btn" data-tool="t8"><span class="icon">💧</span><span class="title">Гидравлика</span></div>
+    <div class="home-btn" data-tool="t20"><span class="icon">🚨</span><span class="title">Дымоудаление</span></div>
     <div class="home-btn" data-tool="t16"><span class="icon">💰</span><span class="title">Смета</span></div>
     <div class="home-btn" data-tool="t19"><span class="icon">📷</span><span class="title">Фото</span></div>
   </div>
@@ -325,7 +331,19 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 
 <section id="t18" class="tool"><button class="back-btn">← Назад</button><h2>Конвертер</h2><p class="hint">Пересчёт единиц.</p>
 <div class="grid">
-<label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
+<label>Величина<select id="u_c">
+<option value="0">Расход воздуха</option>
+<option value="1">Мощность</option>
+<option value="2">Давление</option>
+<option value="3">Температура</option>
+<option value="4">Расход воды</option>
+<option value="5">Длина</option>
+<option value="6">Площадь</option>
+<option value="7">Скорость</option>
+<option value="8">Масса</option>
+<option value="9">Объём</option>
+<option value="10">Теплота</option>
+</select></label>
 <label>Значение<input id="u_v" type="number" value="500" inputmode="decimal"></label>
 <label>Единица<select id="u_u"></select></label>
 </div>
@@ -338,6 +356,89 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
 </section>
+
+<section id="t20" class="tool"><button class="back-btn">← Назад</button><h2>Дымоудаление</h2><p class="hint">Расход дыма через дверной проём по СП 7.13130.</p>
+<div class="grid">
+<label>Ширина двери, м<input id="dm_w" type="number" value="1.2" step="0.1" min="0.5" inputmode="decimal"></label>
+<label>Высота двери, м<input id="dm_h" type="number" value="2.1" step="0.1" min="1.5" inputmode="decimal"></label>
+<label>Температура дыма, °C<input id="dm_t" type="number" value="300" inputmode="decimal"></label>
+</div>
+<div class="res" id="dm_res"></div>
+<p class="note">G = 676,8 · b · H^1,5 (кг/ч). Плотность дыма ρ = 353/(273+t) кг/м³. Проверяйте по СП 7.13130.2013.</p></section>
+
+<section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Расход и мощность завесы по проёму.</p>
+<div class="grid">
+<label>Ширина проёма, м<input id="tz_w" type="number" value="1.5" step="0.1" min="0.5" inputmode="decimal"></label>
+<label>Высота проёма, м<input id="tz_h" type="number" value="2.2" step="0.1" min="1" inputmode="decimal"></label>
+<label>t внутри, °C<input id="tz_tin" type="number" value="20" inputmode="decimal"></label>
+<label>t снаружи, °C<input id="tz_tout" type="number" value="-20" inputmode="decimal"></label>
+<label>Скорость на срезе, м/с<input id="tz_v" type="number" value="6" step="0.5" min="3" inputmode="decimal"></label>
+</div>
+<div class="res" id="tz_res"></div>
+<p class="note">Рекомендуемая скорость на срезе: 5–8 м/с для боковых, 3–5 м/с для верхних завес.</p></section>
+
+<section id="t22" class="tool"><button class="back-btn">← Назад</button><h2>Чиллеры</h2><p class="hint">Расход воды и потребление электроэнергии.</p>
+<div class="grid">
+<label>Холодопроизводительность, кВт<input id="ch_q" type="number" value="50" min="0" inputmode="decimal"></label>
+<label>t подачи, °C<input id="ch_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
+<label>t обратки, °C<input id="ch_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
+<label>COP чиллера<input id="ch_cop" type="number" value="3" step="0.1" min="1" inputmode="decimal"></label>
+</div>
+<div class="res" id="ch_res"></div>
+<p class="note">Типичный COP: 2,8–3,5 для воздушных, 4,5–6 для водяных чиллеров.</p></section>
+
+<section id="t23" class="tool"><button class="back-btn">← Назад</button><h2>Рециркуляция</h2><p class="hint">Доля рециркуляции и экономия тепла.</p>
+<div class="grid">
+<label>Санитарная норма притока, м³/ч<input id="rc_san" type="number" value="1000" min="0" inputmode="decimal"></label>
+<label>Общий приток, м³/ч<input id="rc_total" type="number" value="3000" min="0" inputmode="decimal"></label>
+<label>Мощность нагрева (без рец.), кВт<input id="rc_heat" type="number" value="50" min="0" inputmode="decimal"></label>
+</div>
+<div class="res" id="rc_res"></div>
+<p class="note">Доля рециркуляции ограничена: не более 60% для жилых, до 80% для производственных.</p></section>
+
+<section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Толщина изоляции и проверка конденсата.</p>
+<div class="grid">
+<label>Наружный диаметр, мм<input id="iz_d" type="number" value="100" min="10" inputmode="decimal"></label>
+<label>t теплоносителя, °C<input id="iz_tin" type="number" value="90" inputmode="decimal"></label>
+<label>t среды, °C<input id="iz_tout" type="number" value="20" inputmode="decimal"></label>
+<label>Теплопроводность, Вт/(м·К)<input id="iz_lam" type="number" value="0.04" step="0.005" min="0.02" inputmode="decimal"></label>
+<label>Требуемое R, м²·К/Вт<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
+</div>
+<div class="res" id="iz_res"></div>
+<p class="note">R для изоляции по СП 61.13330: от 0,5 до 1,5 м²·К/Вт для труб в зависимости от t и диаметра.</p></section>
+
+<section id="t25" class="tool"><button class="back-btn">← Назад</button><h2>Вентиляторы</h2><p class="hint">Мощность и ток двигателя.</p>
+<div class="grid">
+<label>Расход, м³/ч<input id="vn_l" type="number" value="2000" min="0" inputmode="decimal"></label>
+<label>Полное давление, Па<input id="vn_p" type="number" value="500" min="0" inputmode="decimal"></label>
+<label>КПД вентилятора<input id="vn_eta" type="number" value="0.7" step="0.05" min="0.3" max="0.95" inputmode="decimal"></label>
+</div>
+<div class="res" id="vn_res"></div>
+<p class="note">Мощность N = L·P/(3600·1000·η). Ток для 3 фаз с запасом 15%.</p></section>
+
+<section id="t26" class="tool"><button class="back-btn">← Назад</button><h2>Теплопотери</h2><p class="hint">По ограждающим конструкциям.</p>
+<div class="grid">
+<label>Площадь стен, м²<input id="tl_sw" type="number" value="50" min="0" inputmode="decimal"></label>
+<label>R стен, м²·К/Вт<input id="tl_rw" type="number" value="2.5" step="0.1" min="0.1" inputmode="decimal"></label>
+<label>Площадь окон, м²<input id="tl_so" type="number" value="10" min="0" inputmode="decimal"></label>
+<label>R окон, м²·К/Вт<input id="tl_ro" type="number" value="0.5" step="0.05" min="0.1" inputmode="decimal"></label>
+<label>Площадь пола, м²<input id="tl_sf" type="number" value="50" min="0" inputmode="decimal"></label>
+<label>R пола, м²·К/Вт<input id="tl_rf" type="number" value="3" step="0.1" min="0.1" inputmode="decimal"></label>
+<label>Площадь потолка, м²<input id="tl_sc" type="number" value="50" min="0" inputmode="decimal"></label>
+<label>R потолка, м²·К/Вт<input id="tl_rc" type="number" value="3" step="0.1" min="0.1" inputmode="decimal"></label>
+<label>t внутри, °C<input id="tl_tin" type="number" value="20" inputmode="decimal"></label>
+<label>t снаружи, °C<input id="tl_tout" type="number" value="-26" inputmode="decimal"></label>
+</div>
+<div class="res" id="tl_res"></div></section>
+
+<section id="t27" class="tool"><button class="back-btn">← Назад</button><h2>Резервное копирование</h2><p class="hint">Сохраните или восстановите все данные.</p>
+<div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+  <button class="tool-btn" onclick="backupAll()">💾 Скачать резервную копию</button>
+  <button class="tool-btn sec" onclick="document.getElementById('backup_input').click()">📥 Восстановить из файла</button>
+  <input type="file" id="backup_input" accept=".json" style="display:none;" onchange="restoreBackup(event)">
+</div>
+<p class="note">Файл содержит: журнал расчётов, фотографии, введённые значения полей. Восстановление перезапишет текущие данные.</p>
+<div class="res" id="bk_res"></div></section>
 
 <footer style="text-align:center; margin-top:20px;">Расчёты справочные и не заменяют проектную документацию.</footer>
 </div>
@@ -369,7 +470,7 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* Навигация и Views */
+/* Список всех расчётов */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -389,7 +490,16 @@ const tools = [
   { id: 't15', name: 'Пусконаладка', cat: 'serv', icon: '🔧' },
   { id: 't16', name: 'Смета', cat: 'smeta', icon: '💰' },
   { id: 't17', name: 'Осушители', cat: 'vent', icon: '💦' },
-  { id: 't18', name: 'Конвертер', cat: 'serv', icon: '🔄' }
+  { id: 't18', name: 'Конвертер', cat: 'serv', icon: '🔄' },
+  { id: 't19', name: 'Фото', cat: 'serv', icon: '📷' },
+  { id: 't20', name: 'Дымоудаление', cat: 'vent', icon: '🚨' },
+  { id: 't21', name: 'Тепловые завесы', cat: 'heat', icon: '🌡️' },
+  { id: 't22', name: 'Чиллеры', cat: 'heat', icon: '🏭' },
+  { id: 't23', name: 'Рециркуляция', cat: 'vent', icon: '♻️' },
+  { id: 't24', name: 'Изоляция', cat: 'heat', icon: '📦' },
+  { id: 't25', name: 'Вентиляторы', cat: 'vent', icon: '🌀' },
+  { id: 't26', name: 'Теплопотери', cat: 'heat', icon: '🧱' },
+  { id: 't27', name: 'Резервная копия', cat: 'serv', icon: '💾' }
 ];
 
 const catNames = {
@@ -400,6 +510,7 @@ const catNames = {
   serv: 'Сервис и Инструменты'
 };
 
+/* Навигация */
 function showView(viewName, catId) {
   document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
@@ -426,8 +537,6 @@ function showView(viewName, catId) {
       toolEl.classList.add('on');
       const t = tools.find(x => x.id === catId);
       if (t) document.querySelector(`.nav-btn[data-view="${t.cat}"]`).setAttribute('aria-selected', 'true');
-      
-      // Прокручиваем вниз к самому инструменту (к полям ввода)
       setTimeout(() => {
         toolEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
@@ -435,7 +544,41 @@ function showView(viewName, catId) {
   }
 }
 
+/* Автосохранение/восстановление полей */
+function restoreInputsForSection(section) {
+  section.querySelectorAll('input[id], select[id]').forEach(el => {
+    if (el.type === 'file' || el.type === 'search') return;
+    const saved = localStorage.getItem('hvac_in_' + el.id);
+    if (saved !== null) el.value = saved;
+  });
+}
+
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.id && el.closest('section.tool') && el.type !== 'file') {
+    try { localStorage.setItem('hvac_in_' + el.id, el.value); } catch(err) {}
+  }
+});
+
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.id && el.closest('section.tool') && el.type !== 'file') {
+    try { localStorage.setItem('hvac_in_' + el.id, el.value); } catch(err) {}
+  }
+});
+
 window.openTool = function(id) {
+  const section = $(id);
+  if (section) {
+    restoreInputsForSection(section);
+    // Триггерим перерасчёт, дисатчим input на все поля
+    section.querySelectorAll('input, select').forEach(el => {
+      if (el.type !== 'file' && el.type !== 'search') {
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  }
   showView('tool', id);
 };
 
@@ -456,11 +599,48 @@ document.querySelectorAll('.back-btn').forEach(btn => {
     const toolId = btn.closest('section').id;
     const t = tools.find(x => x.id === toolId);
     if (t) showView('cat', t.cat);
+    else showView('home');
   };
 });
 
-/* РАСЧЁТЫ */
-const rooms = [['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3], ['Ресторан, зал', 8], ['Спортзал', 5], ['Мастерская', 4], ['Склад', 1]];
+$('btn-photo').onclick = () => openTool('t19');
+
+/* Поиск */
+$('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  const res = $('search-results');
+  if (!q) { res.style.display = 'none'; res.innerHTML = ''; return; }
+  const matches = tools.filter(t => 
+    t.name.toLowerCase().includes(q) || 
+    catNames[t.cat].toLowerCase().includes(q)
+  );
+  res.style.display = 'block';
+  if (!matches.length) {
+    res.innerHTML = '<p class="empty" style="padding:12px;margin:0;">Ничего не найдено</p>';
+    return;
+  }
+  res.innerHTML = matches.map(t => 
+    `<div class="cat-item" data-tool="${t.id}"><span>${t.icon} ${t.name}</span><span style="color:var(--mut);font-size:0.75rem;">${catNames[t.cat]}</span></div>`
+  ).join('');
+  res.querySelectorAll('[data-tool]').forEach(el => {
+    el.onclick = () => {
+      openTool(el.dataset.tool);
+      $('search').value = '';
+      res.style.display = 'none';
+    };
+  });
+});
+
+/* ============ РАСЧЁТЫ ============ */
+
+/* Т0. Воздухообмен */
+const rooms = [
+  ['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Кухня (газ)', 8],
+  ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3],
+  ['Ресторан, зал', 8], ['Спортзал', 5], ['Мастерская', 4], ['Склад', 1],
+  ['Серверная', 5], ['Лаборатория', 8], ['Класс', 3], ['Актовый зал', 6],
+  ['Гостиница', 2], ['Курилка', 10]
+];
 $('a_k').innerHTML = rooms.map(r => `<option value="${r[1]}">${r[0]} — ${r[1]} 1/ч</option>`).join('');
 $('a_k').value = 1;
 
@@ -470,6 +650,7 @@ function calcA() {
   $('a_r').innerHTML = box('Объём', f(V), 'м³') + box('По кратности', f(L1, 0), 'м³/ч') + box('По людям', f(L2, 0), 'м³/ч') + box('Требуемый расход', f(L, 0), 'м³/ч', 1) + box('Расход', f(L / 3.6, 0), 'л/с');
 }
 
+/* Т1. Подбор сечения */
 const STD = [100, 125, 160, 200, 250, 315, 400, 500, 630, 710, 800, 1000, 1250];
 function calcD() {
   const L = val('d_l'), v = Math.max(val('d_v'), 0.1);
@@ -488,6 +669,7 @@ function calcD() {
   $('d_r').innerHTML = html;
 }
 
+/* Т2. Холод */
 const AC = [[2.0, '07'], [2.6, '09'], [3.5, '12'], [5.3, '18'], [7.0, '24'], [8.8, '30'], [10.5, '36'], [14, '48']];
 function calcC() {
   const S = val('c_s'), h = val('c_h'), q = val('c_q'), n = val('c_n'), e = val('c_e'), r = val('c_r');
@@ -496,24 +678,14 @@ function calcC() {
   $('c_r2').innerHTML = box('Теплопритоки', f(W / 1000, 2), 'кВт') + box('С запасом', f(Q, 2), 'кВт', 1) + box('В BTU/ч', f(Q * 3412, 0), '') + box('Типоразмер', m ? m[1] + ' (' + m[0] + ' кВт)' : 'мульти-/полупром.', '', 1) + box('Удельно', f(S > 0 ? W / S : NaN, 0), 'Вт/м²');
 }
 
+/* Т3. Нагрев */
 function calcH() {
   const L = val('h_l'), a = val('h_t1'), b = val('h_t2'), dt = b - a;
   const Q = L * 1.2 * 1.005 * dt / 3600;
   $('h_r').innerHTML = box('Δt', f(dt, 0), '°C') + box('Мощность', f(Q, 2), 'кВт', 1) + box('Ток, 1 фаза 230 В', f(Q * 1000 / 230), 'А') + box('Ток, 3 фазы 400 В', f(Q * 1000 / (Math.sqrt(3) * 400)), 'А') + box('Ккал/ч', f(Q * 860, 0), '');
 }
 
-const U = [[['м³/ч', 1], ['л/с', 3.6], ['м³/с', 3600], ['CFM', 1.699011]], [['Вт', 1], ['кВт', 1000], ['BTU/ч', 0.293071], ['ккал/ч', 1.163], ['ton (TR)', 3516.85]], [['Па', 1], ['кПа', 1000], ['мм вод. ст.', 9.80665], ['бар', 100000], ['inH₂O', 249.089]]];
-function fillU() {
-  const c = +$('u_c').value;
-  $('u_u').innerHTML = U[c].map((u, i) => `<option value="${i}">${u[0]}</option>`).join('');
-  calcU();
-}
-function calcU() {
-  const c = +$('u_c').value, v = val('u_v'), i = +$('u_u').value;
-  const base = v * U[c][i][1];
-  $('u_r').innerHTML = U[c].map((u, j) => box(u[0], f(base / u[1], 4), '', j === i)).join('');
-}
-
+/* Т4. Зонт */
 function calcZ() {
   const a = val('z_a') / 1000, b = val('z_b') / 1000, h = val('z_h') / 1000;
   const e = val('z_e') / 1000, t = val('z_t'), v = val('z_v'), r = val('z_r');
@@ -531,6 +703,7 @@ function calcZ() {
   $('z_res').innerHTML = html;
 }
 
+/* Т5. Бассейн */
 function Psat(t){if(t>=0)return 0.6108*Math.exp(17.27*t/(t+237.3));return 0.6108*Math.exp(21.875*t/(t+265.5));}
 function dFrom(t,rh){const Ps=Psat(t),Pp=Math.max(rh,0)/100*Ps;return 622*Pp/(101.325-Pp);}
 function dewPoint(d){const Pp=d*101.325/(622+d);if(Pp<=0.01)return -60;const a=Math.log(Pp/0.6108);return 237.3*a/(17.27-a);}
@@ -576,6 +749,7 @@ function calcB(){
   $('b_res').innerHTML=html;
 }
 
+/* Т6. Аэродинамика */
 function toggleShapeE() {
   const isRound = $('e_shape').value === 'round';
   $('lbl_e_d').style.display = isRound ? 'flex' : 'none';
@@ -629,6 +803,7 @@ function calcE() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
+/* Т7. Отопление */
 function calcO() {
   const s = val('o_s'), h = val('o_h'), ins = val('o_ins'), tin = val('o_tin'), tout = val('o_tout'), prad = val('o_rad');
   const V = s * h;
@@ -645,6 +820,7 @@ function calcO() {
     box('Расход теплоносителя', f(G, 2), 'м³/ч');
 }
 
+/* Т8. Гидравлика */
 const PIPE_STD = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200];
 function calcG() {
   const Q = val('g_q');
@@ -690,6 +866,7 @@ function calcG() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
+/* Т9. Фанкойлы */
 function calcFC() {
   const Q = val('fc_q');
   const tws = val('fc_tws');
@@ -711,6 +888,7 @@ function calcFC() {
     box('Перепад t воздуха', f(dta, 1), '°C');
 }
 
+/* Т10. Электрика */
 function calcEL() {
   const P = val('el_p');
   const ph = $('el_ph').value;
@@ -762,6 +940,7 @@ function calcEL() {
   $('el_res').innerHTML = html;
 }
 
+/* Т11. Воздухораспределители */
 function calcVD() {
   const L = val('vd_l'), w = Math.max(val('vd_w'), 10) / 1000, h = Math.max(val('vd_h'), 10) / 1000;
   const k = Math.max(val('vd_k'), 10), zeta = val('vd_zeta');
@@ -777,12 +956,14 @@ function calcVD() {
     box('Потери давления', f(dP, 0), 'Па', 1);
 }
 
+/* Т12. Шумоглушители */
 function calcSL() {
   const l1 = val('sl_l1'), l2 = val('sl_l2'), att = val('sl_att');
   const req = l1 - l2 - att;
   $('sl_res').innerHTML = box('Требуемое затухание', f(req, 0), 'дБ', 1);
 }
 
+/* Т13. Фильтры */
 function calcFL() {
   const L = val('fl_l'), v = val('fl_c'), dp = val('fl_dp');
   const A = L / 3600 / v;
@@ -792,6 +973,7 @@ function calcFL() {
     box('Сопротивление', dp, 'Па');
 }
 
+/* Т14. Водяные калориферы */
 function calcWC() {
   const Q = val('wc_q'), tin = val('wc_tin'), tout = val('wc_tout'), tws = val('wc_tws'), twr = val('wc_twr');
   const dta = Math.max(tout - tin, 0.1);
@@ -807,6 +989,7 @@ function calcWC() {
     box('Перепад t воды', f(dtw, 1), '°C');
 }
 
+/* Т15. Пусконаладка */
 function calcPN() {
   const proj = Math.max(val('pn_l_proj'), 1);
   const fact = val('pn_l_fact');
@@ -825,6 +1008,7 @@ function calcPN() {
   $('pn_res').innerHTML = html;
 }
 
+/* Т16. Смета */
 function calcSM() {
   const duct = val('sm_duct'), p_duct = val('sm_p_duct');
   const grille = val('sm_grille'), p_grille = val('sm_p_grille');
@@ -845,6 +1029,7 @@ function calcSM() {
     box('ИТОГО', f(total, 0), 'руб.', 1);
 }
 
+/* Т17. Осушители / Увлажнители */
 function calcOU() {
   const L = val('ou_l');
   const t = val('ou_t');
@@ -877,6 +1062,203 @@ function calcOU() {
   $('ou_res').innerHTML = html;
 }
 
+/* Т18. Конвертер */
+const U = [
+  [['м³/ч', 1], ['л/с', 3.6], ['м³/с', 3600], ['CFM', 1.699011], ['м³/мин', 60]],
+  [['Вт', 1], ['кВт', 1000], ['BTU/ч', 0.293071], ['ккал/ч', 1.163], ['ton (TR)', 3516.85], ['л.с.', 735.5]],
+  [['Па', 1], ['кПа', 1000], ['МПа', 1e6], ['мм вод. ст.', 9.80665], ['бар', 100000], ['inH₂O', 249.089], ['атм', 101325], ['кгс/см²', 98066.5]],
+  [['°C', 1], ['°F', 1], ['K', 1]],
+  [['м³/ч', 1], ['л/с', 3.6], ['л/мин', 60], ['GPM', 0.2271247], ['м³/с', 0.000277778]],
+  [['мм', 1], ['см', 10], ['м', 1000], ['дюйм', 25.4], ['фут', 304.8]],
+  [['см²', 1], ['мм²', 0.01], ['м²', 10000], ['дюйм²', 6.4516], ['фут²', 929.0304]],
+  [['м/с', 1], ['км/ч', 0.277778], ['фут/мин', 0.00508], ['фут/с', 0.3048]],
+  [['кг', 1], ['г', 0.001], ['т', 1000], ['фунт', 0.453592], ['унция', 0.0283495]],
+  [['м³', 1], ['л', 0.001], ['мл', 1e-6], ['галлон US', 0.00378541], ['фут³', 0.0283168]],
+  [['кДж', 1], ['Дж', 0.001], ['ккал', 4.1868], ['BTU', 1.05506], ['кВт·ч', 3600]]
+];
+
+function fillU() {
+  const c = +$('u_c').value;
+  $('u_u').innerHTML = U[c].map((u, i) => `<option value="${i}">${u[0]}</option>`).join('');
+  calcU();
+}
+
+function calcU() {
+  const c = +$('u_c').value, v = val('u_v'), i = +$('u_u').value;
+  
+  if (c === 3) {
+    let celsius;
+    if (i === 0) celsius = v;
+    else if (i === 1) celsius = (v - 32) * 5 / 9;
+    else celsius = v - 273.15;
+    
+    const results = [celsius, celsius * 9 / 5 + 32, celsius + 273.15];
+    $('u_r').innerHTML = U[3].map((u, j) => box(u[0], f(results[j], 2), '', j === i)).join('');
+    return;
+  }
+  
+  const base = v * U[c][i][1];
+  $('u_r').innerHTML = U[c].map((u, j) => box(u[0], f(base / u[1], 4), '', j === i)).join('');
+}
+
+/* Т20. Дымоудаление */
+function calcDM() {
+  const w = val('dm_w'), h = val('dm_h'), t = val('dm_t');
+  const S = w * h;
+  const G = 676.8 * w * Math.pow(h, 1.5);
+  const rho = 353 / (273 + t);
+  const L = G / rho;
+  $('dm_res').innerHTML = 
+    box('Площадь двери', f(S, 2), 'м²') +
+    box('Массовый расход дыма', f(G, 0), 'кг/ч', 1) +
+    box('Плотность дыма', f(rho, 2), 'кг/м³') +
+    box('Объёмный расход', f(L, 0), 'м³/ч', 1);
+}
+
+/* Т21. Тепловые завесы */
+function calcTZ() {
+  const w = val('tz_w'), h = val('tz_h'), tin = val('tz_tin'), tout = val('tz_tout'), v = val('tz_v');
+  const S = w * h;
+  const L = S * v * 3600;
+  const dt = tin - tout;
+  const Q = L * 1.2 * 1.005 * dt / 3600;
+  $('tz_res').innerHTML = 
+    box('Площадь проёма', f(S, 2), 'м²') +
+    box('Расход завесы', f(L, 0), 'м³/ч', 1) +
+    box('Мощность нагрева', f(Q, 1), 'кВт', 1) +
+    box('Δt', f(dt, 0), '°C');
+}
+
+/* Т22. Чиллеры */
+function calcCH() {
+  const Q = val('ch_q'), tws = val('ch_tws'), twr = val('ch_twr'), cop = Math.max(val('ch_cop'), 1);
+  const dt = twr - tws;
+  const G = dt > 0 ? 0.86 * Q / dt : 0;
+  const P = Q / cop;
+  $('ch_res').innerHTML = 
+    box('Расход воды', f(G, 2), 'м³/ч', 1) +
+    box('Δt воды', f(dt, 1), '°C') +
+    box('Потребление электроэнергии', f(P, 1), 'кВт', 1) +
+    box('Ток (3ф 380В)', f(P * 1000 / (Math.sqrt(3) * 380 * 0.9), 1), 'А');
+}
+
+/* Т23. Рециркуляция */
+function calcRC() {
+  const san = val('rc_san'), total = val('rc_total'), heat = val('rc_heat');
+  const recirc = Math.max(total - san, 0);
+  const pct = total > 0 ? (recirc / total) * 100 : 0;
+  const save = heat * (pct / 100);
+  $('rc_res').innerHTML = 
+    box('Наружный воздух', f(san, 0), 'м³/ч', 1) +
+    box('Рециркуляция', f(recirc, 0), 'м³/ч', 1) +
+    box('Доля рециркуляции', f(pct, 1), '%') +
+    box('Экономия тепла', f(save, 1), 'кВт', 1);
+}
+
+/* Т24. Изоляция */
+function calcIZ() {
+  const d = Math.max(val('iz_d') / 1000, 0.01);
+  const tin = val('iz_tin'), tout = val('iz_tout');
+  const lam = Math.max(val('iz_lam'), 0.02);
+  const Rreq = Math.max(val('iz_R'), 0.1);
+  
+  const expArg = Math.min(2 * lam * Rreq / d, 5);
+  const delta = d / 2 * (Math.exp(expArg) - 1);
+  
+  const R_out = 0.1;
+  const t_surf = tout + (tin - tout) * R_out / (Rreq + R_out);
+  const tr_out = dewPoint(dFrom(tout, 70));
+  
+  let html = 
+    box('Толщина изоляции', f(delta * 1000, 0), 'мм', 1) +
+    box('Плоская (проверка)', f(lam * Rreq * 1000, 0), 'мм') +
+    box('t поверхности', f(t_surf, 1), '°C') +
+    box('t точки росы', f(tr_out, 1), '°C');
+  
+  if (t_surf < tr_out) {
+    html += `<p class="note warn">t поверхности ниже точки росы — возможна конденсация!</p>`;
+  }
+  $('iz_res').innerHTML = html;
+}
+
+/* Т25. Вентиляторы */
+function calcVN() {
+  const L = val('vn_l'), P = val('vn_p'), eta = Math.max(val('vn_eta'), 0.3);
+  const N = L * P / (3600 * 1000 * eta);
+  const I = N * 1000 / (Math.sqrt(3) * 380 * 0.85);
+  $('vn_res').innerHTML = 
+    box('Мощность на валу', f(N, 2), 'кВт', 1) +
+    box('Мощность с запасом 15%', f(N * 1.15, 2), 'кВт') +
+    box('Ток (3ф, 380 В)', f(I * 1.15, 1), 'А', 1) +
+    box('Полезная мощность', f(L * P / 3600 / 1000, 3), 'кВт');
+}
+
+/* Т26. Теплопотери */
+function calcTL() {
+  const sw = val('tl_sw'), rw = Math.max(val('tl_rw'), 0.1);
+  const so = val('tl_so'), ro = Math.max(val('tl_ro'), 0.1);
+  const sf = val('tl_sf'), rf = Math.max(val('tl_rf'), 0.1);
+  const sc = val('tl_sc'), rc = Math.max(val('tl_rc'), 0.1);
+  const tin = val('tl_tin'), tout = val('tl_tout');
+  const dt = tin - tout;
+  
+  const qw = sw * dt / rw;
+  const qo = so * dt / ro;
+  const qf = sf * dt / rf;
+  const qc = sc * dt / rc;
+  const total = qw + qo + qf + qc;
+  const withMargin = total * 1.15;
+  
+  $('tl_res').innerHTML = 
+    box('Стены', f(qw / 1000, 2), 'кВт') +
+    box('Окна', f(qo / 1000, 2), 'кВт') +
+    box('Пол', f(qf / 1000, 2), 'кВт') +
+    box('Потолок', f(qc / 1000, 2), 'кВт') +
+    box('Всего с запасом 15%', f(withMargin / 1000, 2), 'кВт', 1);
+}
+
+/* Т27. Резервное копирование */
+window.backupAll = function() {
+  const data = { version: 1, exportedAt: new Date().toISOString() };
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('hvac')) {
+      data[key] = localStorage.getItem(key);
+    }
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'hvac-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  $('bk_res').innerHTML = box('Резервная копия сохранена', 'OK', '', 1);
+};
+
+window.restoreBackup = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      let count = 0;
+      Object.keys(data).forEach(key => {
+        if (key !== 'version' && key !== 'exportedAt' && typeof data[key] === 'string') {
+          localStorage.setItem(key, data[key]);
+          count++;
+        }
+      });
+      $('bk_res').innerHTML = box('Восстановлено записей', count, '', 1) + box('Перезагрузите приложение', 'OK', '', 1);
+    } catch(err) {
+      $('bk_res').innerHTML = box('Ошибка', err.message, '', 1);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+};
+
+/* ФОТО */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -919,6 +1301,7 @@ $('photo_input').addEventListener('change', function(e) {
 
 function renderPhotos() {
     const g = $('photo_gallery');
+    if (!g) return;
     if (!PHOTOS.length) {
         g.innerHTML = '<div class="empty" style="grid-column:1/-1; text-align:center; padding:20px;">Нет сохраненных фотографий</div>';
         return;
@@ -941,7 +1324,8 @@ window.delPhoto = function(id) {
     renderPhotos();
 };
 
-function bind(ids, fn) { ids.forEach(i => { const el = $(i); el.addEventListener('input', fn); el.addEventListener('change', fn); }); }
+/* Привязка всех расчётов */
+function bind(ids, fn) { ids.forEach(i => { const el = $(i); if (el) { el.addEventListener('input', fn); el.addEventListener('change', fn); } }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
 bind(['d_l', 'd_v', 'd_d', 'd_w', 'd_h', 'd_n'], calcD);
 bind(['c_s', 'c_h', 'c_q', 'c_n', 'c_e', 'c_r'], calcC);
@@ -960,13 +1344,22 @@ bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
 bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
 bind(['sm_duct','sm_p_duct','sm_grille','sm_p_grille','sm_unit','sm_p_unit', 'sm_fit'], calcSM);
 bind(['ou_l','ou_t','ou_rh1','ou_rh2'], calcOU);
+bind(['dm_w','dm_h','dm_t'], calcDM);
+bind(['tz_w','tz_h','tz_tin','tz_tout','tz_v'], calcTZ);
+bind(['ch_q','ch_tws','ch_twr','ch_cop'], calcCH);
+bind(['rc_san','rc_total','rc_heat'], calcRC);
+bind(['iz_d','iz_tin','iz_tout','iz_lam','iz_R'], calcIZ);
+bind(['vn_l','vn_p','vn_eta'], calcVN);
+bind(['tl_sw','tl_rw','tl_so','tl_ro','tl_sf','tl_rf','tl_sc','tl_rc','tl_tin','tl_tout'], calcTL);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); fillU(); renderPhotos();
+/* Первичный расчёт */
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcDM(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcVN(); calcTL(); fillU(); renderPhotos();
 
+/* Журнал */
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
 const save = () => { try { localStorage.setItem('hvaclog', JSON.stringify(LOG)); } catch (e) {} };
@@ -996,34 +1389,47 @@ function renderTot() {
   const k = Object.keys(s);
   $('lg_f').innerHTML = k.length ? '<tr><th colspan="6">Итого</th><th colspan="2">' + k.map(n => n + ': ' + f(s[n].v, 2) + ' ' + s[n].u + ' (' + s[n].k + ' поз.)').join('<br>') + '</th></tr>' : '';
 }
-const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'], 9: ['Расход воздуха', 'м³/ч'], 10: ['Ток нагрузки', 'А'], 11: ['Скорость в сечении', 'м/с'], 12: ['Требуемое затухание', 'дБ'], 13: ['Требуемая площадь', 'м²'], 14: ['Расход воды', 'м³/ч'], 15: ['Отклонение', '%'], 16: ['ИТОГО', 'руб.'], 17: ['Требуется удалить влагу', 'кг/ч'] };
-function sv(section, i) {
-  const d = SUM[i]; if (!d) return {};
-  const r = [...section.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === d[0]);
-  if (!r) return {};
-  const v = num(r.querySelector('b').textContent);
-  return isFinite(v) ? { v: v, u: d[1] } : {};
-}
-document.querySelectorAll('section.tool').forEach((s, i) => {
+const SUM = { 
+  t0: ['Требуемый расход', 'м³/ч'], t2: ['С запасом', 'кВт'], t3: ['Мощность', 'кВт'], 
+  t4: ['Расход с запасом', 'м³/ч'], t5: ['Приток', 'м³/ч'], t6: ['Суммарные потери', 'Па'], 
+  t7: ['Теплопотери с запасом', 'кВт'], t8: ['Суммарные потери', 'Па'], t9: ['Расход воздуха', 'м³/ч'], 
+  t10: ['Ток нагрузки', 'А'], t11: ['Скорость в сечении', 'м/с'], t12: ['Требуемое затухание', 'дБ'], 
+  t13: ['Требуемая площадь', 'м²'], t14: ['Расход воды', 'м³/ч'], t15: ['Отклонение', '%'], 
+  t16: ['ИТОГО', 'руб.'], t17: ['Требуется удалить влагу', 'кг/ч'],
+  t20: ['Объёмный расход', 'м³/ч'], t21: ['Мощность нагрева', 'кВт'], t22: ['Расход воды', 'м³/ч'],
+  t23: ['Экономия тепла', 'кВт'], t24: ['Толщина изоляции', 'мм'], t25: ['Мощность на валу', 'кВт'],
+  t26: ['Всего с запасом 15%', 'кВт']
+};
+
+document.querySelectorAll('section.tool').forEach((s, idx) => {
+  if (s.id === 't19' || s.id === 't27') return; // фото и backup без журнала
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
     const inp = [...s.querySelectorAll('label')].map(l => {
       const c = l.querySelector('input,select');
+      if (!c) return '';
       const v = c.tagName === 'SELECT' ? c.options[c.selectedIndex].text : c.value;
       return l.firstChild.textContent.trim() + ': ' + v;
-    }).join('; ');
+    }).filter(Boolean).join('; ');
     const res = [...s.querySelectorAll('.r')].map(r =>
       (r.querySelector('small').textContent + ': ' + r.querySelector('b').textContent + ' ' + r.querySelector('span').textContent).trim()
     ).join('; ');
-    const toolIndex = tools.findIndex(x => x.id === s.id);
-    const toolName = toolIndex >= 0 ? tools[toolIndex].name : s.id;
-    LOG.push({ t: new Date().toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }), n: toolName, o: $('lg_o').value, i: inp, r: res, ...sv(s, toolIndex) });
+    const t = tools.find(x => x.id === s.id);
+    const toolName = t ? t.name : s.id;
+    const sum = SUM[s.id];
+    let v = null, u = null;
+    if (sum) {
+      const r = [...s.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === sum[0]);
+      if (r) { v = num(r.querySelector('b').textContent); u = sum[1]; }
+    }
+    LOG.push({ t: new Date().toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }), n: toolName, o: $('lg_o').value, i: inp, r: res, v: v, u: u });
     save(); renderLog(); say('Строка добавлена');
     showView('log');
   };
   s.appendChild(b);
 });
+
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
   try {
@@ -1076,6 +1482,7 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
+/* Свайпы */
 (function() {
     let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
@@ -1114,6 +1521,7 @@ showView('home');
 
 })();
 
+/* PWA */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
