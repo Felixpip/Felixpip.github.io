@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e3f2fd;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#bbdefb;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#f9fbe7;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f0f4c3;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -32,7 +32,7 @@ nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;s
 nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 nav button:hover{border-color:var(--ac)}
 nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
 .home-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top:10px;}
 .home-btn{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 10px; text-align:center; cursor:pointer; transition:transform .1s, box-shadow .1s; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink); font-weight:700;}
 .home-btn:hover{transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.05); border-color:var(--ac);}
@@ -49,7 +49,8 @@ h2{margin:0 0 4px;font-size:1.25rem}
 .hint{color:var(--mut);font-size:.9rem;margin:0 0 14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 label{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--mut)}
-input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+textarea{resize:vertical;min-height:70px}
 .res{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
 .r{border-left:4px solid var(--ac);background:var(--acs);padding:10px 12px;border-radius:0 6px 6px 0}
 .r.main{border-color:var(--hot);background:var(--hots)}
@@ -82,6 +83,9 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 .hint-inline{color:var(--mut); font-size:0.75rem; margin-top:2px; font-weight:400; line-height:1.3;}
 .log-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
 .log-actions .tool-btn{margin-top:0;}
+.spec-preview{grid-column:1/-1; white-space:pre-wrap; font-family:inherit; line-height:1.7; padding:12px; background:var(--acs); border-radius:6px; border-left:4px solid var(--ac); font-size:0.92rem;}
+.passport-preview{grid-column:1/-1; padding:12px; background:var(--acs); border-radius:6px; border-left:4px solid var(--ac); line-height:1.8; font-size:0.92rem;}
+.passport-preview b{color:var(--ink);}
 </style>
 </head>
 <body>
@@ -102,7 +106,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="nav-btn" data-view="vent">Вентиляция</button>
   <button class="nav-btn" data-view="heat">Тепло/Холод</button>
   <button class="nav-btn" data-view="elec">Электрика</button>
-  <button class="nav-btn" data-view="smeta">Смета</button>
+  <button class="nav-btn" data-view="smeta">Объект</button>
   <button class="nav-btn" data-view="serv">Сервис</button>
   <button class="nav-btn" data-view="log">Журнал</button>
 </nav>
@@ -115,7 +119,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <div class="home-btn" data-tool="t2"><span class="icon">❄️</span><span class="title">Холод</span></div>
     <div class="home-btn" data-tool="t7"><span class="icon">🏠</span><span class="title">Отопление</span></div>
     <div class="home-btn" data-tool="t8"><span class="icon">💧</span><span class="title">Гидравлика</span></div>
-    <div class="home-btn" data-tool="t20"><span class="icon">💨</span><span class="title">Увлажнители</span></div>
+    <div class="home-btn" data-tool="t28"><span class="icon">📋</span><span class="title">Паспорт</span></div>
     <div class="home-btn" data-tool="t16"><span class="icon">💰</span><span class="title">Смета</span></div>
     <div class="home-btn" data-tool="t19"><span class="icon">📷</span><span class="title">Фото</span></div>
   </div>
@@ -345,9 +349,108 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 
 <div class="res" id="sm_res"></div>
-<p class="note">Быстрая прикидка для заказчика. Не учитывает НДС, доставку, проектирование, согласования и непредвиденные расходы.</p></section>
+<p class="note">Быстрая прикидка для заказчика.</p></section>
 
-<section id="t17" class="tool"><button class="back-btn">← Назад</button><h2>Осушители</h2><p class="hint">Подбор осушителя по расходу воздуха и влажности.</p>
+<!-- ПАСПОРТ ОБЪЕКТА -->
+<section id="t28" class="tool"><button class="back-btn">← Назад</button><h2>Паспорт объекта</h2><p class="hint">Краткая характеристика объекта для проекта и монтажа.</p>
+<div class="grid">
+<label>Название / адрес<input id="po_name" type="text" placeholder="Например: ООО «Ромашка», ул. Ленина 5"></label>
+<label>Помещение / этаж<input id="po_room" type="text" placeholder="Кабинет 12, 2 этаж"></label>
+<label>Назначение<select id="po_type">
+<option value="flat">Квартира</option>
+<option value="office" selected>Офис</option>
+<option value="shop">Магазин</option>
+<option value="restaurant">Ресторан</option>
+<option value="production">Производство</option>
+<option value="other">Другое</option>
+</select></label>
+<label>Площадь, м²<input id="po_s" type="number" value="50" min="0" inputmode="decimal"></label>
+<label>Высота потолка, м<input id="po_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
+<label>Тип стен<select id="po_walls">
+<option value="brick">Кирпич</option>
+<option value="panel" selected>Панель</option>
+<option value="concrete">Бетон</option>
+<option value="gk">Гипсокартон</option>
+<option value="wood">Дерево</option>
+</select></label>
+<label>Тип окон<select id="po_windows">
+<option value="wood">Деревянные</option>
+<option value="1kam" selected>Стеклопакет 1-кам.</option>
+<option value="2kam">Стеклопакет 2-кам.</option>
+<option value="vitrage">Витраж</option>
+</select></label>
+<label>Электрическая мощность выделенная, кВт<input id="po_pwr_total" type="number" value="10" min="0" step="0.5" inputmode="decimal"></label>
+<label>Уже занято электроэнергией, кВт<input id="po_pwr_used" type="number" value="4" min="0" step="0.5" inputmode="decimal"></label>
+<label>Существующая вентиляция<select id="po_vent">
+<option value="no" selected>Нет</option>
+<option value="yes_work">Есть, работает</option>
+<option value="yes_bad">Есть, не работает</option>
+</select></label>
+<label>Существующий кондиционер<select id="po_ac">
+<option value="no" selected>Нет</option>
+<option value="yes_work">Есть, работает</option>
+<option value="yes_bad">Есть, не работает</option>
+</select></label>
+</div>
+<label style="margin-top:10px;">Комментарии<textarea id="po_notes" placeholder="Что важно знать по объекту"></textarea></label>
+<div class="res" id="po_res"></div>
+<p class="note">Сохраняется автоматически. Используйте для заметок на объекте.</p></section>
+
+<!-- СПЕЦИФИКАЦИЯ -->
+<section id="t29" class="tool"><button class="back-btn">← Назад</button><h2>Спецификация оборудования</h2><p class="hint">Список для закупки и монтажа. Заполняйте только нужные позиции.</p>
+<div class="gh">Воздуховоды и арматура</div>
+<div class="grid">
+<label>Воздуховод круглый Ø100, м<input id="sp_100" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Воздуховод круглый Ø125, м<input id="sp_125" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Воздуховод круглый Ø160, м<input id="sp_160" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Воздуховод круглый Ø200, м<input id="sp_200" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Воздуховод круглый Ø250, м<input id="sp_250" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Воздуховод прямоуг., м²<input id="sp_rect" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Фасонина, шт<input id="sp_fit" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Изоляция, м²<input id="sp_ins" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+</div>
+<div class="gh">Воздухораспределение</div>
+<div class="grid">
+<label>Решётки / диффузоры, шт<input id="sp_grille" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Шумоглушители, шт<input id="sp_silencer" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Фильтры, шт<input id="sp_filter" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Клапаны / заслонки, шт<input id="sp_valve" type="number" value="0" min="0" inputmode="numeric"></label>
+</div>
+<div class="gh">Оборудование</div>
+<div class="grid">
+<label>Приточная установка, шт<input id="sp_ahu" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Приточно-вытяжная установка, шт<input id="sp_ahu_pv" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Кондиционеры, шт<input id="sp_ac" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Канальные вентиляторы, шт<input id="sp_fan" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Калориферы, шт<input id="sp_heater" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Фанкойлы, шт<input id="sp_fcu" type="number" value="0" min="0" inputmode="numeric"></label>
+</div>
+<div class="gh">Прочее</div>
+<div class="grid">
+<label>Фреоновая трасса, м<input id="sp_freon" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Дренаж, м<input id="sp_drain" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Кабель, м<input id="sp_cable" type="number" value="0" min="0" step="0.5" inputmode="decimal"></label>
+<label>Автоматика, компл.<input id="sp_auto" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Прочее (свободный текст)<input id="sp_other" type="text" placeholder="Кронштейны, крепёж и т.д."></label>
+</div>
+<div class="res" id="sp_res"></div>
+<div class="log-actions">
+  <button class="tool-btn" id="sp_copy" type="button">📋 Скопировать</button>
+  <button class="tool-btn" id="sp_share" type="button">📤 Поделиться</button>
+</div></section>
+
+<!-- ТРАССА КОНДИЦИОНЕРА -->
+<section id="t30" class="tool"><button class="back-btn">← Назад</button><h2>Трасса кондиционера</h2><p class="hint">Проверка длины фреоновой трассы и перепада высот.</p>
+<div class="grid">
+<label>Мощность кондиционера, кВт<input id="tr_pwr" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Длина трассы, м<input id="tr_len" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
+<label>Перепад высот, м<input id="tr_h" type="number" value="0" step="0.5" inputmode="decimal"><span class="hint-inline">Плюс — внутренний выше, минус — ниже</span></label>
+<label>Количество поворотов, шт<input id="tr_turns" type="number" value="2" min="0" inputmode="numeric"></label>
+</div>
+<div class="res" id="tr_res"></div>
+<p class="note">Ориентиры для бытовых сплитов: длина без дозаправки 5 м (≤3,5 кВт), 7 м (5–7 кВт), 10 м (10+ кВт). Перепад высот: до 5 м внутренний выше, до 15 м наружный выше. Дозаправка ~20 г/м сверх нормы.</p></section>
+
+<section id="t17" class="tool"><button class="back-btn">← Назад</button><h2>Осушители</h2><p class="hint">Подбор осушителя.</p>
 <div class="grid">
 <label>Расход воздуха, м³/ч<input id="ou_l" type="number" value="1000" min="0" inputmode="decimal"></label>
 <label>Температура, °C<input id="ou_t" type="number" value="20" inputmode="decimal"></label>
@@ -385,7 +488,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
 </section>
 
-<section id="t20" class="tool"><button class="back-btn">← Назад</button><h2>Увлажнители</h2><p class="hint">Подбор увлажнителя по балансу влаги.</p>
+<section id="t20" class="tool"><button class="back-btn">← Назад</button><h2>Увлажнители</h2><p class="hint">Подбор увлажнителя.</p>
 <div class="grid">
 <label>Объём помещения, м³<input id="uh_v" type="number" value="200" min="0" inputmode="decimal"></label>
 <label>Кратность притока, 1/ч<input id="uh_n" type="number" value="2" step="0.1" min="0" inputmode="decimal"></label>
@@ -394,8 +497,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Влажность наружная, %<input id="uh_rh1" type="number" value="30" min="10" max="100" inputmode="numeric"></label>
 <label>Людей в помещении, чел.<input id="uh_p" type="number" value="0" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="uh_res"></div>
-<p class="note">W = L · 1.2 · (d_цел − d_нар) / 1000 − W_людей. Люди выделяют ~50 г/ч. Отрицательное значение — увлажнитель не нужен.</p></section>
+<div class="res" id="uh_res"></div></section>
 
 <section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Расход и мощность по проёму.</p>
 <div class="grid">
@@ -424,7 +526,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="rc_res"></div></section>
 
-<section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Толщина изоляции и проверка конденсата.</p>
+<section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Толщина изоляции и конденсат.</p>
 <div class="grid">
 <label>Наружный диаметр, мм<input id="iz_d" type="number" value="100" min="10" inputmode="decimal"></label>
 <label>t теплоносителя, °C<input id="iz_tin" type="number" value="90" inputmode="decimal"></label>
@@ -455,7 +557,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="tool-btn sec" onclick="document.getElementById('backup_input').click()">📥 Восстановить из файла</button>
   <input type="file" id="backup_input" accept=".json" style="display:none;" onchange="restoreBackup(event)">
 </div>
-<p class="note">Файл содержит: журнал, фотографии, введённые значения полей. Восстановление перезапишет текущие данные.</p>
+<p class="note">Файл содержит: журнал, фотографии, паспорт, спецификацию, введённые значения.</p>
 <div class="res" id="bk_res"></div></section>
 
 <footer style="text-align:center; margin-top:20px;">Расчёты справочные и не заменяют проектную документацию.</footer>
@@ -471,7 +573,7 @@ const box = (l, v, u, m) => `<div class="r${m ? ' main' : ''}"><small>${l}</smal
 const num = v => { const n = parseFloat(String(v).replace(/\s|\u00a0|\u202f/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
 const val = id => num($(id).value);
 
-/* ============ ТЕМА ============ */
+/* ТЕМА */
 const themeBtn = $('theme');
 const THEME_LABEL = { auto: 'Тема', light: 'Светлая', dark: 'Тёмная' };
 let theme = 'auto';
@@ -488,7 +590,7 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* ============ СПИСОК РАСЧЁТОВ ============ */
+/* СПИСОК */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -516,18 +618,21 @@ const tools = [
   { id: 't23', name: 'Рециркуляция', cat: 'vent', icon: '♻️' },
   { id: 't24', name: 'Изоляция', cat: 'heat', icon: '📦' },
   { id: 't26', name: 'Теплопотери', cat: 'heat', icon: '🧱' },
-  { id: 't27', name: 'Резервная копия', cat: 'serv', icon: '💾' }
+  { id: 't27', name: 'Резервная копия', cat: 'serv', icon: '💾' },
+  { id: 't28', name: 'Паспорт объекта', cat: 'smeta', icon: '📋' },
+  { id: 't29', name: 'Спецификация', cat: 'smeta', icon: '📄' },
+  { id: 't30', name: 'Трасса кондиц.', cat: 'heat', icon: '🛣️' }
 ];
 
 const catNames = {
   vent: 'Вентиляция и Воздух',
   heat: 'Тепло и Холод',
   elec: 'Электрика',
-  smeta: 'Смета',
+  smeta: 'Объект',
   serv: 'Сервис и Инструменты'
 };
 
-/* ============ НАВИГАЦИЯ ============ */
+/* НАВИГАЦИЯ */
 function showView(viewName, catId) {
   document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
@@ -538,10 +643,7 @@ function showView(viewName, catId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (viewName === 'cat') {
     const items = tools.filter(t => t.cat === catId);
-    if (items.length === 1) {
-      openTool(items[0].id);
-      return;
-    }
+    if (items.length === 1) { openTool(items[0].id); return; }
     $('view-cat').classList.add('on');
     document.querySelector(`.nav-btn[data-view="${catId}"]`).setAttribute('aria-selected', 'true');
     $('cat-title').textContent = catNames[catId];
@@ -564,22 +666,20 @@ function showView(viewName, catId) {
   }
 }
 
-/* ============ АВТОСОХРАНЕНИЕ ============ */
+/* АВТОСОХРАНЕНИЕ */
 function restoreInputsForSection(section) {
-  section.querySelectorAll('input[id], select[id]').forEach(el => {
+  section.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
     if (el.type === 'file') return;
     const saved = localStorage.getItem('hvac_in_' + el.id);
     if (saved !== null) el.value = saved;
   });
 }
-
 document.addEventListener('input', e => {
   const el = e.target;
   if (el.id && el.closest('section.tool') && el.type !== 'file') {
     try { localStorage.setItem('hvac_in_' + el.id, el.value); } catch(err) {}
   }
 });
-
 document.addEventListener('change', e => {
   const el = e.target;
   if (el.id && el.closest('section.tool') && el.type !== 'file') {
@@ -591,7 +691,7 @@ window.openTool = function(id) {
   const section = $(id);
   if (section) {
     restoreInputsForSection(section);
-    section.querySelectorAll('input, select').forEach(el => {
+    section.querySelectorAll('input, select, textarea').forEach(el => {
       if (el.type !== 'file') {
         el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
@@ -608,11 +708,9 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     else showView('cat', v);
   };
 });
-
 document.querySelectorAll('.home-btn').forEach(btn => {
   btn.onclick = () => openTool(btn.getAttribute('data-tool'));
 });
-
 document.querySelectorAll('.back-btn').forEach(btn => {
   btn.onclick = () => {
     const toolId = btn.closest('section').id;
@@ -621,15 +719,13 @@ document.querySelectorAll('.back-btn').forEach(btn => {
       const countInCat = tools.filter(x => x.cat === t.cat).length;
       if (countInCat === 1) showView('home');
       else showView('cat', t.cat);
-    } else {
-      showView('home');
-    }
+    } else showView('home');
   };
 });
 
 $('btn-photo').onclick = () => openTool('t19');
 
-/* ============ РАСЧЁТЫ ============ */
+/* РАСЧЁТЫ */
 const rooms = [
   ['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Кухня (газ)', 8],
   ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3],
@@ -727,11 +823,11 @@ function calcB(){
   box('Расход воздуха (приток)',f(Lsupply,0),'м³/ч',1)+
   `<div class="gh">Приточно-вытяжная установка (ПВУ)</div>`+
   box('Приток',f(Lsupply,0),'м³/ч',1)+
-  box('Вытяжка (85% от притока)',f(Lexhaust,0),'м³/ч')+
-  box('Нагрев (с рекуперацией)',f(Qheat,2),'кВт',1)+
+  box('Вытяжка (85%)',f(Lexhaust,0),'м³/ч')+
+  box('Нагрев (с рекуп.)',f(Qheat,2),'кВт',1)+
   box('Нагрев (без рекуп.)',f(QheatNoRec,2),'кВт')+
-  box('t после рекуператора',f(tAfterRec,1),'°C')+
-  box('Охлаждение/осушение (лето)',f(Qcool,1),'кВт');
+  box('t после рекуп.',f(tAfterRec,1),'°C')+
+  box('Охлаждение/осушение',f(Qcool,1),'кВт');
   if(tr>t-1)html+=`<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха.</p>`;
   if(dd<0.5)html+=`<p class="note warn">Влагосодержание снаружи почти равно внутреннему.</p>`;
   $('b_res').innerHTML=html;
@@ -746,123 +842,60 @@ function toggleShapeE() {
 }
 
 function calcE() {
-  const L = val('e_l');
-  const len = val('e_len');
-  const k = val('e_k');
-  const zeta = val('e_zeta');
-  const shape = $('e_shape').value;
+  const L = val('e_l'), len = val('e_len'), k = val('e_k'), zeta = val('e_zeta'), shape = $('e_shape').value;
   let v = 0, d_eq = 0.01, area = 0;
   if (shape === 'round') {
     const d = Math.max(val('e_d'), 10) / 1000;
-    area = Math.PI * d * d / 4;
-    v = L / 3600 / area;
-    d_eq = d;
+    area = Math.PI * d * d / 4; v = L / 3600 / area; d_eq = d;
   } else {
-    const a = Math.max(val('e_w'), 10) / 1000;
-    const b = Math.max(val('e_h'), 10) / 1000;
-    area = a * b;
-    v = L / 3600 / area;
-    d_eq = 2 * a * b / (a + b);
+    const a = Math.max(val('e_w'), 10) / 1000, b = Math.max(val('e_h'), 10) / 1000;
+    area = a * b; v = L / 3600 / area; d_eq = 2 * a * b / (a + b);
   }
-  const Pd = 0.6 * v * v;
-  const nu = 1.5e-5;
-  const Re = v * d_eq / nu;
+  const Pd = 0.6 * v * v, nu = 1.5e-5, Re = v * d_eq / nu;
   let lambda = 0;
   if (Re > 0) lambda = 0.11 * Math.pow((k / 1000 / d_eq) + (68 / Re), 0.25);
   const R = (lambda / d_eq) * Pd;
-  const P_friction = R * len;
-  const P_local = zeta * Pd;
-  const P_total = P_friction + P_local;
-  $('e_res').innerHTML = 
-    box('Скорость', f(v, 2), 'м/с', 1) +
-    box('Динамическое давление', f(Pd, 1), 'Па') +
-    box('Эквивалентный диаметр', f(d_eq * 1000, 0), 'мм') +
-    box('Удельные потери', f(R, 2), 'Па/м') +
-    box('Потери на трение', f(P_friction, 0), 'Па') +
-    box('Потери на местные сопр.', f(P_local, 0), 'Па') +
-    box('Суммарные потери', f(P_total, 0), 'Па', 1);
+  const P_friction = R * len, P_local = zeta * Pd, P_total = P_friction + P_local;
+  $('e_res').innerHTML = box('Скорость', f(v, 2), 'м/с', 1) + box('Дин. давление', f(Pd, 1), 'Па') + box('Эквив. диаметр', f(d_eq * 1000, 0), 'мм') + box('Удельные потери', f(R, 2), 'Па/м') + box('Трение', f(P_friction, 0), 'Па') + box('Местные', f(P_local, 0), 'Па') + box('Суммарные', f(P_total, 0), 'Па', 1);
 }
 
 function calcO() {
   const s = val('o_s'), h = val('o_h'), ins = val('o_ins'), tin = val('o_tin'), tout = val('o_tout'), prad = val('o_rad');
-  const V = s * h;
-  const dt = tin - tout;
-  let q = V * ins * dt;
-  q = q * 1.15;
-  const sections = Math.ceil(q / prad);
-  const G = 0.86 * (q / 1000) / 20;
-  $('o_res').innerHTML = 
-    box('Объём помещения', f(V, 1), 'м³') +
-    box('Теплопотери с запасом', f(q / 1000, 2), 'кВт', 1) +
-    box('Нужно секций (по ' + prad + ' Вт)', sections, 'шт', 1) +
-    box('Расход теплоносителя', f(G, 2), 'м³/ч');
+  const V = s * h, dt = tin - tout;
+  let q = V * ins * dt * 1.15;
+  const sections = Math.ceil(q / prad), G = 0.86 * (q / 1000) / 20;
+  $('o_res').innerHTML = box('Объём', f(V, 1), 'м³') + box('Теплопотери', f(q / 1000, 2), 'кВт', 1) + box('Секций (по ' + prad + ' Вт)', sections, 'шт', 1) + box('Расход воды', f(G, 2), 'м³/ч');
 }
 
 const PIPE_STD = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200];
 function calcG() {
-  const Q = val('g_q');
-  const dt = Math.max(val('g_dt'), 1);
-  const len = val('g_len');
-  const k = val('g_pipe');
-  const zeta = val('g_zeta');
-  const G_m3h = 0.86 * Q / dt;
-  const G_ls = G_m3h / 3.6;
+  const Q = val('g_q'), dt = Math.max(val('g_dt'), 1), len = val('g_len'), k = val('g_pipe'), zeta = val('g_zeta');
+  const G_m3h = 0.86 * Q / dt, G_ls = G_m3h / 3.6;
   let best_d = 15;
   for (let d of PIPE_STD) {
     const area = Math.PI * Math.pow(d / 1000, 2) / 4;
-    const v = (G_m3h / 3600) / area;
-    if (v <= 1.2) { best_d = d; break; }
+    if ((G_m3h / 3600) / area <= 1.2) { best_d = d; break; }
   }
-  const area = Math.PI * Math.pow(best_d / 1000, 2) / 4;
-  const v = (G_m3h / 3600) / area;
-  const Pd = 1000 * v * v / 2;
-  const nu = 1e-6;
-  const Re = v * (best_d / 1000) / nu;
+  const area = Math.PI * Math.pow(best_d / 1000, 2) / 4, v = (G_m3h / 3600) / area;
+  const Pd = 1000 * v * v / 2, nu = 1e-6, Re = v * (best_d / 1000) / nu;
   let lambda = 0;
   if (Re > 0) lambda = 0.11 * Math.pow((k / 1000 / (best_d / 1000)) + (68 / Re), 0.25);
   const R = (lambda / (best_d / 1000)) * Pd;
-  const P_friction = R * len;
-  const P_local = zeta * Pd;
-  const P_total = P_friction + P_local;
-  $('g_res').innerHTML = 
-    box('Расход воды', f(G_m3h, 2), 'м³/ч', 1) +
-    box('Расход воды', f(G_ls, 2), 'л/с') +
-    box('Рекомендуемый диаметр', best_d, 'мм', 1) +
-    box('Скорость воды', f(v, 2), 'м/с') +
-    box('Удельные потери', f(R, 1), 'Па/м') +
-    box('Потери на трение', f(P_friction, 0), 'Па') +
-    box('Потери на местные', f(P_local, 0), 'Па') +
-    box('Суммарные потери', f(P_total, 0), 'Па', 1);
+  const P_friction = R * len, P_local = zeta * Pd, P_total = P_friction + P_local;
+  $('g_res').innerHTML = box('Расход воды', f(G_m3h, 2), 'м³/ч', 1) + box('Расход', f(G_ls, 2), 'л/с') + box('Диаметр', best_d, 'мм', 1) + box('Скорость', f(v, 2), 'м/с') + box('Удельные потери', f(R, 1), 'Па/м') + box('Трение', f(P_friction, 0), 'Па') + box('Местные', f(P_local, 0), 'Па') + box('Суммарные', f(P_total, 0), 'Па', 1);
 }
 
 function calcFC() {
-  const Q = val('fc_q');
-  const tws = val('fc_tws');
-  const twr = val('fc_twr');
-  const tas = val('fc_tas');
-  const tar = val('fc_tar');
-  const dtw = twr - tws;
-  const dta = tar - tas;
-  const G = dtw > 0 ? (0.86 * Q / dtw) : 0;
-  const L = dta > 0 ? (Q * 3600) / (1.2 * 1.005 * dta) : 0;
-  $('fc_res').innerHTML = 
-    box('Расход воды', f(G, 2), 'м³/ч', 1) +
-    box('Расход воды', f(G / 3.6, 2), 'л/с') +
-    box('Расход воздуха', f(L, 0), 'м³/ч', 1) +
-    box('Перепад t воды', f(dtw, 1), '°C') +
-    box('Перепад t воздуха', f(dta, 1), '°C');
+  const Q = val('fc_q'), tws = val('fc_tws'), twr = val('fc_twr'), tas = val('fc_tas'), tar = val('fc_tar');
+  const dtw = twr - tws, dta = tar - tas;
+  const G = dtw > 0 ? (0.86 * Q / dtw) : 0, L = dta > 0 ? (Q * 3600) / (1.2 * 1.005 * dta) : 0;
+  $('fc_res').innerHTML = box('Расход воды', f(G, 2), 'м³/ч', 1) + box('Расход', f(G / 3.6, 2), 'л/с') + box('Расход воздуха', f(L, 0), 'м³/ч', 1) + box('Δt воды', f(dtw, 1), '°C') + box('Δt воздуха', f(dta, 1), '°C');
 }
 
 function calcEL() {
-  const P = val('el_p');
-  const ph = $('el_ph').value;
-  const cos = Math.max(val('el_cos'), 0.1);
-  const mat = $('el_mat').value;
-  const len = val('el_l');
+  const P = val('el_p'), ph = $('el_ph').value, cos = Math.max(val('el_cos'), 0.1), mat = $('el_mat').value, len = val('el_l');
   const U = ph === '3' ? 380 : 220;
-  let I = 0;
-  if (ph === '1') I = (P * 1000) / (U * cos);
-  else I = (P * 1000) / (Math.sqrt(3) * U * cos);
+  let I = ph === '1' ? (P * 1000) / (U * cos) : (P * 1000) / (Math.sqrt(3) * U * cos);
   const breakers = [6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160];
   let breaker = breakers.find(b => b >= I * 1.25) || '>160';
   const cuTable = [{ s: 1.5, i: 19 }, { s: 2.5, i: 27 }, { s: 4, i: 38 }, { s: 6, i: 46 }, { s: 10, i: 70 }, { s: 16, i: 85 }, { s: 25, i: 115 }, { s: 35, i: 135 }];
@@ -870,82 +903,53 @@ function calcEL() {
   const table = mat === 'cu' ? cuTable : alTable;
   let cable = table.find(c => c.i >= (breaker === '>160' ? 200 : breaker));
   let cableSize = cable ? cable.s : '—';
-  let rho = mat === 'cu' ? 0.0175 : 0.028;
-  let dU = 0;
+  let rho = mat === 'cu' ? 0.0175 : 0.028, dU = 0;
   if (cableSize !== '—') {
     if (ph === '1') dU = (2 * len * I * rho * cos) / cableSize;
     else dU = (Math.sqrt(3) * len * I * rho * cos) / cableSize;
   }
-  const dU_percent = (dU / U) * 100;
-  let html = 
-    box('Ток нагрузки', f(I, 1), 'А', 1) +
-    box('Автомат (с запасом 25%)', breaker, 'А', 1) +
-    box('Кабель (' + (mat === 'cu' ? 'Cu' : 'Al') + ')', cableSize, 'мм²', 1) +
-    box('Падение напряжения', f(dU, 1), 'В') +
-    box('Падение U (%)', f(dU_percent, 1), '%');
-  if (dU_percent > 5) html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
+  const dU_pct = (dU / U) * 100;
+  let html = box('Ток', f(I, 1), 'А', 1) + box('Автомат', breaker, 'А', 1) + box('Кабель', cableSize, 'мм²', 1) + box('Падение', f(dU, 1), 'В') + box('Падение %', f(dU_pct, 1), '%');
+  if (dU_pct > 5) html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
   $('el_res').innerHTML = html;
 }
 
 function calcVD() {
   const L = val('vd_l'), w = Math.max(val('vd_w'), 10) / 1000, h = Math.max(val('vd_h'), 10) / 1000;
   const k = Math.max(val('vd_k'), 10), zeta = val('vd_zeta');
-  const A = w * h;
-  const v = L / 3600 / A;
-  const v_live = v / (k / 100);
-  const Pd = 0.6 * v * v;
-  const dP = zeta * Pd;
-  $('vd_res').innerHTML = 
-    box('Площадь сечения', f(A * 1e6, 0), 'см²') +
-    box('Скорость в сечении', f(v, 2), 'м/с', 1) +
-    box('Скорость в живом сечении', f(v_live, 2), 'м/с', 1) +
-    box('Потери давления', f(dP, 0), 'Па', 1);
+  const A = w * h, v = L / 3600 / A, v_live = v / (k / 100);
+  const Pd = 0.6 * v * v, dP = zeta * Pd;
+  $('vd_res').innerHTML = box('Площадь', f(A * 1e6, 0), 'см²') + box('Скорость', f(v, 2), 'м/с', 1) + box('В живом сечении', f(v_live, 2), 'м/с', 1) + box('Потери', f(dP, 0), 'Па', 1);
 }
 
 function calcSL() {
-  const l1 = val('sl_l1'), l2 = val('sl_l2'), att = val('sl_att');
-  const req = l1 - l2 - att;
+  const req = val('sl_l1') - val('sl_l2') - val('sl_att');
   $('sl_res').innerHTML = box('Требуемое затухание', f(req, 0), 'дБ', 1);
 }
 
 function calcFL() {
   const L = val('fl_l'), v = val('fl_c'), dp = val('fl_dp');
   const A = L / 3600 / v;
-  $('fl_res').innerHTML = 
-    box('Требуемая площадь', f(A, 2), 'м²', 1) +
-    box('Скорость воздуха', f(v, 1), 'м/с') +
-    box('Сопротивление', dp, 'Па');
+  $('fl_res').innerHTML = box('Площадь', f(A, 2), 'м²', 1) + box('Скорость', f(v, 1), 'м/с') + box('Сопротивление', dp, 'Па');
 }
 
 function calcWC() {
   const Q = val('wc_q'), tin = val('wc_tin'), tout = val('wc_tout'), tws = val('wc_tws'), twr = val('wc_twr');
-  const dta = Math.max(tout - tin, 0.1);
-  const dtw = Math.max(tws - twr, 0.1);
-  const G = (0.86 * Q) / dtw;
-  const L = (Q * 3600) / (1.2 * 1.005 * dta);
-  $('wc_res').innerHTML = 
-    box('Расход воды', f(G, 2), 'м³/ч', 1) +
-    box('Расход воздуха', f(L, 0), 'м³/ч', 1) +
-    box('Перепад t воздуха', f(dta, 1), '°C') +
-    box('Перепад t воды', f(dtw, 1), '°C');
+  const dta = Math.max(tout - tin, 0.1), dtw = Math.max(tws - twr, 0.1);
+  const G = (0.86 * Q) / dtw, L = (Q * 3600) / (1.2 * 1.005 * dta);
+  $('wc_res').innerHTML = box('Расход воды', f(G, 2), 'м³/ч', 1) + box('Расход воздуха', f(L, 0), 'м³/ч', 1) + box('Δt воздуха', f(dta, 1), '°C') + box('Δt воды', f(dtw, 1), '°C');
 }
 
 function calcPN() {
-  const proj = Math.max(val('pn_l_proj'), 1);
-  const fact = val('pn_l_fact');
-  const tol = Math.max(val('pn_tol'), 0);
-  const dev = ((fact - proj) / proj) * 100;
-  const isPass = Math.abs(dev) <= tol;
-  let html = 
-    box('Отклонение', f(dev, 1), '%', 1) +
-    box('Вердикт', isPass ? 'ГОДЕН' : 'НЕ ГОДЕН', '', 1);
+  const proj = Math.max(val('pn_l_proj'), 1), fact = val('pn_l_fact'), tol = Math.max(val('pn_tol'), 0);
+  const dev = ((fact - proj) / proj) * 100, isPass = Math.abs(dev) <= tol;
+  let html = box('Отклонение', f(dev, 1), '%', 1) + box('Вердикт', isPass ? 'ГОДЕН' : 'НЕ ГОДЕН', '', 1);
   if (!isPass) html += `<p class="note warn">Отклонение превышает ${tol}%.</p>`;
   $('pn_res').innerHTML = html;
 }
 
 function updateUnitHint() {
-  const type = $('sm_unit_type').value;
-  const hint = $('sm_unit_hint');
+  const type = $('sm_unit_type').value, hint = $('sm_unit_hint');
   if (type === 'supply') hint.textContent = 'Ориентир: 80 000 – 500 000 ₽';
   else if (type === 'supply_exhaust') hint.textContent = 'Ориентир: 350 000 – 1 000 000 ₽';
   else hint.textContent = 'Введите цену вручную';
@@ -968,48 +972,23 @@ function calcSM() {
   const grand_total = material_total + equipment_total + labor_total;
   const unit_label = $('sm_unit_type').selectedOptions[0].text;
   $('sm_res').innerHTML = 
-    `<div class="gh">Материалы</div>` +
-    box('Воздуховоды', f(cost_duct, 0), 'руб.') +
-    box('Фасонина', f(cost_fit, 0), 'руб.') +
-    box('Изоляция', f(cost_ins, 0), 'руб.') +
-    box('Решётки', f(cost_grille, 0), 'руб.') +
-    box('Итого материалы', f(material_total, 0), 'руб.', 1) +
-    `<div class="gh">Оборудование</div>` +
-    box('Установка (' + unit_label + ')', f(unit_price, 0), 'руб.') +
-    box('Кондиционеры', f(cond_cost, 0), 'руб.') +
-    box('Канальные вентиляторы', f(fan_cost, 0), 'руб.') +
-    box('Итого оборудование', f(equipment_total, 0), 'руб.', 1) +
-    `<div class="gh">Работы и расходники</div>` +
-    box('Крепёж/расходники', f(cost_hw, 0), 'руб.') +
-    box('Монтаж', f(cost_work, 0), 'руб.') +
-    box('Пусконаладка', f(cost_pnr, 0), 'руб.') +
-    box('Итого работы', f(labor_total, 0), 'руб.', 1) +
-    `<div class="gh">Всего по объекту</div>` +
-    box('ИТОГО', f(grand_total, 0), 'руб.', 1);
+    `<div class="gh">Материалы</div>` + box('Воздуховоды', f(cost_duct, 0), 'руб.') + box('Фасонина', f(cost_fit, 0), 'руб.') + box('Изоляция', f(cost_ins, 0), 'руб.') + box('Решётки', f(cost_grille, 0), 'руб.') + box('Итого материалы', f(material_total, 0), 'руб.', 1) +
+    `<div class="gh">Оборудование</div>` + box('Установка (' + unit_label + ')', f(unit_price, 0), 'руб.') + box('Кондиционеры', f(cond_cost, 0), 'руб.') + box('Вентиляторы', f(fan_cost, 0), 'руб.') + box('Итого оборудование', f(equipment_total, 0), 'руб.', 1) +
+    `<div class="gh">Работы</div>` + box('Крепёж', f(cost_hw, 0), 'руб.') + box('Монтаж', f(cost_work, 0), 'руб.') + box('Пусконаладка', f(cost_pnr, 0), 'руб.') + box('Итого работы', f(labor_total, 0), 'руб.', 1) +
+    `<div class="gh">Всего</div>` + box('ИТОГО', f(grand_total, 0), 'руб.', 1);
 }
 
 function calcOU() {
-  const L = val('ou_l');
-  const t = val('ou_t');
-  const rh1 = val('ou_rh1');
-  const rh2 = val('ou_rh2');
+  const L = val('ou_l'), t = val('ou_t'), rh1 = val('ou_rh1'), rh2 = val('ou_rh2');
   const Ps = Psat(t);
-  const p1 = (rh1 / 100) * Ps;
-  const p2 = (rh2 / 100) * Ps;
-  const d1 = 622 * p1 / (101.325 - p1);
-  const d2 = 622 * p2 / (101.325 - p2);
-  const M = L * 1.2;
-  const W = M * (d1 - d2) / 1000;
+  const p1 = (rh1 / 100) * Ps, p2 = (rh2 / 100) * Ps;
+  const d1 = 622 * p1 / (101.325 - p1), d2 = 622 * p2 / (101.325 - p2);
+  const W = L * 1.2 * (d1 - d2) / 1000;
   let html = '';
   if (W > 0.01) {
     const litrDay = W * 24;
-    html = 
-      box('Требуется удалить влагу', f(W, 2), 'кг/ч', 1) +
-      box('Производительность', f(litrDay, 1), 'л/сутки', 1) +
-      box('Рекомендация', 'Осушитель до ' + Math.ceil(litrDay / 10) * 10 + ' л/сут', '', 1);
-  } else {
-    html = box('Осушение не требуется', '0', 'кг/ч', 1);
-  }
+    html = box('Удалить влагу', f(W, 2), 'кг/ч', 1) + box('Производительность', f(litrDay, 1), 'л/сутки', 1) + box('Рекомендация', 'Осушитель до ' + Math.ceil(litrDay / 10) * 10 + ' л/сут', '', 1);
+  } else html = box('Осушение не требуется', '0', 'кг/ч', 1);
   $('ou_res').innerHTML = html;
 }
 
@@ -1032,7 +1011,6 @@ function fillU() {
   $('u_u').innerHTML = U[c].map((u, i) => `<option value="${i}">${u[0]}</option>`).join('');
   calcU();
 }
-
 function calcU() {
   const c = +$('u_c').value, v = val('u_v'), i = +$('u_u').value;
   if (c === 3) {
@@ -1052,81 +1030,42 @@ function calcUH() {
   const V = val('uh_v'), n = val('uh_n'), t = val('uh_t'), rh2 = val('uh_rh2'), rh1 = val('uh_rh1'), p = val('uh_p');
   const L = V * n;
   const Ps = Psat(t);
-  const p2 = (rh2 / 100) * Ps;
-  const p1 = (rh1 / 100) * Ps;
-  const d2 = 622 * p2 / (101.325 - p2);
-  const d1 = 622 * p1 / (101.325 - p1);
-  const W_vent = L * 1.2 * (d2 - d1) / 1000;
-  const W_people = p * 0.05;
+  const p2 = (rh2 / 100) * Ps, p1 = (rh1 / 100) * Ps;
+  const d2 = 622 * p2 / (101.325 - p2), d1 = 622 * p1 / (101.325 - p1);
+  const W_vent = L * 1.2 * (d2 - d1) / 1000, W_people = p * 0.05;
   const W_need = W_vent - W_people;
-  let html = 
-    box('Расход притока', f(L, 0), 'м³/ч') +
-    box('Влагосодержание наружного', f(d1, 1), 'г/кг') +
-    box('Влагосодержание целевое', f(d2, 1), 'г/кг') +
-    box('Влага от людей', f(W_people, 2), 'кг/ч');
-  if (W_need > 0.01) {
-    html += 
-      box('Требуется добавить влагу', f(W_need, 2), 'кг/ч', 1) +
-      box('Производительность увлажнителя', f(W_need, 2), 'кг/ч', 1);
-  } else {
-    html += box('Увлажнитель не требуется', '0', 'кг/ч', 1);
-  }
+  let html = box('Расход притока', f(L, 0), 'м³/ч') + box('Влагосодержание наружного', f(d1, 1), 'г/кг') + box('Влагосодержание целевое', f(d2, 1), 'г/кг') + box('Влага от людей', f(W_people, 2), 'кг/ч');
+  if (W_need > 0.01) html += box('Требуется добавить', f(W_need, 2), 'кг/ч', 1);
+  else html += box('Увлажнитель не требуется', '0', 'кг/ч', 1);
   $('uh_res').innerHTML = html;
 }
 
 function calcTZ() {
   const w = val('tz_w'), h = val('tz_h'), tin = val('tz_tin'), tout = val('tz_tout'), v = val('tz_v');
-  const S = w * h;
-  const L = S * v * 3600;
-  const dt = tin - tout;
+  const S = w * h, L = S * v * 3600, dt = tin - tout;
   const Q = L * 1.2 * 1.005 * dt / 3600;
-  $('tz_res').innerHTML = 
-    box('Площадь проёма', f(S, 2), 'м²') +
-    box('Расход завесы', f(L, 0), 'м³/ч', 1) +
-    box('Мощность нагрева', f(Q, 1), 'кВт', 1) +
-    box('Δt', f(dt, 0), '°C');
+  $('tz_res').innerHTML = box('Площадь проёма', f(S, 2), 'м²') + box('Расход', f(L, 0), 'м³/ч', 1) + box('Мощность', f(Q, 1), 'кВт', 1) + box('Δt', f(dt, 0), '°C');
 }
 
 function calcCH() {
   const Q = val('ch_q'), tws = val('ch_tws'), twr = val('ch_twr'), cop = Math.max(val('ch_cop'), 1);
-  const dt = twr - tws;
-  const G = dt > 0 ? 0.86 * Q / dt : 0;
-  const P = Q / cop;
-  $('ch_res').innerHTML = 
-    box('Расход воды', f(G, 2), 'м³/ч', 1) +
-    box('Δt воды', f(dt, 1), '°C') +
-    box('Потребление электроэнергии', f(P, 1), 'кВт', 1) +
-    box('Ток (3ф 380В)', f(P * 1000 / (Math.sqrt(3) * 380 * 0.9), 1), 'А');
+  const dt = twr - tws, G = dt > 0 ? 0.86 * Q / dt : 0, P = Q / cop;
+  $('ch_res').innerHTML = box('Расход воды', f(G, 2), 'м³/ч', 1) + box('Δt воды', f(dt, 1), '°C') + box('Потребление', f(P, 1), 'кВт', 1) + box('Ток (3ф 380В)', f(P * 1000 / (Math.sqrt(3) * 380 * 0.9), 1), 'А');
 }
 
 function calcRC() {
   const san = val('rc_san'), total = val('rc_total'), heat = val('rc_heat');
-  const recirc = Math.max(total - san, 0);
-  const pct = total > 0 ? (recirc / total) * 100 : 0;
-  const save = heat * (pct / 100);
-  $('rc_res').innerHTML = 
-    box('Наружный воздух', f(san, 0), 'м³/ч', 1) +
-    box('Рециркуляция', f(recirc, 0), 'м³/ч', 1) +
-    box('Доля рециркуляции', f(pct, 1), '%') +
-    box('Экономия тепла', f(save, 1), 'кВт', 1);
+  const recirc = Math.max(total - san, 0), pct = total > 0 ? (recirc / total) * 100 : 0, save = heat * (pct / 100);
+  $('rc_res').innerHTML = box('Наружный воздух', f(san, 0), 'м³/ч', 1) + box('Рециркуляция', f(recirc, 0), 'м³/ч', 1) + box('Доля рециркуляции', f(pct, 1), '%') + box('Экономия тепла', f(save, 1), 'кВт', 1);
 }
 
 function calcIZ() {
-  const d = Math.max(val('iz_d') / 1000, 0.01);
-  const tin = val('iz_tin'), tout = val('iz_tout');
-  const lam = Math.max(val('iz_lam'), 0.02);
-  const Rreq = Math.max(val('iz_R'), 0.1);
-  const expArg = Math.min(2 * lam * Rreq / d, 5);
-  const delta = d / 2 * (Math.exp(expArg) - 1);
-  const R_out = 0.1;
-  const t_surf = tout + (tin - tout) * R_out / (Rreq + R_out);
-  const tr_out = dewPoint(dFrom(tout, 70));
-  let html = 
-    box('Толщина изоляции', f(delta * 1000, 0), 'мм', 1) +
-    box('Плоская (проверка)', f(lam * Rreq * 1000, 0), 'мм') +
-    box('t поверхности', f(t_surf, 1), '°C') +
-    box('t точки росы', f(tr_out, 1), '°C');
-  if (t_surf < tr_out) html += `<p class="note warn">t поверхности ниже точки росы — возможна конденсация!</p>`;
+  const d = Math.max(val('iz_d') / 1000, 0.01), tin = val('iz_tin'), tout = val('iz_tout');
+  const lam = Math.max(val('iz_lam'), 0.02), Rreq = Math.max(val('iz_R'), 0.1);
+  const delta = d / 2 * (Math.exp(Math.min(2 * lam * Rreq / d, 5)) - 1);
+  const t_surf = tout + (tin - tout) * 0.1 / (Rreq + 0.1), tr_out = dewPoint(dFrom(tout, 70));
+  let html = box('Толщина', f(delta * 1000, 0), 'мм', 1) + box('Плоская', f(lam * Rreq * 1000, 0), 'мм') + box('t поверхности', f(t_surf, 1), '°C') + box('t точки росы', f(tr_out, 1), '°C');
+  if (t_surf < tr_out) html += `<p class="note warn">Возможна конденсация!</p>`;
   $('iz_res').innerHTML = html;
 }
 
@@ -1135,23 +1074,144 @@ function calcTL() {
   const so = val('tl_so'), ro = Math.max(val('tl_ro'), 0.1);
   const sf = val('tl_sf'), rf = Math.max(val('tl_rf'), 0.1);
   const sc = val('tl_sc'), rc = Math.max(val('tl_rc'), 0.1);
-  const tin = val('tl_tin'), tout = val('tl_tout');
-  const dt = tin - tout;
-  const qw = sw * dt / rw;
-  const qo = so * dt / ro;
-  const qf = sf * dt / rf;
-  const qc = sc * dt / rc;
-  const total = qw + qo + qf + qc;
-  const withMargin = total * 1.15;
-  $('tl_res').innerHTML = 
-    box('Стены', f(qw / 1000, 2), 'кВт') +
-    box('Окна', f(qo / 1000, 2), 'кВт') +
-    box('Пол', f(qf / 1000, 2), 'кВт') +
-    box('Потолок', f(qc / 1000, 2), 'кВт') +
-    box('Всего с запасом 15%', f(withMargin / 1000, 2), 'кВт', 1);
+  const dt = val('tl_tin') - val('tl_tout');
+  const qw = sw * dt / rw, qo = so * dt / ro, qf = sf * dt / rf, qc = sc * dt / rc;
+  const total = (qw + qo + qf + qc) * 1.15;
+  $('tl_res').innerHTML = box('Стены', f(qw / 1000, 2), 'кВт') + box('Окна', f(qo / 1000, 2), 'кВт') + box('Пол', f(qf / 1000, 2), 'кВт') + box('Потолок', f(qc / 1000, 2), 'кВт') + box('Всего с запасом', f(total / 1000, 2), 'кВт', 1);
 }
 
-/* ============ РЕЗЕРВНОЕ КОПИРОВАНИЕ ============ */
+/* ПАСПОРТ ОБЪЕКТА */
+function calcPO() {
+  const s = val('po_s'), h = val('po_h'), total = val('po_pwr_total'), used = val('po_pwr_used');
+  const free = Math.max(total - used, 0);
+  const V = s * h;
+  const typeLabel = $('po_type').selectedOptions[0].text;
+  const wallsLabel = $('po_walls').selectedOptions[0].text;
+  const windowsLabel = $('po_windows').selectedOptions[0].text;
+  const ventLabel = $('po_vent').selectedOptions[0].text;
+  const acLabel = $('po_ac').selectedOptions[0].text;
+  const name = $('po_name').value || '—';
+  const room = $('po_room').value || '—';
+  const notes = $('po_notes').value || '';
+  
+  let html = `<div class="passport-preview">
+<b>Объект:</b> ${name}<br>
+<b>Помещение:</b> ${room}<br>
+<b>Назначение:</b> ${typeLabel}<br>
+<b>Площадь / объём:</b> ${f(s)} м² / ${f(V)} м³<br>
+<b>Стены / окна:</b> ${wallsLabel} / ${windowsLabel}<br>
+<b>Эл. мощность:</b> выделено ${f(total, 1)} кВт, занято ${f(used, 1)} кВт, <b>свободно ${f(free, 1)} кВт</b><br>
+<b>Вентиляция:</b> ${ventLabel}<br>
+<b>Кондиционирование:</b> ${acLabel}${notes ? '<br><b>Заметки:</b> ' + notes : ''}
+</div>` + box('Свободная мощность', f(free, 1), 'кВт', 1);
+  
+  $('po_res').innerHTML = html;
+}
+
+/* СПЕЦИФИКАЦИЯ */
+function getSpecItems() {
+  return [
+    ['Воздуховод Ø100', val('sp_100'), 'м'],
+    ['Воздуховод Ø125', val('sp_125'), 'м'],
+    ['Воздуховод Ø160', val('sp_160'), 'м'],
+    ['Воздуховод Ø200', val('sp_200'), 'м'],
+    ['Воздуховод Ø250', val('sp_250'), 'м'],
+    ['Воздуховод прямоуг.', val('sp_rect'), 'м²'],
+    ['Фасонина', val('sp_fit'), 'шт'],
+    ['Изоляция', val('sp_ins'), 'м²'],
+    ['Решётки / диффузоры', val('sp_grille'), 'шт'],
+    ['Шумоглушители', val('sp_silencer'), 'шт'],
+    ['Фильтры', val('sp_filter'), 'шт'],
+    ['Клапаны / заслонки', val('sp_valve'), 'шт'],
+    ['Приточная установка', val('sp_ahu'), 'шт'],
+    ['Приточно-вытяжная', val('sp_ahu_pv'), 'шт'],
+    ['Кондиционеры', val('sp_ac'), 'шт'],
+    ['Канальные вентиляторы', val('sp_fan'), 'шт'],
+    ['Калориферы', val('sp_heater'), 'шт'],
+    ['Фанкойлы', val('sp_fcu'), 'шт'],
+    ['Фреоновая трасса', val('sp_freon'), 'м'],
+    ['Дренаж', val('sp_drain'), 'м'],
+    ['Кабель', val('sp_cable'), 'м'],
+    ['Автоматика', val('sp_auto'), 'компл']
+  ].filter(it => it[1] > 0);
+}
+
+function calcSP() {
+  const items = getSpecItems();
+  const other = $('sp_other').value.trim();
+  if (other) items.push(['Прочее', other, '']);
+  
+  if (!items.length) {
+    $('sp_res').innerHTML = `<div class="spec-preview">Спецификация пуста. Заполните нужные позиции выше.</div>`;
+    return;
+  }
+  
+  const table = items.map((it, i) => 
+    `${i + 1}. ${it[0]} — ${f(it[1], 1)} ${it[2]}`.trim()
+  ).join('\n');
+  
+  $('sp_res').innerHTML = `<div class="gh">Спецификация (${items.length} позиций)</div><div class="spec-preview">${table}</div>`;
+}
+
+function getSpecText() {
+  const items = getSpecItems();
+  const other = $('sp_other').value.trim();
+  if (other) items.push(['Прочее', other, '']);
+  if (!items.length) return 'Спецификация пуста';
+  const objName = $('po_name').value || 'Объект';
+  return 'Спецификация: ' + objName + '\n\n' + items.map((it, i) => `${i + 1}. ${it[0]} — ${it[1]} ${it[2]}`.trim()).join('\n');
+}
+
+$('sp_copy').onclick = async () => {
+  const text = getSpecText();
+  const ok = await copyText(text);
+  alert(ok ? 'Спецификация скопирована в буфер' : 'Не удалось скопировать');
+};
+
+$('sp_share').onclick = async () => {
+  const text = getSpecText();
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Спецификация ОВиК', text: text }); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const ok = await copyText(text);
+  alert(ok ? 'Спецификация скопирована в буфер (поделиться не удалось)' : 'Не удалось поделиться');
+};
+
+/* ТРАССА КОНДИЦИОНЕРА */
+function calcTR() {
+  const power = val('tr_pwr'), len = val('tr_len'), h = val('tr_h'), turns = val('tr_turns');
+  
+  let standardLength;
+  if (power <= 3.5) standardLength = 5;
+  else if (power <= 7) standardLength = 7;
+  else if (power <= 12) standardLength = 10;
+  else standardLength = 15;
+  
+  const maxLength = standardLength * 3;
+  const extraLength = Math.max(len - standardLength, 0);
+  const refillGrams = extraLength * 20;
+  const perfLoss = Math.min((extraLength / 10) * 5 + turns * 0.5, 30);
+  const heightOk = h <= 5 && -h <= 15;
+  const lengthOk = len <= maxLength;
+  const pass = lengthOk && heightOk && perfLoss < 20;
+  
+  let html = 
+    box('Макс. длина без дозаправки', f(standardLength, 0), 'м') +
+    box('Макс. допустимая длина', f(maxLength, 0), 'м') +
+    box('Дозаправка фреона', refillGrams > 0 ? f(refillGrams, 0) + ' г' : 'не требуется', '') +
+    box('Потеря производительности', f(perfLoss, 1), '%') +
+    box('Перепад высот', heightOk ? 'в норме' : 'превышен', '', heightOk ? 0 : 1);
+  
+  if (!lengthOk) html += `<p class="note warn">Длина ${f(len)} м превышает допустимую ${f(maxLength)} м.</p>`;
+  if (!heightOk) html += `<p class="note warn">Перепад высот ${f(h)} м вне нормы (внутр. выше до 5 м, наружн. выше до 15 м).</p>`;
+  if (perfLoss >= 20) html += `<p class="note warn">Потеря производительности ${f(perfLoss, 1)}% — кондиционер может не справиться.</p>`;
+  if (pass) html += `<p class="note" style="color:var(--ac);">✓ Трасса в норме</p>`;
+  
+  $('tr_res').innerHTML = html;
+}
+
+/* РЕЗЕРВНОЕ КОПИРОВАНИЕ */
 window.backupAll = function() {
   const data = { version: 1, exportedAt: new Date().toISOString() };
   for (let i = 0; i < localStorage.length; i++) {
@@ -1190,7 +1250,7 @@ window.restoreBackup = function(event) {
   event.target.value = '';
 };
 
-/* ============ ФОТО ============ */
+/* ФОТО */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -1210,18 +1270,10 @@ $('photo_input').addEventListener('change', function(e) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-            const photo = {
-                id: Date.now(),
-                date: new Date().toLocaleString('ru-RU', {dateStyle:'short', timeStyle:'short'}),
-                data: dataUrl
-            };
+            const photo = { id: Date.now(), date: new Date().toLocaleString('ru-RU', {dateStyle:'short', timeStyle:'short'}), data: dataUrl };
             PHOTOS.unshift(photo);
-            try {
-                localStorage.setItem('hvac_photos', JSON.stringify(PHOTOS));
-                renderPhotos();
-            } catch(err) {
-                alert('Не хватает памяти для сохранения фото.');
-            }
+            try { localStorage.setItem('hvac_photos', JSON.stringify(PHOTOS)); renderPhotos(); }
+            catch(err) { alert('Не хватает памяти для сохранения фото.'); }
         };
         img.src = ev.target.result;
     };
@@ -1232,10 +1284,7 @@ $('photo_input').addEventListener('change', function(e) {
 function renderPhotos() {
     const g = $('photo_gallery');
     if (!g) return;
-    if (!PHOTOS.length) {
-        g.innerHTML = '<div class="empty" style="grid-column:1/-1; text-align:center; padding:20px;">Нет сохраненных фотографий</div>';
-        return;
-    }
+    if (!PHOTOS.length) { g.innerHTML = '<div class="empty" style="grid-column:1/-1; text-align:center; padding:20px;">Нет сохраненных фотографий</div>'; return; }
     g.innerHTML = PHOTOS.map(p => `
         <div class="photo-card">
             <img src="${p.data}" alt="Фото">
@@ -1257,7 +1306,7 @@ window.delPhoto = function(id) {
     renderPhotos();
 };
 
-/* ============ SHARE: УТИЛИТЫ ============ */
+/* SHARE */
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
   try {
@@ -1281,91 +1330,61 @@ function dataURLtoFile(dataUrl, filename) {
 function getLogAsText() {
   if (!LOG.length) return 'Журнал расчётов пуст.';
   const header = '№\tВремя\tРасчёт\tПометка\tИсходные данные\tРезультат\tЗначение';
-  const rows = LOG.map((r, i) => 
-    [i + 1, r.t, r.n, r.o || '', r.i, r.r, r.v != null ? f(r.v, 2) + ' ' + r.u : ''].join('\t')
-  );
+  const rows = LOG.map((r, i) => [i + 1, r.t, r.n, r.o || '', r.i, r.r, r.v != null ? f(r.v, 2) + ' ' + r.u : ''].join('\t'));
   const objectName = $('lg_o').value ? 'Объект: ' + $('lg_o').value + '\n\n' : '';
   return objectName + header + '\n' + rows.join('\n');
 }
 
-/* ============ SHARE: ТЕКСТ ============ */
 async function shareLogText() {
   const text = getLogAsText();
   const title = 'Журнал ОВиК ' + new Date().toLocaleDateString('ru-RU');
-  
   if (navigator.share) {
-    try {
-      await navigator.share({ title: title, text: text });
-      return;
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-    }
+    try { await navigator.share({ title: title, text: text }); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
   }
-  
   const ok = await copyText(text);
-  if (ok) alert('Системное меню недоступно.\n\nТекст журнала скопирован в буфер. Вставьте его в Telegram, WhatsApp или почту вручную.');
-  else alert('Не удалось поделиться. Попробуйте кнопку «Копировать таблицу».');
+  if (ok) alert('Системное меню недоступно.\n\nТекст журнала скопирован в буфер.');
+  else alert('Не удалось поделиться. Попробуйте «Копировать таблицу».');
 }
 
 function shareLogEmail() {
   const text = getLogAsText();
   const subject = 'Журнал ОВиК ' + new Date().toLocaleDateString('ru-RU');
-  const url = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text);
-  window.location.href = url;
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text);
 }
 
-/* ============ SHARE: ФОТО ============ */
 async function sharePhoto(id) {
   const photo = PHOTOS.find(p => p.id === id);
   if (!photo) return;
-  
   const filename = 'hvac-photo-' + photo.id + '.jpg';
-  
   if (navigator.share && navigator.canShare) {
     try {
       const file = dataURLtoFile(photo.data, filename);
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Фото объекта' });
-        return;
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-    }
+      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Фото объекта' }); return; }
+    } catch (e) { if (e.name === 'AbortError') return; }
   }
-  
   const a = document.createElement('a');
-  a.href = photo.data;
-  a.download = filename;
-  a.click();
-  setTimeout(() => alert('Системное меню недоступно. Фото сохранено в папку «Загрузки».'), 300);
+  a.href = photo.data; a.download = filename; a.click();
+  setTimeout(() => alert('Системное меню недоступно. Фото сохранено в «Загрузки».'), 300);
 }
 
 async function shareAllPhotos() {
   if (!PHOTOS.length) { alert('Нет фотографий'); return; }
-  
   if (navigator.share && navigator.canShare) {
     try {
       const files = PHOTOS.slice(0, 10).map(p => dataURLtoFile(p.data, 'hvac-photo-' + p.id + '.jpg'));
-      if (navigator.canShare({ files: files })) {
-        await navigator.share({ files: files, title: 'Фото объекта (' + files.length + ')' });
-        return;
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-    }
+      if (navigator.canShare({ files: files })) { await navigator.share({ files: files, title: 'Фото объекта (' + files.length + ')' }); return; }
+    } catch (e) { if (e.name === 'AbortError') return; }
   }
-  
   for (const p of PHOTOS) {
     const a = document.createElement('a');
-    a.href = p.data;
-    a.download = 'hvac-photo-' + p.id + '.jpg';
-    a.click();
+    a.href = p.data; a.download = 'hvac-photo-' + p.id + '.jpg'; a.click();
     await new Promise(r => setTimeout(r, 150));
   }
-  alert('Системное меню недоступно. Все фото сохранены в папку «Загрузки».');
+  alert('Системное меню недоступно. Все фото в папке «Загрузки».');
 }
 
-/* ============ ПРИВЯЗКА ============ */
+/* ПРИВЯЗКА */
 function bind(ids, fn) { ids.forEach(i => { const el = $(i); if (el) { el.addEventListener('input', fn); el.addEventListener('change', fn); } }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
 bind(['d_l', 'd_v', 'd_d', 'd_w', 'd_h', 'd_n'], calcD);
@@ -1383,9 +1402,7 @@ bind(['sl_l1','sl_l2','sl_att'], calcSL);
 bind(['fl_l','fl_c','fl_dp'], calcFL);
 bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
 bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
-bind(['sm_duct','sm_p_duct','sm_fit','sm_ins','sm_p_ins','sm_grille','sm_p_grille',
-      'sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty',
-      'sm_hw','sm_work','sm_pnr'], calcSM);
+bind(['sm_duct','sm_p_duct','sm_fit','sm_ins','sm_p_ins','sm_grille','sm_p_grille','sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty','sm_hw','sm_work','sm_pnr'], calcSM);
 bind(['ou_l','ou_t','ou_rh1','ou_rh2'], calcOU);
 bind(['uh_v','uh_n','uh_t','uh_rh2','uh_rh1','uh_p'], calcUH);
 bind(['tz_w','tz_h','tz_tin','tz_tout','tz_v'], calcTZ);
@@ -1393,15 +1410,18 @@ bind(['ch_q','ch_tws','ch_twr','ch_cop'], calcCH);
 bind(['rc_san','rc_total','rc_heat'], calcRC);
 bind(['iz_d','iz_tin','iz_tout','iz_lam','iz_R'], calcIZ);
 bind(['tl_sw','tl_rw','tl_so','tl_ro','tl_sf','tl_rf','tl_sc','tl_rc','tl_tin','tl_tout'], calcTL);
+bind(['po_name','po_room','po_type','po_s','po_h','po_walls','po_windows','po_pwr_total','po_pwr_used','po_vent','po_ac','po_notes'], calcPO);
+bind(['sp_100','sp_125','sp_160','sp_200','sp_250','sp_rect','sp_fit','sp_ins','sp_grille','sp_silencer','sp_filter','sp_valve','sp_ahu','sp_ahu_pv','sp_ac','sp_fan','sp_heater','sp_fcu','sp_freon','sp_drain','sp_cable','sp_auto','sp_other'], calcSP);
+bind(['tr_pwr','tr_len','tr_h','tr_turns'], calcTR);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 $('sm_unit_type').addEventListener('change', updateUnitHint);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcTL(); fillU(); renderPhotos(); updateUnitHint();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
 
-/* ============ ЖУРНАЛ ============ */
+/* ЖУРНАЛ */
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
 const save = () => { try { localStorage.setItem('hvaclog', JSON.stringify(LOG)); } catch (e) {} };
@@ -1434,23 +1454,22 @@ function renderTot() {
 const SUM = { 
   t0: ['Требуемый расход', 'м³/ч'], t2: ['С запасом', 'кВт'], t3: ['Мощность', 'кВт'], 
   t4: ['Расход с запасом', 'м³/ч'], t5: ['Приток', 'м³/ч'], t6: ['Суммарные потери', 'Па'], 
-  t7: ['Теплопотери с запасом', 'кВт'], t8: ['Суммарные потери', 'Па'], t9: ['Расход воздуха', 'м³/ч'], 
-  t10: ['Ток нагрузки', 'А'], t11: ['Скорость в сечении', 'м/с'], t12: ['Требуемое затухание', 'дБ'], 
+  t7: ['Теплопотери', 'кВт'], t8: ['Суммарные потери', 'Па'], t9: ['Расход воздуха', 'м³/ч'], 
+  t10: ['Ток', 'А'], t11: ['Скорость', 'м/с'], t12: ['Требуемое затухание', 'дБ'], 
   t13: ['Требуемая площадь', 'м²'], t14: ['Расход воды', 'м³/ч'], t15: ['Отклонение', '%'], 
-  t16: ['ИТОГО', 'руб.'], t17: ['Требуется удалить влагу', 'кг/ч'],
-  t20: ['Требуется добавить влагу', 'кг/ч'],
-  t21: ['Мощность нагрева', 'кВт'], t22: ['Расход воды', 'м³/ч'],
-  t23: ['Экономия тепла', 'кВт'], t24: ['Толщина изоляции', 'мм'],
-  t26: ['Всего с запасом 15%', 'кВт']
+  t16: ['ИТОГО', 'руб.'], t17: ['Удалить влагу', 'кг/ч'],
+  t20: ['Требуется добавить', 'кг/ч'], t21: ['Мощность', 'кВт'], t22: ['Расход воды', 'м³/ч'],
+  t23: ['Экономия тепла', 'кВт'], t24: ['Толщина', 'мм'], t26: ['Всего с запасом', 'кВт'],
+  t30: ['Дозаправка фреона', 'г']
 };
 
 document.querySelectorAll('section.tool').forEach((s, idx) => {
-  if (s.id === 't19' || s.id === 't27') return;
+  if (s.id === 't19' || s.id === 't27' || s.id === 't28' || s.id === 't29') return;
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
     const inp = [...s.querySelectorAll('label')].map(l => {
-      const c = l.querySelector('input,select');
+      const c = l.querySelector('input,select,textarea');
       if (!c) return '';
       const v = c.tagName === 'SELECT' ? c.options[c.selectedIndex].text : c.value;
       return l.firstChild.textContent.trim() + ': ' + v;
@@ -1479,7 +1498,6 @@ $('lg_c').onclick = async () => {
     .concat(LOG.map((r, i) => [i + 1, r.t, r.n, r.o, r.i, r.r, r.v != null ? f(r.v, 2) + ' ' + r.u : ''].join('\t'))).join('\n');
   say(await copyText(tsv) ? 'Скопировано' : 'Не удалось скопировать');
 };
-
 $('lg_share').onclick = shareLogText;
 $('lg_mail').onclick = shareLogEmail;
 
@@ -1515,26 +1533,23 @@ $('lg_fi').onchange = async (e) => {
     if (!Array.isArray(arr)) throw new Error('в файле нет массива записей');
     let added = 0;
     arr.forEach(en => { if (en && en.n && en.t) { LOG.push(en); added++; } });
-    save(); renderLog(); say('Добавлено записей: ' + added);
+    save(); renderLog(); say('Добавлено: ' + added);
   } catch (err) { say('Ошибка импорта: ' + err.message); }
 };
 renderLog();
 
-/* ============ СВАЙПЫ ============ */
+/* СВАЙПЫ */
 (function() {
     let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
         if (evt.touches.length !== 1) return;
         if (evt.target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
-        xDown = evt.touches[0].clientX;
-        yDown = evt.touches[0].clientY;
-        isSwiping = false;
+        xDown = evt.touches[0].clientX; yDown = evt.touches[0].clientY; isSwiping = false;
     }, { passive: true });
     document.addEventListener('touchmove', function(evt) {
         if (!xDown || !yDown || evt.touches.length !== 1) return;
         if (isSwiping) return;
-        const xUp = evt.touches[0].clientX;
-        const yUp = evt.touches[0].clientY;
+        const xUp = evt.touches[0].clientX, yUp = evt.touches[0].clientY;
         const xDiff = xDown - xUp, yDiff = yDown - yUp;
         if (Math.abs(xDiff) > Math.abs(yDiff)) {
             if (evt.cancelable) evt.preventDefault();
