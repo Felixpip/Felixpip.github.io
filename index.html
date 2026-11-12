@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff8e1;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#ffecb3;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#e3f2fd;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#bbdefb;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -72,11 +72,16 @@ th{background:var(--acs)}
 td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;cursor:pointer;line-height:1}
 .empty{color:var(--mut);text-align:center}
 #lg_s{margin-left:10px;color:var(--mut);font-size:.85rem}
-.photo-card{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card); margin-bottom:10px;}
+.photo-card{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card); margin-bottom:10px; position:relative;}
 .photo-card img{width:100%; display:block;}
 .photo-info{padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--mut); background:var(--bg);}
-.photo-del{background:none; border:0; color:var(--hot); font-size:1.4rem; cursor:pointer; padding:0 5px; line-height:1;}
+.photo-actions{display:flex; gap:8px;}
+.photo-share, .photo-del{background:none; border:0; font-size:1.2rem; cursor:pointer; padding:0 5px; line-height:1;}
+.photo-share{color:var(--ac);}
+.photo-del{color:var(--hot);}
 .hint-inline{color:var(--mut); font-size:0.75rem; margin-top:2px; font-weight:400; line-height:1.3;}
+.log-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+.log-actions .tool-btn{margin-top:0;}
 </style>
 </head>
 <body>
@@ -125,10 +130,14 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
   <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
   <div class="tw"><table><thead><tr><th>№</th><th>Время</th><th>Расчёт</th><th>Пометка</th><th>Исходные данные</th><th>Результат</th><th>Значение</th><th></th></tr></thead><tbody id="lg_b"></tbody><tfoot id="lg_f"></tfoot></table></div>
-  <button class="tool-btn" id="lg_c" type="button">Копировать таблицу</button>
-  <button class="tool-btn sec" id="lg_x" type="button">Очистить журнал</button>
-  <button class="tool-btn sec" id="lg_e" type="button">Экспорт JSON</button>
-  <button class="tool-btn sec" id="lg_i" type="button">Импорт JSON</button>
+  <div class="log-actions">
+    <button class="tool-btn" id="lg_c" type="button">Копировать таблицу</button>
+    <button class="tool-btn" id="lg_share" type="button">📤 Поделиться</button>
+    <button class="tool-btn sec" id="lg_mail" type="button">✉️ На почту</button>
+    <button class="tool-btn sec" id="lg_e" type="button">Экспорт JSON</button>
+    <button class="tool-btn sec" id="lg_i" type="button">Импорт JSON</button>
+    <button class="tool-btn sec" id="lg_x" type="button">Очистить</button>
+  </div>
   <input type="file" id="lg_fi" accept=".json,application/json" hidden>
   <span id="lg_s" role="status" aria-live="polite"></span>
 </div>
@@ -301,7 +310,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="pn_res"></div></section>
 
-<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы, оборудование и работы. Итог по объекту.</p>
+<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы, оборудование и работы.</p>
 
 <div class="gh" style="margin-top:0;">Материалы</div>
 <div class="grid">
@@ -368,14 +377,15 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="u_r"></div></section>
 
 <section id="t19" class="tool"><button class="back-btn">← Назад</button><h2>Фото объекта</h2><p class="hint">Снимки сохраняются в памяти приложения.</p>
-<div style="text-align:center; margin-bottom: 20px;">
+<div style="text-align:center; margin-bottom: 20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
     <input type="file" id="photo_input" accept="image/*" capture="environment" style="display:none">
-    <button class="tool-btn" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">📷 Сделать фото</button>
+    <button class="tool-btn" onclick="document.getElementById('photo_input').click()">📷 Сделать фото</button>
+    <button class="tool-btn sec" onclick="shareAllPhotos()">📤 Поделиться всеми</button>
 </div>
 <div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
 </section>
 
-<section id="t20" class="tool"><button class="back-btn">← Назад</button><h2>Увлажнители</h2><p class="hint">Подбор увлажнителя по балансу влаги в помещении.</p>
+<section id="t20" class="tool"><button class="back-btn">← Назад</button><h2>Увлажнители</h2><p class="hint">Подбор увлажнителя по балансу влаги.</p>
 <div class="grid">
 <label>Объём помещения, м³<input id="uh_v" type="number" value="200" min="0" inputmode="decimal"></label>
 <label>Кратность притока, 1/ч<input id="uh_n" type="number" value="2" step="0.1" min="0" inputmode="decimal"></label>
@@ -385,9 +395,9 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Людей в помещении, чел.<input id="uh_p" type="number" value="0" min="0" inputmode="numeric"></label>
 </div>
 <div class="res" id="uh_res"></div>
-<p class="note">W = L_приток · 1.2 · (d_цел − d_нар) / 1000 − W_людей. Люди выделяют ~50 г/ч влаги. Если расчёт даёт отрицательное значение — увлажнитель не нужен.</p></section>
+<p class="note">W = L · 1.2 · (d_цел − d_нар) / 1000 − W_людей. Люди выделяют ~50 г/ч. Отрицательное значение — увлажнитель не нужен.</p></section>
 
-<section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Расход и мощность завесы по проёму.</p>
+<section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Расход и мощность по проёму.</p>
 <div class="grid">
 <label>Ширина проёма, м<input id="tz_w" type="number" value="1.5" step="0.1" min="0.5" inputmode="decimal"></label>
 <label>Высота проёма, м<input id="tz_h" type="number" value="2.2" step="0.1" min="1" inputmode="decimal"></label>
@@ -395,27 +405,24 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>t снаружи, °C<input id="tz_tout" type="number" value="-20" inputmode="decimal"></label>
 <label>Скорость на срезе, м/с<input id="tz_v" type="number" value="6" step="0.5" min="3" inputmode="decimal"></label>
 </div>
-<div class="res" id="tz_res"></div>
-<p class="note">Рекомендуемая скорость на срезе: 5–8 м/с для боковых, 3–5 м/с для верхних завес.</p></section>
+<div class="res" id="tz_res"></div></section>
 
-<section id="t22" class="tool"><button class="back-btn">← Назад</button><h2>Чиллеры</h2><p class="hint">Расход воды и потребление электроэнергии.</p>
+<section id="t22" class="tool"><button class="back-btn">← Назад</button><h2>Чиллеры</h2><p class="hint">Расход воды и потребление.</p>
 <div class="grid">
 <label>Холодопроизводительность, кВт<input id="ch_q" type="number" value="50" min="0" inputmode="decimal"></label>
 <label>t подачи, °C<input id="ch_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
 <label>t обратки, °C<input id="ch_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
 <label>COP чиллера<input id="ch_cop" type="number" value="3" step="0.1" min="1" inputmode="decimal"></label>
 </div>
-<div class="res" id="ch_res"></div>
-<p class="note">Типичный COP: 2,8–3,5 для воздушных, 4,5–6 для водяных чиллеров.</p></section>
+<div class="res" id="ch_res"></div></section>
 
 <section id="t23" class="tool"><button class="back-btn">← Назад</button><h2>Рециркуляция</h2><p class="hint">Доля рециркуляции и экономия тепла.</p>
 <div class="grid">
 <label>Санитарная норма притока, м³/ч<input id="rc_san" type="number" value="1000" min="0" inputmode="decimal"></label>
 <label>Общий приток, м³/ч<input id="rc_total" type="number" value="3000" min="0" inputmode="decimal"></label>
-<label>Мощность нагрева (без рец.), кВт<input id="rc_heat" type="number" value="50" min="0" inputmode="decimal"></label>
+<label>Мощность нагрева, кВт<input id="rc_heat" type="number" value="50" min="0" inputmode="decimal"></label>
 </div>
-<div class="res" id="rc_res"></div>
-<p class="note">Доля рециркуляции ограничена: не более 60% для жилых, до 80% для производственных.</p></section>
+<div class="res" id="rc_res"></div></section>
 
 <section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Толщина изоляции и проверка конденсата.</p>
 <div class="grid">
@@ -425,8 +432,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Теплопроводность, Вт/(м·К)<input id="iz_lam" type="number" value="0.04" step="0.005" min="0.02" inputmode="decimal"></label>
 <label>Требуемое R, м²·К/Вт<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
 </div>
-<div class="res" id="iz_res"></div>
-<p class="note">R для изоляции по СП 61.13330: от 0,5 до 1,5 м²·К/Вт для труб в зависимости от t и диаметра.</p></section>
+<div class="res" id="iz_res"></div></section>
 
 <section id="t26" class="tool"><button class="back-btn">← Назад</button><h2>Теплопотери</h2><p class="hint">По ограждающим конструкциям.</p>
 <div class="grid">
@@ -449,7 +455,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="tool-btn sec" onclick="document.getElementById('backup_input').click()">📥 Восстановить из файла</button>
   <input type="file" id="backup_input" accept=".json" style="display:none;" onchange="restoreBackup(event)">
 </div>
-<p class="note">Файл содержит: журнал расчётов, фотографии, введённые значения полей. Восстановление перезапишет текущие данные.</p>
+<p class="note">Файл содержит: журнал, фотографии, введённые значения полей. Восстановление перезапишет текущие данные.</p>
 <div class="res" id="bk_res"></div></section>
 
 <footer style="text-align:center; margin-top:20px;">Расчёты справочные и не заменяют проектную документацию.</footer>
@@ -465,6 +471,7 @@ const box = (l, v, u, m) => `<div class="r${m ? ' main' : ''}"><small>${l}</smal
 const num = v => { const n = parseFloat(String(v).replace(/\s|\u00a0|\u202f/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
 const val = id => num($(id).value);
 
+/* ============ ТЕМА ============ */
 const themeBtn = $('theme');
 const THEME_LABEL = { auto: 'Тема', light: 'Светлая', dark: 'Тёмная' };
 let theme = 'auto';
@@ -481,6 +488,7 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
+/* ============ СПИСОК РАСЧЁТОВ ============ */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -519,6 +527,7 @@ const catNames = {
   serv: 'Сервис и Инструменты'
 };
 
+/* ============ НАВИГАЦИЯ ============ */
 function showView(viewName, catId) {
   document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
@@ -550,13 +559,12 @@ function showView(viewName, catId) {
       toolEl.classList.add('on');
       const t = tools.find(x => x.id === catId);
       if (t) document.querySelector(`.nav-btn[data-view="${t.cat}"]`).setAttribute('aria-selected', 'true');
-      setTimeout(() => {
-        toolEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
+      setTimeout(() => toolEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     }
   }
 }
 
+/* ============ АВТОСОХРАНЕНИЕ ============ */
 function restoreInputsForSection(section) {
   section.querySelectorAll('input[id], select[id]').forEach(el => {
     if (el.type === 'file') return;
@@ -621,6 +629,7 @@ document.querySelectorAll('.back-btn').forEach(btn => {
 
 $('btn-photo').onclick = () => openTool('t19');
 
+/* ============ РАСЧЁТЫ ============ */
 const rooms = [
   ['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Кухня (газ)', 8],
   ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3],
@@ -702,14 +711,12 @@ function calcB(){
   const Lm=W*1000/dd;
   const Lv=Lm/1.2;
   const tr=dewPoint(dIn);
-  
   const Lsupply = Lv;
   const Lexhaust = Lsupply * 0.85;
   const tAfterRec = t1 + (t - t1) * (eff/100);
   const Qheat = Lsupply * 1.2 * 1.005 * (tsup - tAfterRec) / 3600;
   const QheatNoRec = Lsupply * 1.2 * 1.005 * (tsup - t1) / 3600;
   const Qcool = Lsupply * 1.2 * (60 - 45) / 3600;
-
   let html=
   `<div class="gh">Влаговыделения и воздухообмен</div>`+
   box('Площадь зеркала',f(A,1),'м²')+
@@ -725,8 +732,7 @@ function calcB(){
   box('Нагрев (без рекуп.)',f(QheatNoRec,2),'кВт')+
   box('t после рекуператора',f(tAfterRec,1),'°C')+
   box('Охлаждение/осушение (лето)',f(Qcool,1),'кВт');
-
-  if(tr>t-1)html+=`<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха — конденсат.</p>`;
+  if(tr>t-1)html+=`<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха.</p>`;
   if(dd<0.5)html+=`<p class="note warn">Влагосодержание снаружи почти равно внутреннему.</p>`;
   $('b_res').innerHTML=html;
 }
@@ -745,9 +751,7 @@ function calcE() {
   const k = val('e_k');
   const zeta = val('e_zeta');
   const shape = $('e_shape').value;
-  
   let v = 0, d_eq = 0.01, area = 0;
-  
   if (shape === 'round') {
     const d = Math.max(val('e_d'), 10) / 1000;
     area = Math.PI * d * d / 4;
@@ -760,20 +764,15 @@ function calcE() {
     v = L / 3600 / area;
     d_eq = 2 * a * b / (a + b);
   }
-  
   const Pd = 0.6 * v * v;
   const nu = 1.5e-5;
   const Re = v * d_eq / nu;
   let lambda = 0;
-  if (Re > 0) {
-    lambda = 0.11 * Math.pow((k / 1000 / d_eq) + (68 / Re), 0.25);
-  }
-  
+  if (Re > 0) lambda = 0.11 * Math.pow((k / 1000 / d_eq) + (68 / Re), 0.25);
   const R = (lambda / d_eq) * Pd;
   const P_friction = R * len;
   const P_local = zeta * Pd;
   const P_total = P_friction + P_local;
-  
   $('e_res').innerHTML = 
     box('Скорость', f(v, 2), 'м/с', 1) +
     box('Динамическое давление', f(Pd, 1), 'Па') +
@@ -792,7 +791,6 @@ function calcO() {
   q = q * 1.15;
   const sections = Math.ceil(q / prad);
   const G = 0.86 * (q / 1000) / 20;
-  
   $('o_res').innerHTML = 
     box('Объём помещения', f(V, 1), 'м³') +
     box('Теплопотери с запасом', f(q / 1000, 2), 'кВт', 1) +
@@ -807,33 +805,25 @@ function calcG() {
   const len = val('g_len');
   const k = val('g_pipe');
   const zeta = val('g_zeta');
-  
   const G_m3h = 0.86 * Q / dt;
   const G_ls = G_m3h / 3.6;
-  
   let best_d = 15;
   for (let d of PIPE_STD) {
     const area = Math.PI * Math.pow(d / 1000, 2) / 4;
     const v = (G_m3h / 3600) / area;
     if (v <= 1.2) { best_d = d; break; }
   }
-  
   const area = Math.PI * Math.pow(best_d / 1000, 2) / 4;
   const v = (G_m3h / 3600) / area;
   const Pd = 1000 * v * v / 2;
-  
   const nu = 1e-6;
   const Re = v * (best_d / 1000) / nu;
   let lambda = 0;
-  if (Re > 0) {
-    lambda = 0.11 * Math.pow((k / 1000 / (best_d / 1000)) + (68 / Re), 0.25);
-  }
-  
+  if (Re > 0) lambda = 0.11 * Math.pow((k / 1000 / (best_d / 1000)) + (68 / Re), 0.25);
   const R = (lambda / (best_d / 1000)) * Pd;
   const P_friction = R * len;
   const P_local = zeta * Pd;
   const P_total = P_friction + P_local;
-  
   $('g_res').innerHTML = 
     box('Расход воды', f(G_m3h, 2), 'м³/ч', 1) +
     box('Расход воды', f(G_ls, 2), 'л/с') +
@@ -851,13 +841,10 @@ function calcFC() {
   const twr = val('fc_twr');
   const tas = val('fc_tas');
   const tar = val('fc_tar');
-
   const dtw = twr - tws;
   const dta = tar - tas;
-
   const G = dtw > 0 ? (0.86 * Q / dtw) : 0;
   const L = dta > 0 ? (Q * 3600) / (1.2 * 1.005 * dta) : 0;
-
   $('fc_res').innerHTML = 
     box('Расход воды', f(G, 2), 'м³/ч', 1) +
     box('Расход воды', f(G / 3.6, 2), 'л/с') +
@@ -872,48 +859,31 @@ function calcEL() {
   const cos = Math.max(val('el_cos'), 0.1);
   const mat = $('el_mat').value;
   const len = val('el_l');
-
   const U = ph === '3' ? 380 : 220;
   let I = 0;
-  
-  if (ph === '1') {
-    I = (P * 1000) / (U * cos);
-  } else {
-    I = (P * 1000) / (Math.sqrt(3) * U * cos);
-  }
-
+  if (ph === '1') I = (P * 1000) / (U * cos);
+  else I = (P * 1000) / (Math.sqrt(3) * U * cos);
   const breakers = [6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160];
   let breaker = breakers.find(b => b >= I * 1.25) || '>160';
-
   const cuTable = [{ s: 1.5, i: 19 }, { s: 2.5, i: 27 }, { s: 4, i: 38 }, { s: 6, i: 46 }, { s: 10, i: 70 }, { s: 16, i: 85 }, { s: 25, i: 115 }, { s: 35, i: 135 }];
   const alTable = [{ s: 2.5, i: 21 }, { s: 4, i: 28 }, { s: 6, i: 36 }, { s: 10, i: 50 }, { s: 16, i: 60 }, { s: 25, i: 85 }, { s: 35, i: 100 }];
-  
   const table = mat === 'cu' ? cuTable : alTable;
   let cable = table.find(c => c.i >= (breaker === '>160' ? 200 : breaker));
   let cableSize = cable ? cable.s : '—';
-
   let rho = mat === 'cu' ? 0.0175 : 0.028;
   let dU = 0;
   if (cableSize !== '—') {
-    if (ph === '1') {
-      dU = (2 * len * I * rho * cos) / cableSize;
-    } else {
-      dU = (Math.sqrt(3) * len * I * rho * cos) / cableSize;
-    }
+    if (ph === '1') dU = (2 * len * I * rho * cos) / cableSize;
+    else dU = (Math.sqrt(3) * len * I * rho * cos) / cableSize;
   }
   const dU_percent = (dU / U) * 100;
-
   let html = 
     box('Ток нагрузки', f(I, 1), 'А', 1) +
     box('Автомат (с запасом 25%)', breaker, 'А', 1) +
     box('Кабель (' + (mat === 'cu' ? 'Cu' : 'Al') + ')', cableSize, 'мм²', 1) +
     box('Падение напряжения', f(dU, 1), 'В') +
     box('Падение U (%)', f(dU_percent, 1), '%');
-
-  if (dU_percent > 5) {
-    html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
-  }
-  
+  if (dU_percent > 5) html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
   $('el_res').innerHTML = html;
 }
 
@@ -951,10 +921,8 @@ function calcWC() {
   const Q = val('wc_q'), tin = val('wc_tin'), tout = val('wc_tout'), tws = val('wc_tws'), twr = val('wc_twr');
   const dta = Math.max(tout - tin, 0.1);
   const dtw = Math.max(tws - twr, 0.1);
-  
   const G = (0.86 * Q) / dtw;
   const L = (Q * 3600) / (1.2 * 1.005 * dta);
-  
   $('wc_res').innerHTML = 
     box('Расход воды', f(G, 2), 'м³/ч', 1) +
     box('Расход воздуха', f(L, 0), 'м³/ч', 1) +
@@ -966,17 +934,12 @@ function calcPN() {
   const proj = Math.max(val('pn_l_proj'), 1);
   const fact = val('pn_l_fact');
   const tol = Math.max(val('pn_tol'), 0);
-  
   const dev = ((fact - proj) / proj) * 100;
   const isPass = Math.abs(dev) <= tol;
-  
   let html = 
     box('Отклонение', f(dev, 1), '%', 1) +
     box('Вердикт', isPass ? 'ГОДЕН' : 'НЕ ГОДЕН', '', 1);
-    
-  if (!isPass) {
-    html += `<p class="note warn">Отклонение превышает ${tol}%.</p>`;
-  }
+  if (!isPass) html += `<p class="note warn">Отклонение превышает ${tol}%.</p>`;
   $('pn_res').innerHTML = html;
 }
 
@@ -994,20 +957,16 @@ function calcSM() {
   const cost_ins = val('sm_ins') * val('sm_p_ins');
   const cost_grille = val('sm_grille') * val('sm_p_grille');
   const material_total = cost_duct + cost_fit + cost_ins + cost_grille;
-  
   const unit_price = val('sm_unit_price');
   const cond_cost = val('sm_cond_price') * val('sm_cond_qty');
   const fan_cost = val('sm_fan_price') * val('sm_fan_qty');
   const equipment_total = unit_price + cond_cost + fan_cost;
-  
   const cost_hw = material_total * (val('sm_hw') / 100);
   const cost_work = (material_total + equipment_total) * (val('sm_work') / 100);
   const cost_pnr = cost_work * (val('sm_pnr') / 100);
   const labor_total = cost_hw + cost_work + cost_pnr;
-  
   const grand_total = material_total + equipment_total + labor_total;
   const unit_label = $('sm_unit_type').selectedOptions[0].text;
-  
   $('sm_res').innerHTML = 
     `<div class="gh">Материалы</div>` +
     box('Воздуховоды', f(cost_duct, 0), 'руб.') +
@@ -1034,16 +993,13 @@ function calcOU() {
   const t = val('ou_t');
   const rh1 = val('ou_rh1');
   const rh2 = val('ou_rh2');
-  
   const Ps = Psat(t);
   const p1 = (rh1 / 100) * Ps;
   const p2 = (rh2 / 100) * Ps;
   const d1 = 622 * p1 / (101.325 - p1);
   const d2 = 622 * p2 / (101.325 - p2);
-  
   const M = L * 1.2;
   const W = M * (d1 - d2) / 1000;
-  
   let html = '';
   if (W > 0.01) {
     const litrDay = W * 24;
@@ -1079,43 +1035,35 @@ function fillU() {
 
 function calcU() {
   const c = +$('u_c').value, v = val('u_v'), i = +$('u_u').value;
-  
   if (c === 3) {
     let celsius;
     if (i === 0) celsius = v;
     else if (i === 1) celsius = (v - 32) * 5 / 9;
     else celsius = v - 273.15;
-    
     const results = [celsius, celsius * 9 / 5 + 32, celsius + 273.15];
     $('u_r').innerHTML = U[3].map((u, j) => box(u[0], f(results[j], 2), '', j === i)).join('');
     return;
   }
-  
   const base = v * U[c][i][1];
   $('u_r').innerHTML = U[c].map((u, j) => box(u[0], f(base / u[1], 4), '', j === i)).join('');
 }
 
 function calcUH() {
   const V = val('uh_v'), n = val('uh_n'), t = val('uh_t'), rh2 = val('uh_rh2'), rh1 = val('uh_rh1'), p = val('uh_p');
-  
   const L = V * n;
   const Ps = Psat(t);
   const p2 = (rh2 / 100) * Ps;
   const p1 = (rh1 / 100) * Ps;
   const d2 = 622 * p2 / (101.325 - p2);
   const d1 = 622 * p1 / (101.325 - p1);
-  
   const W_vent = L * 1.2 * (d2 - d1) / 1000;
   const W_people = p * 0.05;
-  
   const W_need = W_vent - W_people;
-  
   let html = 
     box('Расход притока', f(L, 0), 'м³/ч') +
     box('Влагосодержание наружного', f(d1, 1), 'г/кг') +
     box('Влагосодержание целевое', f(d2, 1), 'г/кг') +
     box('Влага от людей', f(W_people, 2), 'кг/ч');
-  
   if (W_need > 0.01) {
     html += 
       box('Требуется добавить влагу', f(W_need, 2), 'кг/ч', 1) +
@@ -1123,7 +1071,6 @@ function calcUH() {
   } else {
     html += box('Увлажнитель не требуется', '0', 'кг/ч', 1);
   }
-  
   $('uh_res').innerHTML = html;
 }
 
@@ -1169,23 +1116,17 @@ function calcIZ() {
   const tin = val('iz_tin'), tout = val('iz_tout');
   const lam = Math.max(val('iz_lam'), 0.02);
   const Rreq = Math.max(val('iz_R'), 0.1);
-  
   const expArg = Math.min(2 * lam * Rreq / d, 5);
   const delta = d / 2 * (Math.exp(expArg) - 1);
-  
   const R_out = 0.1;
   const t_surf = tout + (tin - tout) * R_out / (Rreq + R_out);
   const tr_out = dewPoint(dFrom(tout, 70));
-  
   let html = 
     box('Толщина изоляции', f(delta * 1000, 0), 'мм', 1) +
     box('Плоская (проверка)', f(lam * Rreq * 1000, 0), 'мм') +
     box('t поверхности', f(t_surf, 1), '°C') +
     box('t точки росы', f(tr_out, 1), '°C');
-  
-  if (t_surf < tr_out) {
-    html += `<p class="note warn">t поверхности ниже точки росы — возможна конденсация!</p>`;
-  }
+  if (t_surf < tr_out) html += `<p class="note warn">t поверхности ниже точки росы — возможна конденсация!</p>`;
   $('iz_res').innerHTML = html;
 }
 
@@ -1196,14 +1137,12 @@ function calcTL() {
   const sc = val('tl_sc'), rc = Math.max(val('tl_rc'), 0.1);
   const tin = val('tl_tin'), tout = val('tl_tout');
   const dt = tin - tout;
-  
   const qw = sw * dt / rw;
   const qo = so * dt / ro;
   const qf = sf * dt / rf;
   const qc = sc * dt / rc;
   const total = qw + qo + qf + qc;
   const withMargin = total * 1.15;
-  
   $('tl_res').innerHTML = 
     box('Стены', f(qw / 1000, 2), 'кВт') +
     box('Окна', f(qo / 1000, 2), 'кВт') +
@@ -1212,13 +1151,12 @@ function calcTL() {
     box('Всего с запасом 15%', f(withMargin / 1000, 2), 'кВт', 1);
 }
 
+/* ============ РЕЗЕРВНОЕ КОПИРОВАНИЕ ============ */
 window.backupAll = function() {
   const data = { version: 1, exportedAt: new Date().toISOString() };
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.startsWith('hvac')) {
-      data[key] = localStorage.getItem(key);
-    }
+    if (key && key.startsWith('hvac')) data[key] = localStorage.getItem(key);
   }
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
@@ -1252,6 +1190,7 @@ window.restoreBackup = function(event) {
   event.target.value = '';
 };
 
+/* ============ ФОТО ============ */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -1263,8 +1202,7 @@ $('photo_input').addEventListener('change', function(e) {
         const img = new Image();
         img.onload = function() {
             const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
+            let width = img.width, height = img.height;
             const max = 800;
             if (width > height && width > max) { height *= max / width; width = max; }
             else if (height > max) { width *= max / height; height = max; }
@@ -1272,7 +1210,6 @@ $('photo_input').addEventListener('change', function(e) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
             const photo = {
                 id: Date.now(),
                 date: new Date().toLocaleString('ru-RU', {dateStyle:'short', timeStyle:'short'}),
@@ -1304,7 +1241,10 @@ function renderPhotos() {
             <img src="${p.data}" alt="Фото">
             <div class="photo-info">
                 <span>${p.date}</span>
-                <button class="photo-del" onclick="delPhoto(${p.id})" aria-label="Удалить">&times;</button>
+                <div class="photo-actions">
+                    <button class="photo-share" onclick="sharePhoto(${p.id})" aria-label="Поделиться">📤</button>
+                    <button class="photo-del" onclick="delPhoto(${p.id})" aria-label="Удалить">&times;</button>
+                </div>
             </div>
         </div>
     `).join('');
@@ -1317,6 +1257,115 @@ window.delPhoto = function(id) {
     renderPhotos();
 };
 
+/* ============ SHARE: УТИЛИТЫ ============ */
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
+  } catch (e) { return false; }
+}
+
+function dataURLtoFile(dataUrl, filename) {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+  return new File([u8arr], filename, { type: mime });
+}
+
+function getLogAsText() {
+  if (!LOG.length) return 'Журнал расчётов пуст.';
+  const header = '№\tВремя\tРасчёт\tПометка\tИсходные данные\tРезультат\tЗначение';
+  const rows = LOG.map((r, i) => 
+    [i + 1, r.t, r.n, r.o || '', r.i, r.r, r.v != null ? f(r.v, 2) + ' ' + r.u : ''].join('\t')
+  );
+  const objectName = $('lg_o').value ? 'Объект: ' + $('lg_o').value + '\n\n' : '';
+  return objectName + header + '\n' + rows.join('\n');
+}
+
+/* ============ SHARE: ТЕКСТ ============ */
+async function shareLogText() {
+  const text = getLogAsText();
+  const title = 'Журнал ОВиК ' + new Date().toLocaleDateString('ru-RU');
+  
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: title, text: text });
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+  
+  const ok = await copyText(text);
+  if (ok) alert('Системное меню недоступно.\n\nТекст журнала скопирован в буфер. Вставьте его в Telegram, WhatsApp или почту вручную.');
+  else alert('Не удалось поделиться. Попробуйте кнопку «Копировать таблицу».');
+}
+
+function shareLogEmail() {
+  const text = getLogAsText();
+  const subject = 'Журнал ОВиК ' + new Date().toLocaleDateString('ru-RU');
+  const url = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text);
+  window.location.href = url;
+}
+
+/* ============ SHARE: ФОТО ============ */
+async function sharePhoto(id) {
+  const photo = PHOTOS.find(p => p.id === id);
+  if (!photo) return;
+  
+  const filename = 'hvac-photo-' + photo.id + '.jpg';
+  
+  if (navigator.share && navigator.canShare) {
+    try {
+      const file = dataURLtoFile(photo.data, filename);
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Фото объекта' });
+        return;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+  
+  const a = document.createElement('a');
+  a.href = photo.data;
+  a.download = filename;
+  a.click();
+  setTimeout(() => alert('Системное меню недоступно. Фото сохранено в папку «Загрузки».'), 300);
+}
+
+async function shareAllPhotos() {
+  if (!PHOTOS.length) { alert('Нет фотографий'); return; }
+  
+  if (navigator.share && navigator.canShare) {
+    try {
+      const files = PHOTOS.slice(0, 10).map(p => dataURLtoFile(p.data, 'hvac-photo-' + p.id + '.jpg'));
+      if (navigator.canShare({ files: files })) {
+        await navigator.share({ files: files, title: 'Фото объекта (' + files.length + ')' });
+        return;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+  
+  for (const p of PHOTOS) {
+    const a = document.createElement('a');
+    a.href = p.data;
+    a.download = 'hvac-photo-' + p.id + '.jpg';
+    a.click();
+    await new Promise(r => setTimeout(r, 150));
+  }
+  alert('Системное меню недоступно. Все фото сохранены в папку «Загрузки».');
+}
+
+/* ============ ПРИВЯЗКА ============ */
 function bind(ids, fn) { ids.forEach(i => { const el = $(i); if (el) { el.addEventListener('input', fn); el.addEventListener('change', fn); } }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
 bind(['d_l', 'd_v', 'd_d', 'd_w', 'd_h', 'd_n'], calcD);
@@ -1352,6 +1401,7 @@ $('sm_unit_type').addEventListener('change', updateUnitHint);
 
 calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcTL(); fillU(); renderPhotos(); updateUnitHint();
 
+/* ============ ЖУРНАЛ ============ */
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
 const save = () => { try { localStorage.setItem('hvaclog', JSON.stringify(LOG)); } catch (e) {} };
@@ -1423,30 +1473,25 @@ document.querySelectorAll('section.tool').forEach((s, idx) => {
   s.appendChild(b);
 });
 
-async function copyText(t) {
-  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
-  try {
-    const ta = document.createElement('textarea');
-    ta.value = t; ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    const ok = document.execCommand('copy'); ta.remove(); return ok;
-  } catch (e) { return false; }
-}
 $('lg_c').onclick = async () => {
   if (!LOG.length) { say('Журнал пуст'); return; }
   const tsv = ['№\tВремя\tРасчёт\tПометка\tИсходные данные\tРезультат\tЗначение']
     .concat(LOG.map((r, i) => [i + 1, r.t, r.n, r.o, r.i, r.r, r.v != null ? f(r.v, 2) + ' ' + r.u : ''].join('\t'))).join('\n');
   say(await copyText(tsv) ? 'Скопировано' : 'Не удалось скопировать');
 };
+
+$('lg_share').onclick = shareLogText;
+$('lg_mail').onclick = shareLogEmail;
+
 let armed = 0, armTimer = 0;
 $('lg_x').onclick = () => {
   if (!armed) {
     armed = 1; $('lg_x').textContent = 'Точно очистить?';
     clearTimeout(armTimer);
-    armTimer = setTimeout(() => { armed = 0; $('lg_x').textContent = 'Очистить журнал'; }, 3000);
+    armTimer = setTimeout(() => { armed = 0; $('lg_x').textContent = 'Очистить'; }, 3000);
   } else {
     clearTimeout(armTimer); armed = 0; LOG = []; save(); renderLog();
-    $('lg_x').textContent = 'Очистить журнал'; say('Журнал очищен');
+    $('lg_x').textContent = 'Очистить'; say('Журнал очищен');
   }
 };
 $('lg_e').onclick = () => {
@@ -1475,6 +1520,7 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
+/* ============ СВАЙПЫ ============ */
 (function() {
     let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
