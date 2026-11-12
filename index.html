@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* НОВЫЙ ЦВЕТ ФОНА: светло-серый */
-:root{--bg:#f5f5f5;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#e0e0e0;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* ЦВЕТ ФОНА: светло-лавандовый */
+:root{--bg:#ede7f6;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#d1c4e9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -35,8 +35,6 @@ nav button{flex:none;border:1px solid var(--line);background:var(--card);color:v
 nav button:hover{border-color:var(--ac)}
 nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
-
-/* Стили для дашборда (Стартовый экран) */
 .home-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top:10px;}
 .home-btn{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 10px; text-align:center; cursor:pointer; transition:transform .1s, box-shadow .1s; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink); font-weight:700;}
 .home-btn:hover{transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.05); border-color:var(--ac);}
@@ -45,12 +43,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .cat-list{display:flex; flex-direction:column; gap:10px; margin-top:10px;}
 .cat-item{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:15px; cursor:pointer; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
 .cat-item:hover{border-color:var(--ac);}
-
-/* Стили для инструментов */
 section.tool{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;touch-action:pan-y; margin-top:10px;}
 section.tool.on{display:block;animation:fade .18s ease-out;}
 .back-btn{display:inline-block; margin-bottom:12px; background:none; border:none; color:var(--ac); font-weight:700; cursor:pointer; padding:0; font-size:0.95rem;}
-
 @keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
 h2{margin:0 0 4px;font-size:1.25rem}
 .hint{color:var(--mut);font-size:.9rem;margin:0 0 14px}
@@ -103,10 +98,11 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="nav-btn" data-view="vent">Вентиляция</button>
   <button class="nav-btn" data-view="heat">Тепло/Холод</button>
   <button class="nav-btn" data-view="elec">Электрика</button>
+  <button class="nav-btn" data-view="smeta">Смета</button>
+  <button class="nav-btn" data-view="serv">Сервис</button>
   <button class="nav-btn" data-view="log">Журнал</button>
 </nav>
 
-<!-- СТАРТОВЫЙ ЭКРАН (ДАШБОРД) -->
 <div id="view-home" class="view on">
   <h2>Частые расчёты</h2>
   <div class="home-grid">
@@ -116,16 +112,16 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <div class="home-btn" data-tool="t3"><span class="icon">🔥</span><span class="title">Нагрев</span></div>
     <div class="home-btn" data-tool="t7"><span class="icon">🏠</span><span class="title">Отопление</span></div>
     <div class="home-btn" data-tool="t8"><span class="icon">💧</span><span class="title">Гидравлика</span></div>
+    <div class="home-btn" data-tool="t16"><span class="icon">💰</span><span class="title">Смета</span></div>
+    <div class="home-btn" data-tool="t19"><span class="icon">📷</span><span class="title">Фото</span></div>
   </div>
 </div>
 
-<!-- КАТЕГОРИИ -->
 <div id="view-cat" class="view">
   <h2 id="cat-title">Категория</h2>
   <div class="cat-list" id="cat-list"></div>
 </div>
 
-<!-- ЖУРНАЛ -->
 <div id="log-view">
   <h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
   <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
@@ -138,7 +134,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <span id="lg_s" role="status" aria-live="polite"></span>
 </div>
 
-<!-- ИНСТРУМЕНТЫ (все t0...t19 скрыты по умолчанию) -->
 <section id="t0" class="tool"><button class="back-btn">← Назад</button><h2>Воздухообмен</h2><p class="hint">Расход по кратности и по числу людей.</p>
 <div class="grid">
 <label>Площадь, м²<input id="a_s" type="number" value="20" min="0" inputmode="decimal"></label>
@@ -391,13 +386,19 @@ const tools = [
   { id: 't12', name: 'Шумоглушители', cat: 'vent', icon: '🔇' },
   { id: 't13', name: 'Фильтры', cat: 'vent', icon: '🫧' },
   { id: 't14', name: 'Вод. калориферы', cat: 'vent', icon: '♨️' },
-  { id: 't15', name: 'Пусконаладка', cat: 'elec', icon: '🔧' },
-  { id: 't16', name: 'Смета', cat: 'elec', icon: '💰' },
+  { id: 't15', name: 'Пусконаладка', cat: 'serv', icon: '🔧' },
+  { id: 't16', name: 'Смета', cat: 'smeta', icon: '💰' },
   { id: 't17', name: 'Осушители', cat: 'vent', icon: '💦' },
-  { id: 't18', name: 'Конвертер', cat: 'elec', icon: '🔄' }
+  { id: 't18', name: 'Конвертер', cat: 'serv', icon: '🔄' }
 ];
 
-const catNames = { vent: 'Вентиляция и Воздух', heat: 'Тепло и Холод', elec: 'Электрика и Смета' };
+const catNames = {
+  vent: 'Вентиляция и Воздух',
+  heat: 'Тепло и Холод',
+  elec: 'Электрика',
+  smeta: 'Смета',
+  serv: 'Сервис и Инструменты'
+};
 
 function showView(viewName, catId) {
   document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
@@ -426,7 +427,7 @@ function showView(viewName, catId) {
       const t = tools.find(x => x.id === catId);
       if (t) document.querySelector(`.nav-btn[data-view="${t.cat}"]`).setAttribute('aria-selected', 'true');
       
-      // Прокручиваем к самому инструменту (к форме ввода)
+      // Прокручиваем вниз к самому инструменту (к полям ввода)
       setTimeout(() => {
         toolEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
@@ -438,7 +439,6 @@ window.openTool = function(id) {
   showView('tool', id);
 };
 
-// Привязка кнопок навигации
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.onclick = () => {
     const v = btn.getAttribute('data-view');
@@ -447,12 +447,10 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   };
 });
 
-// Привязка кнопок дашборда
 document.querySelectorAll('.home-btn').forEach(btn => {
   btn.onclick = () => openTool(btn.getAttribute('data-tool'));
 });
 
-// Привязка кнопок "Назад" в инструментах
 document.querySelectorAll('.back-btn').forEach(btn => {
   btn.onclick = () => {
     const toolId = btn.closest('section').id;
@@ -461,17 +459,17 @@ document.querySelectorAll('.back-btn').forEach(btn => {
   };
 });
 
-/* 1. воздухообмен */
+/* РАСЧЁТЫ */
 const rooms = [['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3], ['Ресторан, зал', 8], ['Спортзал', 5], ['Мастерская', 4], ['Склад', 1]];
 $('a_k').innerHTML = rooms.map(r => `<option value="${r[1]}">${r[0]} — ${r[1]} 1/ч</option>`).join('');
 $('a_k').value = 1;
+
 function calcA() {
   const V = val('a_s') * val('a_h'), k = val('a_k'), n = val('a_n'), p = val('a_p');
   const L1 = V * k, L2 = n * p, L = Math.max(L1, L2);
   $('a_r').innerHTML = box('Объём', f(V), 'м³') + box('По кратности', f(L1, 0), 'м³/ч') + box('По людям', f(L2, 0), 'м³/ч') + box('Требуемый расход', f(L, 0), 'м³/ч', 1) + box('Расход', f(L / 3.6, 0), 'л/с');
 }
 
-/* 2. подбор */
 const STD = [100, 125, 160, 200, 250, 315, 400, 500, 630, 710, 800, 1000, 1250];
 function calcD() {
   const L = val('d_l'), v = Math.max(val('d_v'), 0.1);
@@ -486,11 +484,10 @@ function calcD() {
   const de = 1.3 * Math.pow(w * hh, 0.625) / Math.pow(w + hh, 0.25);
   const rs = w + '×' + hh;
   let html = `<div class="gh">Подбор по скорости ${f(v)} м/с</div>` + box('Площадь сечения', f(A * 1e4, 0), 'см²') + box('Расчётный Ø', f(D, 0), 'мм') + box('Стандартный Ø', s ? s : '>' + maxStd, 'мм', 1) + box('Скорость в нём', f(vf), 'м/с') + box('Высота при ширине ' + w + ' мм', f(Math.ceil(h / 10) * 10, 0), 'мм') + box('Динамическое давление', f(0.6 * v * v), 'Па') + `<div class="gh">Круглый Ø${f(dd, 0)} мм</div>` + box('Ø' + dd + ': скорость', f(vr), 'м/с', 1) + box('Ø' + dd + ': сечение', f(ar * 1e4, 0), 'см²') + box('Ø' + dd + ': дин. давление', f(0.6 * vr * vr), 'Па') + box('Ø' + dd + ': площадь поверхности', f(Math.PI * dd / 1000 * ln, 2), 'м²') + `<div class="gh">Прямоугольный ${rs} мм</div>` + box(rs + ': скорость', f(vw), 'м/с', 1) + box(rs + ': сечение', f(aw * 1e4, 0), 'см²') + box(rs + ': экв. Ø по расходу', f(de, 0), 'мм', 1) + box(rs + ': экв. Ø по скорости', f(2 * w * hh / (w + hh), 0), 'мм') + box(rs + ': дин. давление', f(0.6 * vw * vw), 'Па') + box(rs + ': площадь поверхности', f(2 * (w + hh) / 1000 * ln, 2), 'м²');
-  if (!s) html += `<p class="note warn">Расчётный Ø ${f(D, 0)} мм больше типоряда — примите несколько параллельных веток или прямоугольное сечение.</p>`;
+  if (!s) html += `<p class="note warn">Расчётный Ø ${f(D, 0)} мм больше типоряда.</p>`;
   $('d_r').innerHTML = html;
 }
 
-/* 3. кондиционирование */
 const AC = [[2.0, '07'], [2.6, '09'], [3.5, '12'], [5.3, '18'], [7.0, '24'], [8.8, '30'], [10.5, '36'], [14, '48']];
 function calcC() {
   const S = val('c_s'), h = val('c_h'), q = val('c_q'), n = val('c_n'), e = val('c_e'), r = val('c_r');
@@ -499,14 +496,12 @@ function calcC() {
   $('c_r2').innerHTML = box('Теплопритоки', f(W / 1000, 2), 'кВт') + box('С запасом', f(Q, 2), 'кВт', 1) + box('В BTU/ч', f(Q * 3412, 0), '') + box('Типоразмер', m ? m[1] + ' (' + m[0] + ' кВт)' : 'мульти-/полупром.', '', 1) + box('Удельно', f(S > 0 ? W / S : NaN, 0), 'Вт/м²');
 }
 
-/* 4. нагрев */
 function calcH() {
   const L = val('h_l'), a = val('h_t1'), b = val('h_t2'), dt = b - a;
   const Q = L * 1.2 * 1.005 * dt / 3600;
   $('h_r').innerHTML = box('Δt', f(dt, 0), '°C') + box('Мощность', f(Q, 2), 'кВт', 1) + box('Ток, 1 фаза 230 В', f(Q * 1000 / 230), 'А') + box('Ток, 3 фазы 400 В', f(Q * 1000 / (Math.sqrt(3) * 400)), 'А') + box('Ккал/ч', f(Q * 860, 0), '');
 }
 
-/* 5. единицы */
 const U = [[['м³/ч', 1], ['л/с', 3.6], ['м³/с', 3600], ['CFM', 1.699011]], [['Вт', 1], ['кВт', 1000], ['BTU/ч', 0.293071], ['ккал/ч', 1.163], ['ton (TR)', 3516.85]], [['Па', 1], ['кПа', 1000], ['мм вод. ст.', 9.80665], ['бар', 100000], ['inH₂O', 249.089]]];
 function fillU() {
   const c = +$('u_c').value;
@@ -519,7 +514,6 @@ function calcU() {
   $('u_r').innerHTML = U[c].map((u, j) => box(u[0], f(base / u[1], 4), '', j === i)).join('');
 }
 
-/* 6. зонт */
 function calcZ() {
   const a = val('z_a') / 1000, b = val('z_b') / 1000, h = val('z_h') / 1000;
   const e = val('z_e') / 1000, t = val('z_t'), v = val('z_v'), r = val('z_r');
@@ -533,11 +527,10 @@ function calcZ() {
   const s = STD.find(x => x >= D), sOut = s || STD[STD.length - 1];
   const vp = L / 3600 / (Math.PI * Math.pow(sOut / 1000, 2) / 4);
   let html = box('Размер зонта', f(A * 1000, 0) + ' × ' + f(B * 1000, 0), 'мм') + box('Открытый периметр', f(P, 2), 'м') + box('Расход расчётный', f(L0, 0), 'м³/ч') + box('Расход с запасом', f(L, 0), 'м³/ч', 1) + box('Скорость в плоскости зонта', f(vf, 2), 'м/с') + box('Расчётный Ø патрубка', f(D, 0), 'мм') + box('Стандартный Ø патрубка', s ? s : '>' + STD[STD.length - 1], 'мм', 1) + box('Скорость в нём', f(vp), 'м/с');
-  if (!s) html += `<p class="note warn">Расчётный Ø патрубка больше типоряда — примите два патрубка или прямоугольное сечение.</p>`;
+  if (!s) html += `<p class="note warn">Расчётный Ø патрубка больше типоряда.</p>`;
   $('z_res').innerHTML = html;
 }
 
-/* 7. бассейн */
 function Psat(t){if(t>=0)return 0.6108*Math.exp(17.27*t/(t+237.3));return 0.6108*Math.exp(21.875*t/(t+265.5));}
 function dFrom(t,rh){const Ps=Psat(t),Pp=Math.max(rh,0)/100*Ps;return 622*Pp/(101.325-Pp);}
 function dewPoint(d){const Pp=d*101.325/(622+d);if(Pp<=0.01)return -60;const a=Math.log(Pp/0.6108);return 237.3*a/(17.27-a);}
@@ -578,12 +571,11 @@ function calcB(){
   box('t после рекуператора',f(tAfterRec,1),'°C')+
   box('Охлаждение/осушение (лето)',f(Qcool,1),'кВт');
 
-  if(tr>t-1)html+=`<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха — конденсат на холодных поверхностях. Снизьте влажность или поднимите температуру.</p>`;
-  if(dd<0.5)html+=`<p class="note warn">Влагосодержание снаружи почти равно внутреннему — расчёт по влаге даёт огромный расход. Принимайте воздухообмен по санитарным нормам и осушайте воздух.</p>`;
+  if(tr>t-1)html+=`<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха — конденсат.</p>`;
+  if(dd<0.5)html+=`<p class="note warn">Влагосодержание снаружи почти равно внутреннему.</p>`;
   $('b_res').innerHTML=html;
 }
 
-/* 8. аэродинамика */
 function toggleShapeE() {
   const isRound = $('e_shape').value === 'round';
   $('lbl_e_d').style.display = isRound ? 'flex' : 'none';
@@ -637,7 +629,6 @@ function calcE() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
-/* 9. Отопление */
 function calcO() {
   const s = val('o_s'), h = val('o_h'), ins = val('o_ins'), tin = val('o_tin'), tout = val('o_tout'), prad = val('o_rad');
   const V = s * h;
@@ -654,7 +645,6 @@ function calcO() {
     box('Расход теплоносителя', f(G, 2), 'м³/ч');
 }
 
-/* 10. Гидродинамика */
 const PIPE_STD = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200];
 function calcG() {
   const Q = val('g_q');
@@ -666,18 +656,11 @@ function calcG() {
   const G_m3h = 0.86 * Q / dt;
   const G_ls = G_m3h / 3.6;
   
-  let target_v = 0.8;
   let best_d = 15;
-  let best_v = 0;
-  
   for (let d of PIPE_STD) {
     const area = Math.PI * Math.pow(d / 1000, 2) / 4;
     const v = (G_m3h / 3600) / area;
-    if (v <= 1.2) {
-      best_d = d;
-      best_v = v;
-      break;
-    }
+    if (v <= 1.2) { best_d = d; break; }
   }
   
   const area = Math.PI * Math.pow(best_d / 1000, 2) / 4;
@@ -707,7 +690,6 @@ function calcG() {
     box('Суммарные потери', f(P_total, 0), 'Па', 1);
 }
 
-/* 11. Фанкойлы */
 function calcFC() {
   const Q = val('fc_q');
   const tws = val('fc_tws');
@@ -729,7 +711,6 @@ function calcFC() {
     box('Перепад t воздуха', f(dta, 1), '°C');
 }
 
-/* 12. Электрика */
 function calcEL() {
   const P = val('el_p');
   const ph = $('el_ph').value;
@@ -775,13 +756,12 @@ function calcEL() {
     box('Падение U (%)', f(dU_percent, 1), '%');
 
   if (dU_percent > 5) {
-    html += `<p class="note warn">Падение напряжения больше 5%. Увеличьте сечение кабеля или уменьшите длину линии.</p>`;
+    html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
   }
   
   $('el_res').innerHTML = html;
 }
 
-/* 13. Воздухораспределители */
 function calcVD() {
   const L = val('vd_l'), w = Math.max(val('vd_w'), 10) / 1000, h = Math.max(val('vd_h'), 10) / 1000;
   const k = Math.max(val('vd_k'), 10), zeta = val('vd_zeta');
@@ -797,15 +777,12 @@ function calcVD() {
     box('Потери давления', f(dP, 0), 'Па', 1);
 }
 
-/* 14. Шумоглушители */
 function calcSL() {
   const l1 = val('sl_l1'), l2 = val('sl_l2'), att = val('sl_att');
   const req = l1 - l2 - att;
-  $('sl_res').innerHTML = 
-    box('Требуемое затухание', f(req, 0), 'дБ', 1);
+  $('sl_res').innerHTML = box('Требуемое затухание', f(req, 0), 'дБ', 1);
 }
 
-/* 15. Фильтры */
 function calcFL() {
   const L = val('fl_l'), v = val('fl_c'), dp = val('fl_dp');
   const A = L / 3600 / v;
@@ -815,7 +792,6 @@ function calcFL() {
     box('Сопротивление', dp, 'Па');
 }
 
-/* 16. Водяные калориферы */
 function calcWC() {
   const Q = val('wc_q'), tin = val('wc_tin'), tout = val('wc_tout'), tws = val('wc_tws'), twr = val('wc_twr');
   const dta = Math.max(tout - tin, 0.1);
@@ -831,7 +807,6 @@ function calcWC() {
     box('Перепад t воды', f(dtw, 1), '°C');
 }
 
-/* 17. Пусконаладка */
 function calcPN() {
   const proj = Math.max(val('pn_l_proj'), 1);
   const fact = val('pn_l_fact');
@@ -845,12 +820,11 @@ function calcPN() {
     box('Вердикт', isPass ? 'ГОДЕН' : 'НЕ ГОДЕН', '', 1);
     
   if (!isPass) {
-    html += `<p class="note warn">Отклонение превышает допустимое (${tol}%). Требуется регулировка воздуховодов или заслонок.</p>`;
+    html += `<p class="note warn">Отклонение превышает ${tol}%.</p>`;
   }
   $('pn_res').innerHTML = html;
 }
 
-/* 18. Смета (ОБНОВЛЕНО) */
 function calcSM() {
   const duct = val('sm_duct'), p_duct = val('sm_p_duct');
   const grille = val('sm_grille'), p_grille = val('sm_p_grille');
@@ -871,7 +845,6 @@ function calcSM() {
     box('ИТОГО', f(total, 0), 'руб.', 1);
 }
 
-/* 19. Осушители / Увлажнители (ПОДБОР ОБОРУДОВАНИЯ) */
 function calcOU() {
   const L = val('ou_l');
   const t = val('ou_t');
@@ -885,7 +858,7 @@ function calcOU() {
   const d2 = 622 * p2 / (101.325 - p2);
   
   const M = L * 1.2;
-  const W = M * (d1 - d2) / 1000; // кг/ч
+  const W = M * (d1 - d2) / 1000;
   
   let html = '';
   if (W > 0.01) {
@@ -904,7 +877,6 @@ function calcOU() {
   $('ou_res').innerHTML = html;
 }
 
-/* 20. ФОТО */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -936,7 +908,7 @@ $('photo_input').addEventListener('change', function(e) {
                 localStorage.setItem('hvac_photos', JSON.stringify(PHOTOS));
                 renderPhotos();
             } catch(err) {
-                alert('Не хватает памяти для сохранения фото. Удалите старые снимки.');
+                alert('Не хватает памяти для сохранения фото.');
             }
         };
         img.src = ev.target.result;
@@ -969,7 +941,6 @@ window.delPhoto = function(id) {
     renderPhotos();
 };
 
-/* привязка */
 function bind(ids, fn) { ids.forEach(i => { const el = $(i); el.addEventListener('input', fn); el.addEventListener('change', fn); }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
 bind(['d_l', 'd_v', 'd_d', 'd_w', 'd_h', 'd_n'], calcD);
@@ -996,7 +967,6 @@ bind(['u_v', 'u_u'], calcU);
 
 calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcO(); calcG(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); fillU(); renderPhotos();
 
-/* журнал */
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
 const save = () => { try { localStorage.setItem('hvaclog', JSON.stringify(LOG)); } catch (e) {} };
@@ -1106,62 +1076,44 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
-/* Свайпы (работают только между инструментами) */
 (function() {
-    let xDown = null;
-    let yDown = null;
-    let isSwiping = false;
-
+    let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
         if (evt.touches.length !== 1) return;
         if (evt.target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
-        
         xDown = evt.touches[0].clientX;
         yDown = evt.touches[0].clientY;
         isSwiping = false;
     }, { passive: true });
-
     document.addEventListener('touchmove', function(evt) {
         if (!xDown || !yDown || evt.touches.length !== 1) return;
         if (isSwiping) return;
-        
-        let xUp = evt.touches[0].clientX;
-        let yUp = evt.touches[0].clientY;
-        let xDiff = xDown - xUp;
-        let yDiff = yDown - yUp;
-
+        const xUp = evt.touches[0].clientX;
+        const yUp = evt.touches[0].clientY;
+        const xDiff = xDown - xUp, yDiff = yDown - yUp;
         if (Math.abs(xDiff) > Math.abs(yDiff)) {
             if (evt.cancelable) evt.preventDefault();
-            
             if (Math.abs(xDiff) > 40) {
                 isSwiping = true;
                 const currentTool = document.querySelector('section.tool.on');
                 if (!currentTool) return;
-                
                 const curIndex = tools.findIndex(x => x.id === currentTool.id);
                 if (curIndex < 0) return;
-                
                 const next = curIndex + (xDiff > 0 ? 1 : -1);
-                if (next >= 0 && next < tools.length) {
-                    openTool(tools[next].id);
-                }
+                if (next >= 0 && next < tools.length) openTool(tools[next].id);
             }
         }
     }, { passive: false });
-
     document.addEventListener('touchend', function() {
-        xDown = null;
-        yDown = null;
+        xDown = null; yDown = null;
         setTimeout(() => { isSwiping = false; }, 100);
     }, { passive: true });
 })();
 
-/* Старт */
 showView('home');
 
 })();
 
-/* PWA: обновления */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
