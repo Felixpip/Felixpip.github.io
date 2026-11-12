@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e0f2f1;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#b2dfdb;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#fce4ec;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f8bbd0;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -370,7 +370,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <label style="margin-top:10px;">Комментарии<textarea id="po_notes" placeholder="Что важно знать по объекту"></textarea></label>
 <div class="res" id="po_res"></div>
-<p class="note">Сохраняется автоматически. Используйте для заметок на объекте.</p></section>
+<p class="note">Сохраняется автоматически.</p></section>
 
 <section id="t29" class="tool"><button class="back-btn">← Назад</button><h2>Спецификация оборудования</h2><p class="hint">Список для закупки и монтажа.</p>
 <div class="gh">Воздуховоды и арматура</div>
@@ -473,24 +473,18 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="uh_res"></div></section>
 
-<section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Расход и мощность по проёму.</p>
+<!-- ТЕПЛОВЫЕ ЗАВЕСЫ — обновлено -->
+<section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Подбор по ширине проёма и температурному режиму.</p>
 <div class="grid">
 <label>Ширина проёма, м<input id="tz_w" type="number" value="1.5" step="0.1" min="0.5" inputmode="decimal"></label>
 <label>Высота проёма, м<input id="tz_h" type="number" value="2.2" step="0.1" min="1" inputmode="decimal"></label>
 <label>t внутри, °C<input id="tz_tin" type="number" value="20" inputmode="decimal"></label>
 <label>t снаружи, °C<input id="tz_tout" type="number" value="-20" inputmode="decimal"></label>
-<label>Скорость на срезе, м/с<input id="tz_v" type="number" value="6" step="0.5" min="3" inputmode="decimal"></label>
+<label>Удельный расход, м³/(ч·м ширины)<input id="tz_flow" type="number" value="1000" min="300" step="50" inputmode="numeric"><span class="hint-inline">700 эконом · 1000 стандарт · 1500 премиум</span></label>
+<label>Температура на выходе, °C<input id="tz_out" type="number" value="45" step="5" min="30" inputmode="decimal"><span class="hint-inline">Типично +40…+50 °C</span></label>
 </div>
-<div class="res" id="tz_res"></div></section>
-
-<section id="t22" class="tool"><button class="back-btn">← Назад</button><h2>Чиллеры</h2><p class="hint">Расход воды и потребление.</p>
-<div class="grid">
-<label>Холодопроизводительность, кВт<input id="ch_q" type="number" value="50" min="0" inputmode="decimal"></label>
-<label>t подачи, °C<input id="ch_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
-<label>t обратки, °C<input id="ch_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
-<label>COP чиллера<input id="ch_cop" type="number" value="3" step="0.1" min="1" inputmode="decimal"></label>
-</div>
-<div class="res" id="ch_res"></div></section>
+<div class="res" id="tz_res"></div>
+<p class="note">Расход завесы = ширина проёма × удельный расход. Мощность = нагрев рециркуляционного воздуха от температуры в помещении до температуры на выходе. Скорость выхода и защита проёма зависят от высоты проёма и разницы температур.</p></section>
 
 <section id="t23" class="tool"><button class="back-btn">← Назад</button><h2>Рециркуляция</h2><p class="hint">Доля рециркуляции и экономия тепла.</p>
 <div class="grid">
@@ -547,7 +541,6 @@ const box = (l, v, u, m) => `<div class="r${m ? ' main' : ''}"><small>${l}</smal
 const num = v => { const n = parseFloat(String(v).replace(/\s|\u00a0|\u202f/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
 const val = id => num($(id).value);
 
-/* ТЕМА */
 const themeBtn = $('theme');
 const THEME_LABEL = { auto: 'Тема', light: 'Светлая', dark: 'Тёмная' };
 let theme = 'auto';
@@ -564,7 +557,7 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* СПИСОК (без Отопления и Гидравлики) */
+/* СПИСОК (без Чиллеров) */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -586,7 +579,6 @@ const tools = [
   { id: 't19', name: 'Фото', cat: 'serv', icon: '📷' },
   { id: 't20', name: 'Увлажнители', cat: 'vent', icon: '💨' },
   { id: 't21', name: 'Тепловые завесы', cat: 'heat', icon: '🌡️' },
-  { id: 't22', name: 'Чиллеры', cat: 'heat', icon: '🏭' },
   { id: 't23', name: 'Рециркуляция', cat: 'vent', icon: '♻️' },
   { id: 't24', name: 'Изоляция', cat: 'heat', icon: '📦' },
   { id: 't26', name: 'Теплопотери', cat: 'heat', icon: '🧱' },
@@ -604,7 +596,6 @@ const catNames = {
   serv: 'Сервис и Инструменты'
 };
 
-/* НАВИГАЦИЯ */
 function showView(viewName, catId) {
   document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
@@ -638,7 +629,6 @@ function showView(viewName, catId) {
   }
 }
 
-/* АВТОСОХРАНЕНИЕ */
 function restoreInputsForSection(section) {
   section.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
     if (el.type === 'file') return;
@@ -986,17 +976,40 @@ function calcUH() {
   $('uh_res').innerHTML = html;
 }
 
+/* ТЕПЛОВЫЕ ЗАВЕСЫ — новая формула */
 function calcTZ() {
-  const w = val('tz_w'), h = val('tz_h'), tin = val('tz_tin'), tout = val('tz_tout'), v = val('tz_v');
-  const S = w * h, L = S * v * 3600, dt = tin - tout;
-  const Q = L * 1.2 * 1.005 * dt / 3600;
-  $('tz_res').innerHTML = box('Площадь проёма', f(S, 2), 'м²') + box('Расход', f(L, 0), 'м³/ч', 1) + box('Мощность', f(Q, 1), 'кВт', 1) + box('Δt', f(dt, 0), '°C');
-}
-
-function calcCH() {
-  const Q = val('ch_q'), tws = val('ch_tws'), twr = val('ch_twr'), cop = Math.max(val('ch_cop'), 1);
-  const dt = twr - tws, G = dt > 0 ? 0.86 * Q / dt : 0, P = Q / cop;
-  $('ch_res').innerHTML = box('Расход воды', f(G, 2), 'м³/ч', 1) + box('Δt воды', f(dt, 1), '°C') + box('Потребление', f(P, 1), 'кВт', 1) + box('Ток (3ф 380В)', f(P * 1000 / (Math.sqrt(3) * 380 * 0.9), 1), 'А');
+  const w = val('tz_w'), h = val('tz_h'), tin = val('tz_tin'), tout = val('tz_tout');
+  const flowPerM = Math.max(val('tz_flow'), 300);
+  const tOut = Math.max(val('tz_out'), tin + 5);
+  
+  const S = w * h;
+  const L = w * flowPerM; // м³/ч — расход завесы
+  const dtHeat = tOut - tin; // нагрев воздуха внутри (рециркуляция)
+  const Q = L * 1.2 * 1.005 * dtHeat / 3600; // кВт
+  
+  // Скорость на срезе щели (оценочно, ширина сопла ~10% от ширины завесы)
+  const nozzleH = 0.05; // 50 мм типичная высота щели
+  const vOut = L / 3600 / (w * nozzleH);
+  
+  // Расчёт воды для водяных завес (Δt 90/70)
+  const Gwater = Q / (1.163 * 20);
+  
+  const dtOutside = tin - tout;
+  
+  let html = 
+    box('Площадь проёма', f(S, 1), 'м²') +
+    box('Расход завесы', f(L, 0), 'м³/ч', 1) +
+    box('Температура на выходе', f(tOut, 0), '°C') +
+    box('Δt нагрева', f(dtHeat, 0), '°C') +
+    box('Мощность нагрева', f(Q, 1), 'кВт', 1) +
+    box('Скорость на срезе щели', f(vOut, 1), 'м/с') +
+    box('Расход воды 90/70', f(Gwater, 2), 'м³/ч') +
+    box('Δt с улицей', f(dtOutside, 0), '°C');
+  
+  if (vOut < 5) html += `<p class="note warn">Скорость на срезе ${f(vOut, 1)} м/с маловата для защиты проёма. Увеличьте удельный расход.</p>`;
+  if (dtOutside > 25 && h > 2.5) html += `<p class="note warn">Высокий проём (${f(h)} м) при Δt ${f(dtOutside, 0)} °C — рассмотрите завесу с усиленным потоком (удельный расход 1500+).</p>`;
+  
+  $('tz_res').innerHTML = html;
 }
 
 function calcRC() {
@@ -1142,7 +1155,6 @@ function calcTR() {
   $('tr_res').innerHTML = html;
 }
 
-/* РЕЗЕРВНОЕ КОПИРОВАНИЕ */
 window.backupAll = function() {
   const data = { version: 1, exportedAt: new Date().toISOString() };
   for (let i = 0; i < localStorage.length; i++) {
@@ -1181,7 +1193,6 @@ window.restoreBackup = function(event) {
   event.target.value = '';
 };
 
-/* ФОТО */
 let PHOTOS = [];
 try { PHOTOS = JSON.parse(localStorage.getItem('hvac_photos') || '[]'); } catch(e) {}
 
@@ -1237,7 +1248,6 @@ window.delPhoto = function(id) {
     renderPhotos();
 };
 
-/* SHARE */
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
   try {
@@ -1315,7 +1325,6 @@ async function shareAllPhotos() {
   alert('Системное меню недоступно. Все фото в папке «Загрузки».');
 }
 
-/* ПРИВЯЗКА */
 function bind(ids, fn) { ids.forEach(i => { const el = $(i); if (el) { el.addEventListener('input', fn); el.addEventListener('change', fn); } }); }
 bind(['a_s', 'a_h', 'a_k', 'a_n', 'a_p'], calcA);
 bind(['d_l', 'd_v', 'd_d', 'd_w', 'd_h', 'd_n'], calcD);
@@ -1334,8 +1343,7 @@ bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
 bind(['sm_duct','sm_p_duct','sm_fit','sm_ins','sm_p_ins','sm_grille','sm_p_grille','sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty','sm_hw','sm_work','sm_pnr'], calcSM);
 bind(['ou_l','ou_t','ou_rh1','ou_rh2'], calcOU);
 bind(['uh_v','uh_n','uh_t','uh_rh2','uh_rh1','uh_p'], calcUH);
-bind(['tz_w','tz_h','tz_tin','tz_tout','tz_v'], calcTZ);
-bind(['ch_q','ch_tws','ch_twr','ch_cop'], calcCH);
+bind(['tz_w','tz_h','tz_tin','tz_tout','tz_flow','tz_out'], calcTZ);
 bind(['rc_san','rc_total','rc_heat'], calcRC);
 bind(['iz_d','iz_tin','iz_tout','iz_lam','iz_R'], calcIZ);
 bind(['tl_sw','tl_rw','tl_so','tl_ro','tl_sf','tl_rf','tl_sc','tl_rc','tl_tin','tl_tout'], calcTL);
@@ -1348,9 +1356,8 @@ $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 $('sm_unit_type').addEventListener('change', updateUnitHint);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcCH(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
 
-/* ЖУРНАЛ */
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
 const save = () => { try { localStorage.setItem('hvaclog', JSON.stringify(LOG)); } catch (e) {} };
@@ -1386,7 +1393,7 @@ const SUM = {
   t9: ['Расход воздуха', 'м³/ч'], t10: ['Ток', 'А'], t11: ['Скорость', 'м/с'], 
   t12: ['Требуемое затухание', 'дБ'], t13: ['Требуемая площадь', 'м²'], t14: ['Расход воды', 'м³/ч'], 
   t15: ['Отклонение', '%'], t16: ['ИТОГО', 'руб.'], t17: ['Удалить влагу', 'кг/ч'],
-  t20: ['Требуется добавить', 'кг/ч'], t21: ['Мощность', 'кВт'], t22: ['Расход воды', 'м³/ч'],
+  t20: ['Требуется добавить', 'кг/ч'], t21: ['Мощность нагрева', 'кВт'],
   t23: ['Экономия тепла', 'кВт'], t24: ['Толщина', 'мм'], t26: ['Всего с запасом', 'кВт'],
   t30: ['Дозаправка фреона', 'г']
 };
@@ -1466,7 +1473,6 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
-/* СВАЙПЫ */
 (function() {
     let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
