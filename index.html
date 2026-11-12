@@ -406,6 +406,7 @@ function showView(viewName, catId) {
   if (viewName === 'home') {
     $('view-home').classList.add('on');
     document.querySelector('.nav-btn[data-view="home"]').setAttribute('aria-selected', 'true');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (viewName === 'cat') {
     $('view-cat').classList.add('on');
     document.querySelector(`.nav-btn[data-view="${catId}"]`).setAttribute('aria-selected', 'true');
@@ -413,20 +414,24 @@ function showView(viewName, catId) {
     $('cat-list').innerHTML = tools.filter(t => t.cat === catId).map(t => 
       `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
     ).join('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (viewName === 'log') {
     $('log-view').classList.add('on');
     document.querySelector('.nav-btn[data-view="log"]').setAttribute('aria-selected', 'true');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (viewName === 'tool') {
     const toolEl = $(catId);
     if (toolEl) {
       toolEl.classList.add('on');
-      // Подсвечиваем категорию инструмента
       const t = tools.find(x => x.id === catId);
       if (t) document.querySelector(`.nav-btn[data-view="${t.cat}"]`).setAttribute('aria-selected', 'true');
+      
+      // Прокручиваем к самому инструменту (к форме ввода)
+      setTimeout(() => {
+        toolEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     }
   }
-  // Автоматическая прокрутка наверх при смене раздела
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 window.openTool = function(id) {
