@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* НОВЫЙ ЦВЕТ ФОНА: светло-бирюзовый */
-:root{--bg:#e0f2f1;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#b2dfdb;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* НОВЫЙ ЦВЕТ ФОНА: светло-серый */
+:root{--bg:#f5f5f5;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#e0e0e0;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -35,8 +35,22 @@ nav button{flex:none;border:1px solid var(--line);background:var(--card);color:v
 nav button:hover{border-color:var(--ac)}
 nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
-section{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;touch-action:pan-y;}
-section.on{display:block;animation:fade .18s ease-out}
+
+/* Стили для дашборда (Стартовый экран) */
+.home-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top:10px;}
+.home-btn{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 10px; text-align:center; cursor:pointer; transition:transform .1s, box-shadow .1s; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink); font-weight:700;}
+.home-btn:hover{transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.05); border-color:var(--ac);}
+.home-btn .icon{font-size:1.8rem;}
+.home-btn .title{font-size:0.95rem; line-height:1.2;}
+.cat-list{display:flex; flex-direction:column; gap:10px; margin-top:10px;}
+.cat-item{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:15px; cursor:pointer; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+.cat-item:hover{border-color:var(--ac);}
+
+/* Стили для инструментов */
+section.tool{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;touch-action:pan-y; margin-top:10px;}
+section.tool.on{display:block;animation:fade .18s ease-out;}
+.back-btn{display:inline-block; margin-bottom:12px; background:none; border:none; color:var(--ac); font-weight:700; cursor:pointer; padding:0; font-size:0.95rem;}
+
 @keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
 h2{margin:0 0 4px;font-size:1.25rem}
 .hint{color:var(--mut);font-size:.9rem;margin:0 0 14px}
@@ -53,10 +67,11 @@ input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid
 .note.warn{color:var(--hot)}
 .gh{grid-column:1/-1;font-weight:700;margin-top:6px}
 footer{margin-top:18px;font-size:.8rem;color:var(--mut)}
-.add,.tool{margin-top:14px;font:inherit;background:var(--ac);color:var(--ac-ink);border:0;border-radius:6px;padding:9px 14px;cursor:pointer;font-weight:700}
-.tool.sec{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:400}
-.add:hover,.tool:hover{filter:brightness(1.08)}
-#log{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.add,.tool-btn{margin-top:14px;font:inherit;background:var(--ac);color:var(--ac-ink);border:0;border-radius:6px;padding:9px 14px;cursor:pointer;font-weight:700}
+.tool-btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:400}
+.add:hover,.tool-btn:hover{filter:brightness(1.08)}
+#log-view{display:none; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; margin-top:10px;}
+#log-view.on{display:block;}
 .tw{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch;touch-action:pan-x;}
 table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
 th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
@@ -82,53 +97,89 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <button id="btn-photo" type="button" title="Фото объекта">📷 Фото</button>
   </div>
 </div>
-<nav role="tablist" aria-label="Разделы калькулятора" id="tabs"></nav>
 
-<section id="t0" role="tabpanel"><h2>Воздухообмен</h2><p class="hint">Расход по кратности и по числу людей — берётся большее значение.</p>
+<nav role="tablist" id="tabs">
+  <button class="nav-btn" data-view="home" aria-selected="true">Главная</button>
+  <button class="nav-btn" data-view="vent">Вентиляция</button>
+  <button class="nav-btn" data-view="heat">Тепло/Холод</button>
+  <button class="nav-btn" data-view="elec">Электрика</button>
+  <button class="nav-btn" data-view="log">Журнал</button>
+</nav>
+
+<!-- СТАРТОВЫЙ ЭКРАН (ДАШБОРД) -->
+<div id="view-home" class="view on">
+  <h2>Частые расчёты</h2>
+  <div class="home-grid">
+    <div class="home-btn" data-tool="t0"><span class="icon">🌬️</span><span class="title">Воздухообмен</span></div>
+    <div class="home-btn" data-tool="t1"><span class="icon">📏</span><span class="title">Подбор сечения</span></div>
+    <div class="home-btn" data-tool="t2"><span class="icon">❄️</span><span class="title">Холод</span></div>
+    <div class="home-btn" data-tool="t3"><span class="icon">🔥</span><span class="title">Нагрев</span></div>
+    <div class="home-btn" data-tool="t7"><span class="icon">🏠</span><span class="title">Отопление</span></div>
+    <div class="home-btn" data-tool="t8"><span class="icon">💧</span><span class="title">Гидравлика</span></div>
+  </div>
+</div>
+
+<!-- КАТЕГОРИИ -->
+<div id="view-cat" class="view">
+  <h2 id="cat-title">Категория</h2>
+  <div class="cat-list" id="cat-list"></div>
+</div>
+
+<!-- ЖУРНАЛ -->
+<div id="log-view">
+  <h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
+  <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
+  <div class="tw"><table><thead><tr><th>№</th><th>Время</th><th>Расчёт</th><th>Пометка</th><th>Исходные данные</th><th>Результат</th><th>Значение</th><th></th></tr></thead><tbody id="lg_b"></tbody><tfoot id="lg_f"></tfoot></table></div>
+  <button class="tool-btn" id="lg_c" type="button">Копировать таблицу</button>
+  <button class="tool-btn sec" id="lg_x" type="button">Очистить журнал</button>
+  <button class="tool-btn sec" id="lg_e" type="button">Экспорт JSON</button>
+  <button class="tool-btn sec" id="lg_i" type="button">Импорт JSON</button>
+  <input type="file" id="lg_fi" accept=".json,application/json" hidden>
+  <span id="lg_s" role="status" aria-live="polite"></span>
+</div>
+
+<!-- ИНСТРУМЕНТЫ (все t0...t19 скрыты по умолчанию) -->
+<section id="t0" class="tool"><button class="back-btn">← Назад</button><h2>Воздухообмен</h2><p class="hint">Расход по кратности и по числу людей.</p>
 <div class="grid">
 <label>Площадь, м²<input id="a_s" type="number" value="20" min="0" inputmode="decimal"></label>
 <label>Высота, м<input id="a_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
 <label>Тип помещения<select id="a_k"></select></label>
 <label>Людей, чел.<input id="a_n" type="number" value="2" min="0" inputmode="numeric"></label>
-<label>Норма на человека<select id="a_p"><option value="20">20 м³/ч (покой)</option><option value="30">30 м³/ч (офис)</option><option value="40">40 м³/ч</option><option value="60" selected>60 м³/ч (спорт, курение)</option></select></label>
+<label>Норма на человека<select id="a_p"><option value="20">20 м³/ч</option><option value="30">30 м³/ч</option><option value="40">40 м³/ч</option><option value="60" selected>60 м³/ч</option></select></label>
 </div>
-<div class="res" id="a_r"></div>
-<p class="note">Кратности ориентировочные. Для проекта используйте действующие СП/СНиП и задание заказчика.</p></section>
+<div class="res" id="a_r"></div></section>
 
-<section id="t1" role="tabpanel"><h2>Подбор</h2><p class="hint">Подбор сечения по скорости, а также проверка своего круглого и прямоугольного воздуховода: скорость, сечение, давление и площадь поверхности по длине участка.</p>
+<section id="t1" class="tool"><button class="back-btn">← Назад</button><h2>Подбор сечения</h2><p class="hint">Подбор воздуховодов по скорости.</p>
 <div class="grid">
 <label>Расход, м³/ч<input id="d_l" type="number" value="500" min="0" inputmode="decimal"></label>
 <label>Скорость, м/с<input id="d_v" type="number" value="5" step="0.5" min="0.1" inputmode="decimal"></label>
 <label>Диаметр круглого, мм<input id="d_d" type="number" value="160" min="50" inputmode="numeric"></label>
-<label>Ширина прямоугольного, мм<input id="d_w" type="number" value="300" min="50" inputmode="numeric"></label>
-<label>Высота прямоугольного, мм<input id="d_h" type="number" value="150" min="50" inputmode="numeric"></label>
+<label>Ширина прямоуг., мм<input id="d_w" type="number" value="300" min="50" inputmode="numeric"></label>
+<label>Высота прямоуг., мм<input id="d_h" type="number" value="150" min="50" inputmode="numeric"></label>
 <label>Длина участка, м<input id="d_n" type="number" value="10" min="0" step="0.5" inputmode="decimal"></label>
 </div>
-<div class="res" id="d_r"></div>
-<p class="note">Ориентиры скорости: магистраль 5–8 м/с, ответвления 3–5 м/с, решётки 2–3 м/с.</p></section>
+<div class="res" id="d_r"></div></section>
 
-<section id="t2" role="tabpanel"><h2>Холод</h2><p class="hint">Прикидка теплопритоков и подбор сплит-системы по типоряду.</p>
+<section id="t2" class="tool"><button class="back-btn">← Назад</button><h2>Холод</h2><p class="hint">Прикидка теплопритоков.</p>
 <div class="grid">
 <label>Площадь, м²<input id="c_s" type="number" value="20" min="0" inputmode="decimal"></label>
 <label>Высота, м<input id="c_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
-<label>Освещённость солнцем<select id="c_q"><option value="30">Север / тень</option><option value="35" selected>Обычная</option><option value="40">Солнечная сторона</option></select></label>
+<label>Солнце<select id="c_q"><option value="30">Север / тень</option><option value="35" selected>Обычная</option><option value="40">Солнечная сторона</option></select></label>
 <label>Людей, чел.<input id="c_n" type="number" value="2" min="0" inputmode="numeric"></label>
 <label>Техника, Вт<input id="c_e" type="number" value="400" min="0" inputmode="numeric"></label>
 <label>Запас, %<input id="c_r" type="number" value="10" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="c_r2"></div>
-<p class="note">Метод: 30–40 Вт/м³ + 130 Вт на человека + техника.</p></section>
+<div class="res" id="c_r2"></div></section>
 
-<section id="t3" role="tabpanel"><h2>Нагрев воздуха</h2><p class="hint">Мощность калорифера и ток нагрузки.</p>
+<section id="t3" class="tool"><button class="back-btn">← Назад</button><h2>Нагрев воздуха</h2><p class="hint">Мощность калорифера.</p>
 <div class="grid">
 <label>Расход, м³/ч<input id="h_l" type="number" value="1000" min="0" inputmode="decimal"></label>
 <label>t наружная, °C<input id="h_t1" type="number" value="-26" inputmode="decimal"></label>
 <label>t приточная, °C<input id="h_t2" type="number" value="18" inputmode="decimal"></label>
 </div>
-<div class="res" id="h_r"></div>
-<p class="note">Q = L · 1,2 · 1,005 · Δt / 3600. Ток: 230 В однофазный и 400 В трёхфазный, cosφ = 1.</p></section>
+<div class="res" id="h_r"></div></section>
 
-<section id="t4" role="tabpanel"><h2>Зонт местного отсоса</h2><p class="hint">Расход воздуха для вытяжного зонта.</p>
+<section id="t4" class="tool"><button class="back-btn">← Назад</button><h2>Зонт местного отсоса</h2><p class="hint">Расход воздуха для зонта.</p>
 <div class="grid">
 <label>Длина источника, мм<input id="z_a" type="number" value="1000" min="0" inputmode="numeric"></label>
 <label>Ширина источника, мм<input id="z_b" type="number" value="700" min="0" inputmode="numeric"></label>
@@ -141,157 +192,143 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="z_res"></div></section>
 
-<section id="t5" role="tabpanel"><h2>Бассейн и ПВУ</h2><p class="hint">Расчёт влаговыделений, воздухообмена и подбор приточно-вытяжной установки (ПВУ).</p>
+<section id="t5" class="tool"><button class="back-btn">← Назад</button><h2>Бассейн и ПВУ</h2><p class="hint">Расчёт влаговыделений и ПВУ.</p>
 <div class="grid">
 <label>Длина зеркала, м<input id="b_a" type="number" value="10" min="0" step="0.1" inputmode="decimal"></label>
 <label>Ширина зеркала, м<input id="b_b" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
 <label>t воды, °C<input id="b_tw" type="number" value="28" step="0.5" inputmode="decimal"></label>
-<label>t воздуха в помещении, °C<input id="b_t" type="number" value="30" step="0.5" inputmode="decimal"></label>
-<label>Влажность в помещении, %<input id="b_rh" type="number" value="60" min="10" max="95" inputmode="numeric"></label>
-<label>Скорость воздуха над водой, м/с<input id="b_v" type="number" value="0.15" step="0.05" min="0" inputmode="decimal"></label>
+<label>t воздуха, °C<input id="b_t" type="number" value="30" step="0.5" inputmode="decimal"></label>
+<label>Влажность, %<input id="b_rh" type="number" value="60" min="10" max="95" inputmode="numeric"></label>
+<label>Скорость над водой, м/с<input id="b_v" type="number" value="0.15" step="0.05" min="0" inputmode="decimal"></label>
 <label>Купающихся, чел.<input id="b_n" type="number" value="5" min="0" inputmode="numeric"></label>
-<label>t наружная (зима), °C<input id="b_t1" type="number" value="-26" inputmode="decimal"></label>
+<label>t наружная, °C<input id="b_t1" type="number" value="-26" inputmode="decimal"></label>
 <label>Влажность наружная, %<input id="b_rh1" type="number" value="85" min="10" max="100" inputmode="numeric"></label>
-<label>t приточного воздуха, °C<input id="b_tsup" type="number" value="32" step="0.5" inputmode="decimal"></label>
-<label>КПД рекуператора, %<input id="b_eff" type="number" value="50" min="0" max="95" inputmode="numeric"></label>
+<label>t приточного, °C<input id="b_tsup" type="number" value="32" step="0.5" inputmode="decimal"></label>
+<label>КПД рекуп., %<input id="b_eff" type="number" value="50" min="0" max="95" inputmode="numeric"></label>
 <label>Запас, %<input id="b_r" type="number" value="10" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="b_res"></div>
-<p class="note">Влаговыделения: W = A · (0,089 + 0,0782·v) · (P<sub>нас.воды</sub> − P<sub>пара</sub>) / r (r = 2450 кДж/кг) + 0,2 кг/ч на человека.</p></section>
+<div class="res" id="b_res"></div></section>
 
-<section id="t6" role="tabpanel"><h2>Аэродинамика</h2><p class="hint">Расчёт потерь давления в воздуховоде на трение и в местных сопротивлениях.</p>
+<section id="t6" class="tool"><button class="back-btn">← Назад</button><h2>Аэродинамика</h2><p class="hint">Потери давления в воздуховоде.</p>
 <div class="grid">
 <label>Расход воздуха, м³/ч<input id="e_l" type="number" value="500" min="0" inputmode="decimal"></label>
-<label>Форма сечения<select id="e_shape"><option value="round">Круглый</option><option value="rect">Прямоугольный</option></select></label>
+<label>Форма<select id="e_shape"><option value="round">Круглый</option><option value="rect">Прямоугольный</option></select></label>
 <label id="lbl_e_d">Диаметр, мм<input id="e_d" type="number" value="160" min="50" inputmode="numeric"></label>
 <label id="lbl_e_w" style="display:none">Ширина, мм<input id="e_w" type="number" value="500" min="50" inputmode="numeric"></label>
 <label id="lbl_e_h" style="display:none">Высота, мм<input id="e_h" type="number" value="300" min="50" inputmode="numeric"></label>
-<label>Длина участка, м<input id="e_len" type="number" value="20" min="0" step="0.5" inputmode="decimal"></label>
-<label>Шероховатость, мм<select id="e_k"><option value="0.01">0.01 — ПВХ / пластик</option><option value="0.1" selected>0.1 — Сталь, алюминий</option><option value="0.3">0.3 — Оцинковка</option><option value="1.0">1.0 — Гибкий воздуховод</option><option value="3.0">3.0 — Кирпич / бетон</option></select></label>
-<label>Сумма КМС (Σζ)<input id="e_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Длина, м<input id="e_len" type="number" value="20" min="0" step="0.5" inputmode="decimal"></label>
+<label>Шероховатость<select id="e_k"><option value="0.01">ПВХ</option><option value="0.1" selected>Сталь</option><option value="0.3">Оцинковка</option><option value="1.0">Гибкий</option><option value="3.0">Кирпич</option></select></label>
+<label>Сумма КМС<input id="e_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
 </div>
-<div class="res" id="e_res"></div>
-<p class="note">Расчёт по формуле Дарси-Вейсбаха. Коэффициент трения — по формуле Альтшуля. Динамическое давление Pd = 0.6 · v². Потери: ΔP = (λ/d · L + Σζ) · Pd.</p></section>
+<div class="res" id="e_res"></div></section>
 
-<section id="t7" role="tabpanel"><h2>Отопление</h2><p class="hint">Расчёт теплопотерь помещения, подбор радиаторов и расхода теплоносителя.</p>
+<section id="t7" class="tool"><button class="back-btn">← Назад</button><h2>Отопление</h2><p class="hint">Теплопотери и радиаторы.</p>
 <div class="grid">
-<label>Площадь помещения, м²<input id="o_s" type="number" value="30" min="0" inputmode="decimal"></label>
-<label>Высота потолка, м<input id="o_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
-<label>Тип изоляции<select id="o_ins"><option value="0.04">Хорошая (новостройка, пенопласт)</option><option value="0.06" selected>Средняя (кирпич, старый фонд)</option><option value="0.09">Плохая (дерево, щели)</option></select></label>
+<label>Площадь, м²<input id="o_s" type="number" value="30" min="0" inputmode="decimal"></label>
+<label>Высота, м<input id="o_h" type="number" value="3" step="0.1" min="0" inputmode="decimal"></label>
+<label>Изоляция<select id="o_ins"><option value="0.04">Хорошая</option><option value="0.06" selected>Средняя</option><option value="0.09">Плохая</option></select></label>
 <label>t внутри, °C<input id="o_tin" type="number" value="20" inputmode="decimal"></label>
-<label>t улицы (расчётная), °C<input id="o_tout" type="number" value="-26" inputmode="decimal"></label>
-<label>Мощность 1 секции, Вт<input id="o_rad" type="number" value="180" min="50" inputmode="numeric"></label>
+<label>t улицы, °C<input id="o_tout" type="number" value="-26" inputmode="decimal"></label>
+<label>Мощность секции, Вт<input id="o_rad" type="number" value="180" min="50" inputmode="numeric"></label>
 </div>
-<div class="res" id="o_res"></div>
-<p class="note">Теплопотери: Q = V · q_уд · (t_вн − t_нар), где q_уд — удельная тепловая характеристика здания (Вт/м³·°C). Добавлен запас 15%.</p></section>
+<div class="res" id="o_res"></div></section>
 
-<section id="t8" role="tabpanel"><h2>Гидродинамика</h2><p class="hint">Подбор диаметра трубы для системы отопления и расчёт потерь напора.</p>
+<section id="t8" class="tool"><button class="back-btn">← Назад</button><h2>Гидродинамика</h2><p class="hint">Подбор труб и потери напора.</p>
 <div class="grid">
 <label>Тепловая нагрузка, кВт<input id="g_q" type="number" value="15" min="0" inputmode="decimal"></label>
-<label>Перепад t (подача-обратка), °C<input id="g_dt" type="number" value="20" min="1" inputmode="decimal"></label>
-<label>Длина магистрали, м<input id="g_len" type="number" value="30" min="0" step="0.5" inputmode="decimal"></label>
-<label>Тип трубы<select id="g_pipe"><option value="0.01">Полипропилен / PEX (гладкая)</option><option value="0.1" selected>Сталь (новая)</option><option value="0.5">Сталь (старая, с отложениями)</option></select></label>
-<label>Сумма КМС (Σζ)<input id="g_zeta" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
+<label>Перепад t, °C<input id="g_dt" type="number" value="20" min="1" inputmode="decimal"></label>
+<label>Длина, м<input id="g_len" type="number" value="30" min="0" step="0.5" inputmode="decimal"></label>
+<label>Тип трубы<select id="g_pipe"><option value="0.01">Полипропилен</option><option value="0.1" selected>Сталь</option><option value="0.5">Старая сталь</option></select></label>
+<label>Сумма КМС<input id="g_zeta" type="number" value="5" min="0" step="0.5" inputmode="decimal"></label>
 </div>
-<div class="res" id="g_res"></div>
-<p class="note">Расход воды G = 0.86 · Q / Δt. Подбор диаметра идёт по рекомендуемой скорости 0.5–1.5 м/с.</p></section>
+<div class="res" id="g_res"></div></section>
 
-<section id="t9" role="tabpanel"><h2>Фанкойлы</h2><p class="hint">Расчёт требуемого расхода воды и воздуха для фанкойла.</p>
+<section id="t9" class="tool"><button class="back-btn">← Назад</button><h2>Фанкойлы</h2><p class="hint">Расход воды и воздуха.</p>
 <div class="grid">
-<label>Тепловая/Холодильная нагрузка, кВт<input id="fc_q" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
-<label>t подающей воды, °C<input id="fc_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
-<label>t обратной воды, °C<input id="fc_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
-<label>t приточного воздуха, °C<input id="fc_tas" type="number" value="14" step="0.5" inputmode="decimal"></label>
-<label>t воздуха в помещении, °C<input id="fc_tar" type="number" value="24" step="0.5" inputmode="decimal"></label>
+<label>Нагрузка, кВт<input id="fc_q" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
+<label>t воды подача, °C<input id="fc_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
+<label>t воды обратка, °C<input id="fc_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
+<label>t воздуха вход, °C<input id="fc_tas" type="number" value="14" step="0.5" inputmode="decimal"></label>
+<label>t воздуха выход, °C<input id="fc_tar" type="number" value="24" step="0.5" inputmode="decimal"></label>
 </div>
-<div class="res" id="fc_res"></div>
-<p class="note">Расход воды G = 0.86 · Q / Δt_воды. Расход воздуха L = Q · 3600 / (1.2 · 1.005 · Δt_воздуха).</p></section>
+<div class="res" id="fc_res"></div></section>
 
-<section id="t10" role="tabpanel"><h2>Электрика</h2><p class="hint">Расчёт тока нагрузки, подбор автомата и сечения кабеля.</p>
+<section id="t10" class="tool"><button class="back-btn">← Назад</button><h2>Электрика</h2><p class="hint">Ток, автомат, кабель.</p>
 <div class="grid">
-<label>Мощность нагрузки, кВт<input id="el_p" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
-<label>Тип сети<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (380 В)</option></select></label>
-<label>cosφ (коэфф. мощности)<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
-<label>Материал жилы<select id="el_mat"><option value="cu">Медь (Cu)</option><option value="al">Алюминий (Al)</option></select></label>
-<label>Длина линии, м<input id="el_l" type="number" value="20" min="0" inputmode="numeric"></label>
+<label>Мощность, кВт<input id="el_p" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Сеть<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (380 В)</option></select></label>
+<label>cosφ<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
+<label>Материал<select id="el_mat"><option value="cu">Медь</option><option value="al">Алюминий</option></select></label>
+<label>Длина, м<input id="el_l" type="number" value="20" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="el_res"></div>
-<p class="note">Автомат подбирается с запасом 25% от тока нагрузки. Кабель подбирается по номиналу автомата (ПУЭ). Падение напряжения не должно превышать 5%.</p></section>
+<div class="res" id="el_res"></div></section>
 
-<section id="t11" role="tabpanel"><h2>Воздухораспределители</h2><p class="hint">Подбор решёток и диффузоров по расходу и скорости.</p>
+<section id="t11" class="tool"><button class="back-btn">← Назад</button><h2>Воздухораспределители</h2><p class="hint">Подбор решёток.</p>
 <div class="grid">
 <label>Расход, м³/ч<input id="vd_l" type="number" value="500" min="0" inputmode="decimal"></label>
 <label>Ширина, мм<input id="vd_w" type="number" value="400" min="50" inputmode="numeric"></label>
 <label>Высота, мм<input id="vd_h" type="number" value="200" min="50" inputmode="numeric"></label>
 <label>Живое сечение, %<input id="vd_k" type="number" value="70" min="10" max="100" inputmode="numeric"></label>
-<label>КМС (Σζ)<input id="vd_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
+<label>КМС<input id="vd_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
 </div>
-<div class="res" id="vd_res"></div>
-<p class="note">Скорость в сечении = L / (3600 · A). Скорость в живом сечении = V / (k/100). Потери = Σζ · 0.6 · V².</p></section>
+<div class="res" id="vd_res"></div></section>
 
-<section id="t12" role="tabpanel"><h2>Шумоглушители</h2><p class="hint">Расчёт требуемого затухания шума.</p>
+<section id="t12" class="tool"><button class="back-btn">← Назад</button><h2>Шумоглушители</h2><p class="hint">Требуемое затухание.</p>
 <div class="grid">
-<label>Уровень шума вентилятора, дБ(А)<input id="sl_l1" type="number" value="75" inputmode="decimal"></label>
-<label>Требуемый уровень в помещении, дБ(А)<input id="sl_l2" type="number" value="45" inputmode="decimal"></label>
-<label>Затухание в воздуховодах (без глушителя), дБ<input id="sl_att" type="number" value="10" inputmode="decimal"></label>
+<label>Шум вентилятора, дБ(А)<input id="sl_l1" type="number" value="75" inputmode="decimal"></label>
+<label>Требуемый шум, дБ(А)<input id="sl_l2" type="number" value="45" inputmode="decimal"></label>
+<label>Затухание в сети, дБ<input id="sl_att" type="number" value="10" inputmode="decimal"></label>
 </div>
-<div class="res" id="sl_res"></div>
-<p class="note">Требуемое затухание = L_вент - L_треб - L_воздуховоды. Подбирайте шумоглушитель с запасом 2-3 дБ.</p></section>
+<div class="res" id="sl_res"></div></section>
 
-<section id="t13" role="tabpanel"><h2>Фильтры</h2><p class="hint">Подбор площади фильтрации и скорости.</p>
+<section id="t13" class="tool"><button class="back-btn">← Назад</button><h2>Фильтры</h2><p class="hint">Площадь фильтрации.</p>
 <div class="grid">
 <label>Расход, м³/ч<input id="fl_l" type="number" value="1000" min="0" inputmode="decimal"></label>
-<label>Класс фильтра<select id="fl_c"><option value="2.5">G3 (грубая очистка)</option><option value="2.0">G4</option><option value="1.5">F5-F7 (тонкая)</option><option value="1.0">F8-F9 (высокая)</option><option value="0.5">H11-H13 (абс. HEPA)</option></select></label>
-<label>Конечное сопротивление, Па<input id="fl_dp" type="number" value="250" min="0" inputmode="numeric"></label>
+<label>Класс<select id="fl_c"><option value="2.5">G3</option><option value="2.0">G4</option><option value="1.5">F5-F7</option><option value="1.0">F8-F9</option><option value="0.5">H11-H13</option></select></label>
+<label>Сопротивление, Па<input id="fl_dp" type="number" value="250" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="fl_res"></div>
-<p class="note">Площадь = L / (3600 · V_доп). Скорость рекомендуется: G3 - 2.5 м/с, F7 - 1.5 м/с, H11 - 0.5 м/с.</p></section>
+<div class="res" id="fl_res"></div></section>
 
-<section id="t14" role="tabpanel"><h2>Водяные калориферы</h2><p class="hint">Расчёт расхода воды и воздуха для водяного нагревателя.</p>
+<section id="t14" class="tool"><button class="back-btn">← Назад</button><h2>Водяные калориферы</h2><p class="hint">Расход воды и воздуха.</p>
 <div class="grid">
-<label>Тепловая мощность, кВт<input id="wc_q" type="number" value="20" min="0" step="0.1" inputmode="decimal"></label>
-<label>t воздуха на входе, °C<input id="wc_tin" type="number" value="-10" inputmode="decimal"></label>
-<label>t воздуха на выходе, °C<input id="wc_tout" type="number" value="20" inputmode="decimal"></label>
+<label>Мощность, кВт<input id="wc_q" type="number" value="20" min="0" step="0.1" inputmode="decimal"></label>
+<label>t воздуха вход, °C<input id="wc_tin" type="number" value="-10" inputmode="decimal"></label>
+<label>t воздуха выход, °C<input id="wc_tout" type="number" value="20" inputmode="decimal"></label>
 <label>t воды подача, °C<input id="wc_tws" type="number" value="90" inputmode="decimal"></label>
 <label>t воды обратка, °C<input id="wc_twr" type="number" value="70" inputmode="decimal"></label>
 </div>
-<div class="res" id="wc_res"></div>
-<p class="note">Расход воды G = 0.86 · Q / Δt_воды. Расход воздуха L = Q · 3600 / (1.2 · 1.005 · Δt_воздуха).</p></section>
+<div class="res" id="wc_res"></div></section>
 
-<section id="t15" role="tabpanel"><h2>Пусконаладка</h2><p class="hint">Проверка соответствия фактического расхода проектному.</p>
+<section id="t15" class="tool"><button class="back-btn">← Назад</button><h2>Пусконаладка</h2><p class="hint">Проверка расхода.</p>
 <div class="grid">
 <label>Проектный расход, м³/ч<input id="pn_l_proj" type="number" value="1000" min="0" inputmode="decimal"></label>
-<label>Фактический расход (замер), м³/ч<input id="pn_l_fact" type="number" value="920" min="0" inputmode="decimal"></label>
-<label>Допустимое отклонение, %<input id="pn_tol" type="number" value="10" min="0" inputmode="numeric"></label>
+<label>Фактический расход, м³/ч<input id="pn_l_fact" type="number" value="920" min="0" inputmode="decimal"></label>
+<label>Допуск, %<input id="pn_tol" type="number" value="10" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="pn_res"></div>
-<p class="note">Отклонение = (Факт - Проект) / Проект · 100%. По СП 73 допустимое отклонение обычно ±10% (для систем с автоматикой) или ±15% (без).</p></section>
+<div class="res" id="pn_res"></div></section>
 
-<!-- ОБНОВЛЕННАЯ СМЕТА -->
-<section id="t16" role="tabpanel"><h2>Смета</h2><p class="hint">Прикидочная стоимость оборудования и монтажа.</p>
+<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Прикидочная стоимость.</p>
 <div class="grid">
 <label>Длина воздуховодов, м<input id="sm_duct" type="number" value="50" min="0" inputmode="numeric"></label>
-<label>Цена 1 м воздуховода, руб<input id="sm_p_duct" type="number" value="2000" min="0" inputmode="numeric"></label>
-<label>Кол-во решеток/диффузоров, шт<input id="sm_grille" type="number" value="6" min="0" inputmode="numeric"></label>
-<label>Цена 1 решетки, руб<input id="sm_p_grille" type="number" value="7000" min="0" inputmode="numeric"></label>
-<label>Кол-во установок/вентиляторов, шт<input id="sm_unit" type="number" value="1" min="0" inputmode="numeric"></label>
-<label>Цена 1 установки, руб<input id="sm_p_unit" type="number" value="260000" min="0" inputmode="numeric"></label>
-<label>Фасонные изделия, % от цены труб<input id="sm_fit" type="number" value="40" min="0" inputmode="numeric"></label>
+<label>Цена 1 м, руб<input id="sm_p_duct" type="number" value="2000" min="0" inputmode="numeric"></label>
+<label>Кол-во решеток, шт<input id="sm_grille" type="number" value="6" min="0" inputmode="numeric"></label>
+<label>Цена решетки, руб<input id="sm_p_grille" type="number" value="7000" min="0" inputmode="numeric"></label>
+<label>Кол-во установок, шт<input id="sm_unit" type="number" value="1" min="0" inputmode="numeric"></label>
+<label>Цена установки, руб<input id="sm_p_unit" type="number" value="260000" min="0" inputmode="numeric"></label>
+<label>Фасонина, % от труб<input id="sm_fit" type="number" value="40" min="0" inputmode="numeric"></label>
 </div>
-<div class="res" id="sm_res"></div>
-<p class="note">Расчёт очень грубый. Не учитывает изоляцию, автоматику, крепёж, монтаж и пусконаладку.</p></section>
+<div class="res" id="sm_res"></div></section>
 
-<!-- УЛУЧШЕННЫЕ ОСУШИТЕЛИ / УВЛАЖНИТЕЛИ -->
-<section id="t17" role="tabpanel"><h2>Осушители / Увлажнители</h2><p class="hint">Расчёт влагопоступлений или влаговыделений.</p>
+<section id="t17" class="tool"><button class="back-btn">← Назад</button><h2>Осушители / Увлажнители</h2><p class="hint">Подбор оборудования по влажности.</p>
 <div class="grid">
 <label>Расход воздуха, м³/ч<input id="ou_l" type="number" value="1000" min="0" inputmode="decimal"></label>
-<label>Влажность ДО (г/кг сух. возд.)<input id="ou_d1" type="number" value="15" step="0.1" inputmode="decimal"></label>
-<label>Влажность ПОСЛЕ (г/кг сух. возд.)<input id="ou_d2" type="number" value="8" step="0.1" inputmode="decimal"></label>
+<label>Температура, °C<input id="ou_t" type="number" value="20" inputmode="decimal"></label>
+<label>Влажность ДО, %<input id="ou_rh1" type="number" value="70" min="10" max="100" inputmode="numeric"></label>
+<label>Влажность ПОСЛЕ, %<input id="ou_rh2" type="number" value="50" min="10" max="100" inputmode="numeric"></label>
 </div>
-<div class="res" id="ou_res"></div>
-<p class="note">Если влажность до больше, чем после — воздух нужно ОСУШАТЬ. Если меньше — УВЛАЖНЯТЬ. Расчёт показывает, сколько килограммов воды в час нужно убрать или добавить.</p></section>
+<div class="res" id="ou_res"></div></section>
 
-<section id="t18" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
+<section id="t18" class="tool"><button class="back-btn">← Назад</button><h2>Конвертер</h2><p class="hint">Пересчёт единиц.</p>
 <div class="grid">
 <label>Величина<select id="u_c"><option value="0">Расход воздуха</option><option value="1">Мощность</option><option value="2">Давление</option></select></label>
 <label>Значение<input id="u_v" type="number" value="500" inputmode="decimal"></label>
@@ -299,26 +336,15 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="u_r"></div></section>
 
-<section id="t19" role="tabpanel"><h2>Фото объекта</h2><p class="hint">Сделайте снимок на объекте. Фото сохраняются в памяти приложения.</p>
+<section id="t19" class="tool"><button class="back-btn">← Назад</button><h2>Фото объекта</h2><p class="hint">Снимки сохраняются в памяти приложения.</p>
 <div style="text-align:center; margin-bottom: 20px;">
     <input type="file" id="photo_input" accept="image/*" capture="environment" style="display:none">
-    <button class="tool" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">
-        📷 Сделать фото
-    </button>
+    <button class="tool-btn" onclick="document.getElementById('photo_input').click()" style="font-size:1.1rem; padding: 12px 24px;">📷 Сделать фото</button>
 </div>
 <div id="photo_gallery" class="res" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"></div>
 </section>
 
-<div id="log"><h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
-<label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
-<div class="tw"><table><thead><tr><th>№</th><th>Время</th><th>Расчёт</th><th>Пометка</th><th>Исходные данные</th><th>Результат</th><th>Значение</th><th></th></tr></thead><tbody id="lg_b"></tbody><tfoot id="lg_f"></tfoot></table></div>
-<button class="tool" id="lg_c" type="button">Копировать таблицу</button>
-<button class="tool sec" id="lg_x" type="button">Очистить журнал</button>
-<button class="tool sec" id="lg_e" type="button">Экспорт JSON</button>
-<button class="tool sec" id="lg_i" type="button">Импорт JSON</button>
-<input type="file" id="lg_fi" accept=".json,application/json" hidden>
-<span id="lg_s" role="status" aria-live="polite"></span></div>
-<footer>Расчёты справочные и не заменяют проектную документацию.</footer>
+<footer style="text-align:center; margin-top:20px;">Расчёты справочные и не заменяют проектную документацию.</footer>
 </div>
 
 <script>
@@ -348,40 +374,84 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* вкладки */
-const names = ['Воздухообмен', 'Подбор', 'Холод', 'Нагрев', 'Зонт', 'Бассейн', 'Аэродинамика', 'Отопление', 'Гидравлика', 'Фанкойлы', 'Электрика', 'Воздухораспр.', 'Шумоглушители', 'Фильтры', 'Водяные калориферы', 'Пусконаладка', 'Смета', 'Осушители', 'Конвертер'];
-const tabs = $('tabs');
-const tabBtns = names.map((n, i) => {
-  const b = document.createElement('button');
-  b.type = 'button'; b.textContent = n; b.setAttribute('role', 'tab');
-  b.id = 'tb' + i; b.setAttribute('aria-controls', 't' + i); b.tabIndex = -1;
-  b.onclick = () => show(i);
-  tabs.appendChild(b); return b;
+/* Навигация и Views */
+const tools = [
+  { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
+  { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
+  { id: 't2', name: 'Холод', cat: 'heat', icon: '❄️' },
+  { id: 't3', name: 'Нагрев', cat: 'heat', icon: '🔥' },
+  { id: 't4', name: 'Зонт', cat: 'vent', icon: '🍳' },
+  { id: 't5', name: 'Бассейн', cat: 'vent', icon: '🏊' },
+  { id: 't6', name: 'Аэродинамика', cat: 'vent', icon: '💨' },
+  { id: 't7', name: 'Отопление', cat: 'heat', icon: '🏠' },
+  { id: 't8', name: 'Гидравлика', cat: 'heat', icon: '💧' },
+  { id: 't9', name: 'Фанкойлы', cat: 'heat', icon: '🌀' },
+  { id: 't10', name: 'Электрика', cat: 'elec', icon: '⚡' },
+  { id: 't11', name: 'Воздухораспр.', cat: 'vent', icon: '🌪️' },
+  { id: 't12', name: 'Шумоглушители', cat: 'vent', icon: '🔇' },
+  { id: 't13', name: 'Фильтры', cat: 'vent', icon: '🫧' },
+  { id: 't14', name: 'Вод. калориферы', cat: 'vent', icon: '♨️' },
+  { id: 't15', name: 'Пусконаладка', cat: 'elec', icon: '🔧' },
+  { id: 't16', name: 'Смета', cat: 'elec', icon: '💰' },
+  { id: 't17', name: 'Осушители', cat: 'vent', icon: '💦' },
+  { id: 't18', name: 'Конвертер', cat: 'elec', icon: '🔄' }
+];
+
+const catNames = { vent: 'Вентиляция и Воздух', heat: 'Тепло и Холод', elec: 'Электрика и Смета' };
+
+function showView(viewName, catId) {
+  document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+  
+  if (viewName === 'home') {
+    $('view-home').classList.add('on');
+    document.querySelector('.nav-btn[data-view="home"]').setAttribute('aria-selected', 'true');
+  } else if (viewName === 'cat') {
+    $('view-cat').classList.add('on');
+    document.querySelector(`.nav-btn[data-view="${catId}"]`).setAttribute('aria-selected', 'true');
+    $('cat-title').textContent = catNames[catId];
+    $('cat-list').innerHTML = tools.filter(t => t.cat === catId).map(t => 
+      `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
+    ).join('');
+  } else if (viewName === 'log') {
+    $('log-view').classList.add('on');
+    document.querySelector('.nav-btn[data-view="log"]').setAttribute('aria-selected', 'true');
+  } else if (viewName === 'tool') {
+    const toolEl = $(catId);
+    if (toolEl) {
+      toolEl.classList.add('on');
+      // Подсвечиваем категорию инструмента
+      const t = tools.find(x => x.id === catId);
+      if (t) document.querySelector(`.nav-btn[data-view="${t.cat}"]`).setAttribute('aria-selected', 'true');
+    }
+  }
+}
+
+window.openTool = function(id) {
+  showView('tool', id);
+};
+
+// Привязка кнопок навигации
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.onclick = () => {
+    const v = btn.getAttribute('data-view');
+    if (v === 'home' || v === 'log') showView(v);
+    else showView('cat', v);
+  };
 });
-const panels = [...document.querySelectorAll('section')];
-for (let i = 0; i < names.length; i++) {
-  if (panels[i]) panels[i].setAttribute('aria-labelledby', 'tb' + i);
-}
-if (panels[19]) panels[19].setAttribute('aria-label', 'Фото объекта');
 
-function show(i) {
-  tabBtns.forEach((b, j) => { const on = i === j; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
-  panels.forEach((s, j) => { s.classList.toggle('on', i === j); s.hidden = i !== j; });
-  const pb = $('btn-photo');
-  if (pb) pb.classList.toggle('active', i === 19);
-  try { history.replaceState(null, '', i === 19 ? '#photo' : '#t' + i); } catch (e) {}
-}
+// Привязка кнопок дашборда
+document.querySelectorAll('.home-btn').forEach(btn => {
+  btn.onclick = () => openTool(btn.getAttribute('data-tool'));
+});
 
-$('btn-photo').onclick = () => show(19);
-
-tabs.addEventListener('keydown', e => {
-  const cur = tabBtns.findIndex(b => b.getAttribute('aria-selected') === 'true');
-  let next = -1;
-  if (e.key === 'ArrowRight') next = (cur + 1) % tabBtns.length;
-  if (e.key === 'ArrowLeft') next = (cur - 1 + tabBtns.length) % tabBtns.length;
-  if (e.key === 'Home') next = 0;
-  if (e.key === 'End') next = tabBtns.length - 1;
-  if (next >= 0) { e.preventDefault(); show(next); tabBtns[next].focus(); }
+// Привязка кнопок "Назад" в инструментах
+document.querySelectorAll('.back-btn').forEach(btn => {
+  btn.onclick = () => {
+    const toolId = btn.closest('section').id;
+    const t = tools.find(x => x.id === toolId);
+    if (t) showView('cat', t.cat);
+  };
 });
 
 /* 1. воздухообмен */
@@ -794,20 +864,37 @@ function calcSM() {
     box('ИТОГО', f(total, 0), 'руб.', 1);
 }
 
-/* 19. Осушители / Увлажнители */
+/* 19. Осушители / Увлажнители (ПОДБОР ОБОРУДОВАНИЯ) */
 function calcOU() {
   const L = val('ou_l');
-  const d1 = val('ou_d1');
-  const d2 = val('ou_d2');
+  const t = val('ou_t');
+  const rh1 = val('ou_rh1');
+  const rh2 = val('ou_rh2');
   
-  const delta = Math.abs(d1 - d2);
-  const W = (L * 1.2 * delta) / 1000;
-  const verdict = d1 > d2 ? 'Осушать' : (d1 < d2 ? 'Увлажнять' : 'Без изменений');
+  const Ps = Psat(t);
+  const p1 = (rh1 / 100) * Ps;
+  const p2 = (rh2 / 100) * Ps;
+  const d1 = 622 * p1 / (101.325 - p1);
+  const d2 = 622 * p2 / (101.325 - p2);
   
-  $('ou_res').innerHTML = 
-    box('Влага', f(W, 2), 'кг/ч', 1) +
-    box('Влага', f(W * 24, 1), 'л/сутки') +
-    box('Действие', verdict, '', 1);
+  const M = L * 1.2;
+  const W = M * (d1 - d2) / 1000; // кг/ч
+  
+  let html = '';
+  if (W > 0.01) {
+    const litrDay = W * 24;
+    html = 
+      box('Требуется удалить влагу', f(W, 2), 'кг/ч', 1) +
+      box('Производительность', f(litrDay, 1), 'л/сутки', 1) +
+      box('Рекомендация', 'Осушитель до ' + Math.ceil(litrDay / 10) * 10 + ' л/сут', '', 1);
+  } else if (W < -0.01) {
+    html = 
+      box('Требуется добавить влагу', f(Math.abs(W), 2), 'кг/ч', 1) +
+      box('Рекомендация', 'Увлажнитель на ' + f(Math.abs(W), 1) + ' кг/ч', '', 1);
+  } else {
+    html = box('Влажность в норме', '0', 'кг/ч', 1);
+  }
+  $('ou_res').innerHTML = html;
 }
 
 /* 20. ФОТО */
@@ -894,7 +981,7 @@ bind(['fl_l','fl_c','fl_dp'], calcFL);
 bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
 bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
 bind(['sm_duct','sm_p_duct','sm_grille','sm_p_grille','sm_unit','sm_p_unit', 'sm_fit'], calcSM);
-bind(['ou_l','ou_d1','ou_d2'], calcOU);
+bind(['ou_l','ou_t','ou_rh1','ou_rh2'], calcOU);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
@@ -932,7 +1019,7 @@ function renderTot() {
   const k = Object.keys(s);
   $('lg_f').innerHTML = k.length ? '<tr><th colspan="6">Итого</th><th colspan="2">' + k.map(n => n + ': ' + f(s[n].v, 2) + ' ' + s[n].u + ' (' + s[n].k + ' поз.)').join('<br>') + '</th></tr>' : '';
 }
-const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'], 9: ['Расход воздуха', 'м³/ч'], 10: ['Ток нагрузки', 'А'], 11: ['Скорость в сечении', 'м/с'], 12: ['Требуемое затухание', 'дБ'], 13: ['Требуемая площадь', 'м²'], 14: ['Расход воды', 'м³/ч'], 15: ['Отклонение', '%'], 16: ['ИТОГО', 'руб.'], 17: ['Влага', 'кг/ч'] };
+const SUM = { 0: ['Требуемый расход', 'м³/ч'], 2: ['С запасом', 'кВт'], 3: ['Мощность', 'кВт'], 4: ['Расход с запасом', 'м³/ч'], 5: ['Приток', 'м³/ч'], 6: ['Суммарные потери', 'Па'], 7: ['Теплопотери с запасом', 'кВт'], 8: ['Суммарные потери', 'Па'], 9: ['Расход воздуха', 'м³/ч'], 10: ['Ток нагрузки', 'А'], 11: ['Скорость в сечении', 'м/с'], 12: ['Требуемое затухание', 'дБ'], 13: ['Требуемая площадь', 'м²'], 14: ['Расход воды', 'м³/ч'], 15: ['Отклонение', '%'], 16: ['ИТОГО', 'руб.'], 17: ['Требуется удалить влагу', 'кг/ч'] };
 function sv(section, i) {
   const d = SUM[i]; if (!d) return {};
   const r = [...section.querySelectorAll('.r')].find(x => x.querySelector('small').textContent === d[0]);
@@ -940,8 +1027,7 @@ function sv(section, i) {
   const v = num(r.querySelector('b').textContent);
   return isFinite(v) ? { v: v, u: d[1] } : {};
 }
-panels.forEach((s, i) => {
-  if (i === 19) return;
+document.querySelectorAll('section.tool').forEach((s, i) => {
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'add'; b.textContent = 'Записать в журнал';
   b.onclick = () => {
@@ -953,9 +1039,11 @@ panels.forEach((s, i) => {
     const res = [...s.querySelectorAll('.r')].map(r =>
       (r.querySelector('small').textContent + ': ' + r.querySelector('b').textContent + ' ' + r.querySelector('span').textContent).trim()
     ).join('; ');
-    LOG.push({ t: new Date().toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }), n: names[i], o: $('lg_o').value, i: inp, r: res, ...sv(s, i) });
+    const toolIndex = tools.findIndex(x => x.id === s.id);
+    const toolName = toolIndex >= 0 ? tools[toolIndex].name : s.id;
+    LOG.push({ t: new Date().toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }), n: toolName, o: $('lg_o').value, i: inp, r: res, ...sv(s, toolIndex) });
     save(); renderLog(); say('Строка добавлена');
-    $('log').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showView('log');
   };
   s.appendChild(b);
 });
@@ -1011,15 +1099,7 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
-/* старт */
-if (location.hash === '#photo') {
-  show(19);
-} else {
-  const m = /^#t(\d+)$/.exec(location.hash);
-  show(m ? +m[1] : 0);
-}
-
-/* Свайпы в любой точке экрана */
+/* Свайпы (работают только между инструментами) */
 (function() {
     let xDown = null;
     let yDown = null;
@@ -1048,15 +1128,15 @@ if (location.hash === '#photo') {
             
             if (Math.abs(xDiff) > 40) {
                 isSwiping = true;
-                const cur = panels.findIndex(p => p.classList.contains('on'));
-                if (cur < 0) return;
+                const currentTool = document.querySelector('section.tool.on');
+                if (!currentTool) return;
                 
-                const next = cur + (xDiff > 0 ? 1 : -1);
-                if (next >= 0 && next < panels.length) {
-                    show(next);
-                    if (next < tabBtns.length) {
-                        tabBtns[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
+                const curIndex = tools.findIndex(x => x.id === currentTool.id);
+                if (curIndex < 0) return;
+                
+                const next = curIndex + (xDiff > 0 ? 1 : -1);
+                if (next >= 0 && next < tools.length) {
+                    openTool(tools[next].id);
                 }
             }
         }
@@ -1068,6 +1148,9 @@ if (location.hash === '#photo') {
         setTimeout(() => { isSwiping = false; }, 100);
     }, { passive: true });
 })();
+
+/* Старт */
+showView('home');
 
 })();
 
