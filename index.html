@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* НОВЫЙ ЦВЕТ ФОНА: светло-желтый */
-:root{--bg:#fffde7;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f9e79f;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+/* НОВЫЙ ЦВЕТ ФОНА: светло-бирюзовый */
+:root{--bg:#e0f2f1;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#b2dfdb;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -267,26 +267,29 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="res" id="pn_res"></div>
 <p class="note">Отклонение = (Факт - Проект) / Проект · 100%. По СП 73 допустимое отклонение обычно ±10% (для систем с автоматикой) или ±15% (без).</p></section>
 
+<!-- ОБНОВЛЕННАЯ СМЕТА -->
 <section id="t16" role="tabpanel"><h2>Смета</h2><p class="hint">Прикидочная стоимость оборудования и монтажа.</p>
 <div class="grid">
 <label>Длина воздуховодов, м<input id="sm_duct" type="number" value="50" min="0" inputmode="numeric"></label>
-<label>Цена 1 м воздуховода, руб<input id="sm_p_duct" type="number" value="1200" min="0" inputmode="numeric"></label>
-<label>Кол-во решеток/диффузоров, шт<input id="sm_grille" type="number" value="5" min="0" inputmode="numeric"></label>
-<label>Цена 1 решетки, руб<input id="sm_p_grille" type="number" value="2000" min="0" inputmode="numeric"></label>
-<label>Кол-во вентиляторов / ПВУ, шт<input id="sm_unit" type="number" value="1" min="0" inputmode="numeric"></label>
-<label>Цена 1 установки, руб<input id="sm_p_unit" type="number" value="150000" min="0" inputmode="numeric"></label>
+<label>Цена 1 м воздуховода, руб<input id="sm_p_duct" type="number" value="2000" min="0" inputmode="numeric"></label>
+<label>Кол-во решеток/диффузоров, шт<input id="sm_grille" type="number" value="6" min="0" inputmode="numeric"></label>
+<label>Цена 1 решетки, руб<input id="sm_p_grille" type="number" value="7000" min="0" inputmode="numeric"></label>
+<label>Кол-во установок/вентиляторов, шт<input id="sm_unit" type="number" value="1" min="0" inputmode="numeric"></label>
+<label>Цена 1 установки, руб<input id="sm_p_unit" type="number" value="260000" min="0" inputmode="numeric"></label>
+<label>Фасонные изделия, % от цены труб<input id="sm_fit" type="number" value="40" min="0" inputmode="numeric"></label>
 </div>
 <div class="res" id="sm_res"></div>
-<p class="note">Расчёт очень грубый, для быстрой оценки бюджета заказчиком. Не учитывает фасонину, изоляцию, автоматику, крепёж и пусконаладку.</p></section>
+<p class="note">Расчёт очень грубый. Не учитывает изоляцию, автоматику, крепёж, монтаж и пусконаладку.</p></section>
 
-<section id="t17" role="tabpanel"><h2>Осушители / Увлажнители</h2><p class="hint">Расчёт количества влаги для осушения или увлажнения.</p>
+<!-- УЛУЧШЕННЫЕ ОСУШИТЕЛИ / УВЛАЖНИТЕЛИ -->
+<section id="t17" role="tabpanel"><h2>Осушители / Увлажнители</h2><p class="hint">Расчёт влагопоступлений или влаговыделений.</p>
 <div class="grid">
 <label>Расход воздуха, м³/ч<input id="ou_l" type="number" value="1000" min="0" inputmode="decimal"></label>
-<label>Влагосодержание на входе, г/кг<input id="ou_d1" type="number" value="15" step="0.1" inputmode="decimal"></label>
-<label>Влагосодержание на выходе, г/кг<input id="ou_d2" type="number" value="8" step="0.1" inputmode="decimal"></label>
+<label>Влажность ДО (г/кг сух. возд.)<input id="ou_d1" type="number" value="15" step="0.1" inputmode="decimal"></label>
+<label>Влажность ПОСЛЕ (г/кг сух. возд.)<input id="ou_d2" type="number" value="8" step="0.1" inputmode="decimal"></label>
 </div>
 <div class="res" id="ou_res"></div>
-<p class="note">Количество влаги W = L · 1.2 · |d1 - d2| / 1000 (кг/ч). Если d1 > d2 — нужно осушать, если d1 < d2 — увлажнять.</p></section>
+<p class="note">Если влажность до больше, чем после — воздух нужно ОСУШАТЬ. Если меньше — УВЛАЖНЯТЬ. Расчёт показывает, сколько килограммов воды в час нужно убрать или добавить.</p></section>
 
 <section id="t18" role="tabpanel"><h2>Конвертер</h2><p class="hint">Введите значение, остальные единицы пересчитаются.</p>
 <div class="grid">
@@ -770,21 +773,24 @@ function calcPN() {
   $('pn_res').innerHTML = html;
 }
 
-/* 18. Смета */
+/* 18. Смета (ОБНОВЛЕНО) */
 function calcSM() {
   const duct = val('sm_duct'), p_duct = val('sm_p_duct');
   const grille = val('sm_grille'), p_grille = val('sm_p_grille');
   const unit = val('sm_unit'), p_unit = val('sm_p_unit');
+  const fit_pct = val('sm_fit');
   
   const cost_duct = duct * p_duct;
+  const cost_fit = cost_duct * (fit_pct / 100);
   const cost_grille = grille * p_grille;
   const cost_unit = unit * p_unit;
-  const total = cost_duct + cost_grille + cost_unit;
+  const total = cost_duct + cost_fit + cost_grille + cost_unit;
   
   $('sm_res').innerHTML = 
-    box('Стоимость воздуховодов', f(cost_duct, 0), 'руб.') +
-    box('Стоимость решеток', f(cost_grille, 0), 'руб.') +
-    box('Стоимость оборудования', f(cost_unit, 0), 'руб.') +
+    box('Воздуховоды', f(cost_duct, 0), 'руб.') +
+    box('Фасонина (' + fit_pct + '%)', f(cost_fit, 0), 'руб.') +
+    box('Решетки', f(cost_grille, 0), 'руб.') +
+    box('Оборудование', f(cost_unit, 0), 'руб.') +
     box('ИТОГО', f(total, 0), 'руб.', 1);
 }
 
@@ -887,7 +893,7 @@ bind(['sl_l1','sl_l2','sl_att'], calcSL);
 bind(['fl_l','fl_c','fl_dp'], calcFL);
 bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
 bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
-bind(['sm_duct','sm_p_duct','sm_grille','sm_p_grille','sm_unit','sm_p_unit'], calcSM);
+bind(['sm_duct','sm_p_duct','sm_grille','sm_p_grille','sm_unit','sm_p_unit', 'sm_fit'], calcSM);
 bind(['ou_l','ou_d1','ou_d2'], calcOU);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
