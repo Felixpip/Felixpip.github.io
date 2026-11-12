@@ -425,6 +425,8 @@ function showView(viewName, catId) {
       if (t) document.querySelector(`.nav-btn[data-view="${t.cat}"]`).setAttribute('aria-selected', 'true');
     }
   }
+  // Автоматическая прокрутка наверх при смене раздела
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 window.openTool = function(id) {
