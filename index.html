@@ -531,14 +531,20 @@ function showView(viewName, catId) {
     $('view-home').classList.add('on');
     document.querySelector('.nav-btn[data-view="home"]').setAttribute('aria-selected', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else if (viewName === 'cat') {
+    } else if (viewName === 'cat') {
+    const items = tools.filter(t => t.cat === catId);
+    if (items.length === 1) {
+      openTool(items[0].id);
+      return;
+    }
     $('view-cat').classList.add('on');
     document.querySelector(`.nav-btn[data-view="${catId}"]`).setAttribute('aria-selected', 'true');
     $('cat-title').textContent = catNames[catId];
-    $('cat-list').innerHTML = tools.filter(t => t.cat === catId).map(t => 
+    $('cat-list').innerHTML = items.map(t => 
       `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
     ).join('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   } else if (viewName === 'log') {
     $('log-view').classList.add('on');
     document.querySelector('.nav-btn[data-view="log"]').setAttribute('aria-selected', 'true');
@@ -608,8 +614,13 @@ document.querySelectorAll('.back-btn').forEach(btn => {
   btn.onclick = () => {
     const toolId = btn.closest('section').id;
     const t = tools.find(x => x.id === toolId);
-    if (t) showView('cat', t.cat);
-    else showView('home');
+    if (t) {
+      const countInCat = tools.filter(x => x.cat === t.cat).length;
+      if (countInCat === 1) showView('home');
+      else showView('cat', t.cat);
+    } else {
+      showView('home');
+    }
   };
 });
 
