@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#ede7f6;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#d1c4e9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#fff9c4;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#fff176;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -120,11 +120,8 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
     <button class="tool-btn" id="lg_c" type="button">Копировать таблицу</button>
     <button class="tool-btn" id="lg_share" type="button">📤 Поделиться</button>
     <button class="tool-btn sec" id="lg_mail" type="button">✉️ На почту</button>
-    <button class="tool-btn sec" id="lg_e" type="button">Экспорт JSON</button>
-    <button class="tool-btn sec" id="lg_i" type="button">Импорт JSON</button>
     <button class="tool-btn sec" id="lg_x" type="button">Очистить</button>
   </div>
-  <input type="file" id="lg_fi" accept=".json,application/json" hidden>
   <span id="lg_s" role="status" aria-live="polite"></span>
 </div>
 
@@ -793,7 +790,6 @@ function calcE() {
   $('e_res').innerHTML = box('Скорость', f(v, 2), 'м/с', 1) + box('Дин. давление', f(Pd, 1), 'Па') + box('Эквив. диаметр', f(d_eq * 1000, 0), 'мм') + box('Удельные потери', f(R, 2), 'Па/м') + box('Трение', f(P_friction, 0), 'Па') + box('Местные', f(P_local, 0), 'Па') + box('Суммарные', f(P_total, 0), 'Па', 1);
 }
 
-/* ФАНКОЙЛЫ — обновлено */
 const FC_SIZES = {
   '2.5': { q: 2.5, l: 400 },
   '3.5': { q: 3.5, l: 500 },
@@ -1431,30 +1427,6 @@ $('lg_x').onclick = () => {
     clearTimeout(armTimer); armed = 0; LOG = []; save(); renderLog();
     $('lg_x').textContent = 'Очистить'; say('Журнал очищен');
   }
-};
-$('lg_e').onclick = () => {
-  if (!LOG.length) { say('Журнал пуст'); return; }
-  const payload = { app: 'hvac-calc', version: 1, exportedAt: new Date().toISOString(), log: LOG };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'hvac-log-' + new Date().toISOString().slice(0, 10) + '.json';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
-  say('Журнал сохранён в файл');
-};
-$('lg_i').onclick = () => $('lg_fi').click();
-$('lg_fi').onchange = async (e) => {
-  const file = e.target.files[0]; e.target.value = '';
-  if (!file) return;
-  try {
-    const data = JSON.parse(await file.text());
-    const arr = Array.isArray(data) ? data : (data && data.log);
-    if (!Array.isArray(arr)) throw new Error('в файле нет массива записей');
-    let added = 0;
-    arr.forEach(en => { if (en && en.n && en.t) { LOG.push(en); added++; } });
-    save(); renderLog(); say('Добавлено: ' + added);
-  } catch (err) { say('Ошибка импорта: ' + err.message); }
 };
 renderLog();
 
