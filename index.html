@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fce4ec;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f8bbd0;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#e8eaf6;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#c5cae9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -44,6 +44,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 section.tool{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;touch-action:pan-y; margin-top:10px;}
 section.tool.on{display:block;animation:fade .18s ease-out;}
 .back-btn{display:inline-block; margin-bottom:12px; background:none; border:none; color:var(--ac); font-weight:700; cursor:pointer; padding:0; font-size:0.95rem;}
+.reset-btn{margin-left:10px; background:none; border:none; color:var(--mut); font-size:1.15rem; cursor:pointer; padding:0 6px; vertical-align:middle; line-height:1;}
+.reset-btn:hover{color:var(--hot);}
 @keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
 h2{margin:0 0 4px;font-size:1.25rem}
 .hint{color:var(--mut);font-size:.9rem;margin:0 0 14px}
@@ -473,7 +475,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="uh_res"></div></section>
 
-<!-- ТЕПЛОВЫЕ ЗАВЕСЫ — обновлено -->
 <section id="t21" class="tool"><button class="back-btn">← Назад</button><h2>Тепловые завесы</h2><p class="hint">Подбор по ширине проёма и температурному режиму.</p>
 <div class="grid">
 <label>Ширина проёма, м<input id="tz_w" type="number" value="1.5" step="0.1" min="0.5" inputmode="decimal"></label>
@@ -484,7 +485,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Температура на выходе, °C<input id="tz_out" type="number" value="45" step="5" min="30" inputmode="decimal"><span class="hint-inline">Типично +40…+50 °C</span></label>
 </div>
 <div class="res" id="tz_res"></div>
-<p class="note">Расход завесы = ширина проёма × удельный расход. Мощность = нагрев рециркуляционного воздуха от температуры в помещении до температуры на выходе. Скорость выхода и защита проёма зависят от высоты проёма и разницы температур.</p></section>
+<p class="note">Расход завесы = ширина проёма × удельный расход. Мощность = нагрев рециркуляционного воздуха от температуры в помещении до температуры на выходе.</p></section>
 
 <section id="t23" class="tool"><button class="back-btn">← Назад</button><h2>Рециркуляция</h2><p class="hint">Доля рециркуляции и экономия тепла.</p>
 <div class="grid">
@@ -519,13 +520,14 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="tl_res"></div></section>
 
-<section id="t27" class="tool"><button class="back-btn">← Назад</button><h2>Резервное копирование</h2><p class="hint">Сохраните или восстановите все данные.</p>
+<section id="t27" class="tool"><button class="back-btn">← Назад</button><h2>Резервное копирование</h2><p class="hint">Сохраните, восстановите или сбросьте данные.</p>
 <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
   <button class="tool-btn" onclick="backupAll()">💾 Скачать резервную копию</button>
   <button class="tool-btn sec" onclick="document.getElementById('backup_input').click()">📥 Восстановить из файла</button>
+  <button class="tool-btn sec" onclick="resetAllInputs()">↺ Сбросить все введённые данные</button>
   <input type="file" id="backup_input" accept=".json" style="display:none;" onchange="restoreBackup(event)">
 </div>
-<p class="note">Файл содержит: журнал, фотографии, паспорт, спецификацию, введённые значения.</p>
+<p class="note">Резервная копия содержит: журнал, фотографии, паспорт, спецификацию, введённые значения. Сброс введённых данных вернёт поля к заводским значениям (журнал и фото останутся).</p>
 <div class="res" id="bk_res"></div></section>
 
 <footer style="text-align:center; margin-top:20px;">Расчёты справочные и не заменяют проектную документацию.</footer>
@@ -557,7 +559,6 @@ themeBtn.onclick = () => {
 };
 applyTheme();
 
-/* СПИСОК (без Чиллеров) */
 const tools = [
   { id: 't0', name: 'Воздухообмен', cat: 'vent', icon: '🌬️' },
   { id: 't1', name: 'Подбор сечения', cat: 'vent', icon: '📏' },
@@ -687,7 +688,6 @@ document.querySelectorAll('.back-btn').forEach(btn => {
 
 $('btn-photo').onclick = () => openTool('t19');
 
-/* РАСЧЁТЫ */
 const rooms = [
   ['Жилая комната', 1], ['Спальня', 1], ['Кухня (электроплита)', 6], ['Кухня (газ)', 8],
   ['Санузел', 7], ['Офис', 3], ['Переговорная', 5], ['Магазин', 3],
@@ -976,26 +976,18 @@ function calcUH() {
   $('uh_res').innerHTML = html;
 }
 
-/* ТЕПЛОВЫЕ ЗАВЕСЫ — новая формула */
 function calcTZ() {
   const w = val('tz_w'), h = val('tz_h'), tin = val('tz_tin'), tout = val('tz_tout');
   const flowPerM = Math.max(val('tz_flow'), 300);
   const tOut = Math.max(val('tz_out'), tin + 5);
-  
   const S = w * h;
-  const L = w * flowPerM; // м³/ч — расход завесы
-  const dtHeat = tOut - tin; // нагрев воздуха внутри (рециркуляция)
-  const Q = L * 1.2 * 1.005 * dtHeat / 3600; // кВт
-  
-  // Скорость на срезе щели (оценочно, ширина сопла ~10% от ширины завесы)
-  const nozzleH = 0.05; // 50 мм типичная высота щели
+  const L = w * flowPerM;
+  const dtHeat = tOut - tin;
+  const Q = L * 1.2 * 1.005 * dtHeat / 3600;
+  const nozzleH = 0.05;
   const vOut = L / 3600 / (w * nozzleH);
-  
-  // Расчёт воды для водяных завес (Δt 90/70)
   const Gwater = Q / (1.163 * 20);
-  
   const dtOutside = tin - tout;
-  
   let html = 
     box('Площадь проёма', f(S, 1), 'м²') +
     box('Расход завесы', f(L, 0), 'м³/ч', 1) +
@@ -1005,10 +997,8 @@ function calcTZ() {
     box('Скорость на срезе щели', f(vOut, 1), 'м/с') +
     box('Расход воды 90/70', f(Gwater, 2), 'м³/ч') +
     box('Δt с улицей', f(dtOutside, 0), '°C');
-  
-  if (vOut < 5) html += `<p class="note warn">Скорость на срезе ${f(vOut, 1)} м/с маловата для защиты проёма. Увеличьте удельный расход.</p>`;
-  if (dtOutside > 25 && h > 2.5) html += `<p class="note warn">Высокий проём (${f(h)} м) при Δt ${f(dtOutside, 0)} °C — рассмотрите завесу с усиленным потоком (удельный расход 1500+).</p>`;
-  
+  if (vOut < 5) html += `<p class="note warn">Скорость на срезе ${f(vOut, 1)} м/с маловата. Увеличьте удельный расход.</p>`;
+  if (dtOutside > 25 && h > 2.5) html += `<p class="note warn">Высокий проём при Δt ${f(dtOutside, 0)} °C — рассмотрите усиленный поток (1500+).</p>`;
   $('tz_res').innerHTML = html;
 }
 
@@ -1473,6 +1463,65 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
+/* ============ СБРОС ВВЕДЁННЫХ ЗНАЧЕНИЙ ============ */
+// Сохраняем заводские значения всех полей в разделах
+const DEFAULTS = {};
+document.querySelectorAll('section.tool input, section.tool select, section.tool textarea').forEach(el => {
+  if (el.type === 'file' || !el.id) return;
+  DEFAULTS[el.id] = el.tagName === 'SELECT' ? el.selectedIndex : el.value;
+});
+
+function resetSectionFields(section) {
+  section.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+    if (el.type === 'file') return;
+    const def = DEFAULTS[el.id];
+    if (def === undefined) return;
+    if (el.tagName === 'SELECT') el.selectedIndex = def;
+    else el.value = def;
+    try { localStorage.removeItem('hvac_in_' + el.id); } catch (e) {}
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+}
+
+window.resetAllInputs = function () {
+  if (!confirm('Сбросить все введённые значения во всех разделах?\n\nЖурнал расчётов, фотографии, паспорт объекта и спецификация останутся, но все поля вернутся к заводским значениям.')) return;
+  Object.keys(DEFAULTS).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const def = DEFAULTS[id];
+    if (el.tagName === 'SELECT') el.selectedIndex = def;
+    else el.value = def;
+    try { localStorage.removeItem('hvac_in_' + id); } catch (e) {}
+  });
+  document.querySelectorAll('section.tool').forEach(section => {
+    section.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.type !== 'file') {
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  });
+  alert('Все введённые значения сброшены к заводским.');
+};
+
+// Кнопка ↺ в каждом разделе (только там, где есть поля для сброса)
+document.querySelectorAll('section.tool').forEach(section => {
+  const backBtn = section.querySelector('.back-btn');
+  if (!backBtn) return;
+  const hasFields = section.querySelector('input[id]:not([type="file"]), select[id], textarea[id]');
+  if (!hasFields) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'reset-btn';
+  btn.textContent = '↺';
+  btn.title = 'Сбросить поля этого раздела';
+  btn.setAttribute('aria-label', 'Сбросить поля раздела');
+  btn.onclick = () => resetSectionFields(section);
+  backBtn.parentNode.insertBefore(btn, backBtn.nextSibling);
+});
+
+/* СВАЙПЫ */
 (function() {
     let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
