@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fce4ec;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#f8bbd0;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
+:root{--bg:#ede7f6;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#d1c4e9;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
 *{box-sizing:border-box}
@@ -211,15 +211,23 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="e_res"></div></section>
 
-<section id="t9" class="tool"><button class="back-btn">← Назад</button><h2>Фанкойлы</h2><p class="hint">Расход воды и воздуха.</p>
+<section id="t9" class="tool"><button class="back-btn">← Назад</button><h2>Фанкойлы</h2><p class="hint">Расход воды по нагрузке, расход воздуха по типоразмеру.</p>
 <div class="grid">
+<label>Типоразмер<select id="fc_size">
+<option value="2.5">2,5 кВт</option>
+<option value="3.5">3,5 кВт</option>
+<option value="5" selected>5 кВт</option>
+<option value="7">7 кВт</option>
+<option value="10">10 кВт</option>
+<option value="14">14 кВт</option>
+</select></label>
 <label>Нагрузка, кВт<input id="fc_q" type="number" value="5" min="0" step="0.1" inputmode="decimal"></label>
+<label>Расход воздуха, м³/ч<input id="fc_airflow" type="number" value="700" min="0" step="50" inputmode="numeric"></label>
 <label>t воды подача, °C<input id="fc_tws" type="number" value="7" step="0.5" inputmode="decimal"></label>
 <label>t воды обратка, °C<input id="fc_twr" type="number" value="12" step="0.5" inputmode="decimal"></label>
-<label>t воздуха вход, °C<input id="fc_tas" type="number" value="14" step="0.5" inputmode="decimal"></label>
-<label>t воздуха выход, °C<input id="fc_tar" type="number" value="24" step="0.5" inputmode="decimal"></label>
 </div>
-<div class="res" id="fc_res"></div></section>
+<div class="res" id="fc_res"></div>
+<p class="note">Типоразмер задаёт типовую нагрузку и расход воздуха. Оба значения можно перебить вручную — например, если есть паспорт конкретной модели. Δt воздуха рассчитывается от введённого расхода.</p></section>
 
 <section id="t10" class="tool"><button class="back-btn">← Назад</button><h2>Электрика</h2><p class="hint">Ток, автомат, кабель.</p>
 <div class="grid">
@@ -267,14 +275,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="wc_res"></div></section>
 
-<section id="t15" class="tool"><button class="back-btn">← Назад</button><h2>Пусконаладка</h2><p class="hint">Проверка расхода.</p>
-<div class="grid">
-<label>Проектный расход, м³/ч<input id="pn_l_proj" type="number" value="1000" min="0" inputmode="decimal"></label>
-<label>Фактический расход, м³/ч<input id="pn_l_fact" type="number" value="920" min="0" inputmode="decimal"></label>
-<label>Допуск, %<input id="pn_tol" type="number" value="10" min="0" inputmode="numeric"></label>
-</div>
-<div class="res" id="pn_res"></div></section>
-
 <section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы, оборудование и работы.</p>
 
 <div class="gh" style="margin-top:0;">Материалы</div>
@@ -306,7 +306,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <div class="grid">
 <label>Крепёж/расходники, % от материалов<input id="sm_hw" type="number" value="5" min="0" inputmode="numeric"></label>
 <label>Монтаж, % от материалов+оборудования<input id="sm_work" type="number" value="25" min="0" inputmode="numeric"></label>
-<label>Пусконаладка, % от монтажа<input id="sm_pnr" type="number" value="8" min="0" inputmode="numeric"></label>
 </div>
 
 <div class="res" id="sm_res"></div></section>
@@ -554,7 +553,6 @@ const tools = [
   { id: 't12', name: 'Шумоглушители', cat: 'vent', icon: '🔇' },
   { id: 't13', name: 'Фильтры', cat: 'vent', icon: '🫧' },
   { id: 't14', name: 'Вод. калориферы', cat: 'vent', icon: '♨️' },
-  { id: 't15', name: 'Пусконаладка', cat: 'serv', icon: '🔧' },
   { id: 't16', name: 'Смета', cat: 'smeta', icon: '💰' },
   { id: 't17', name: 'Осушители', cat: 'vent', icon: '💦' },
   { id: 't18', name: 'Конвертер', cat: 'serv', icon: '🔄' },
@@ -795,11 +793,43 @@ function calcE() {
   $('e_res').innerHTML = box('Скорость', f(v, 2), 'м/с', 1) + box('Дин. давление', f(Pd, 1), 'Па') + box('Эквив. диаметр', f(d_eq * 1000, 0), 'мм') + box('Удельные потери', f(R, 2), 'Па/м') + box('Трение', f(P_friction, 0), 'Па') + box('Местные', f(P_local, 0), 'Па') + box('Суммарные', f(P_total, 0), 'Па', 1);
 }
 
+/* ФАНКОЙЛЫ — обновлено */
+const FC_SIZES = {
+  '2.5': { q: 2.5, l: 400 },
+  '3.5': { q: 3.5, l: 500 },
+  '5':   { q: 5,   l: 700 },
+  '7':   { q: 7,   l: 900 },
+  '10':  { q: 10,  l: 1200 },
+  '14':  { q: 14,  l: 1500 }
+};
+
+function updateFcFromSize() {
+  const s = $('fc_size').value;
+  const data = FC_SIZES[s];
+  if (!data) return;
+  $('fc_q').value = data.q;
+  $('fc_airflow').value = data.l;
+  $('fc_q').dispatchEvent(new Event('input', { bubbles: true }));
+  $('fc_airflow').dispatchEvent(new Event('input', { bubbles: true }));
+}
+
 function calcFC() {
-  const Q = val('fc_q'), tws = val('fc_tws'), twr = val('fc_twr'), tas = val('fc_tas'), tar = val('fc_tar');
-  const dtw = twr - tws, dta = tar - tas;
-  const G = dtw > 0 ? (0.86 * Q / dtw) : 0, L = dta > 0 ? (Q * 3600) / (1.2 * 1.005 * dta) : 0;
-  $('fc_res').innerHTML = box('Расход воды', f(G, 2), 'м³/ч', 1) + box('Расход', f(G / 3.6, 2), 'л/с') + box('Расход воздуха', f(L, 0), 'м³/ч', 1) + box('Δt воды', f(dtw, 1), '°C') + box('Δt воздуха', f(dta, 1), '°C');
+  const Q = val('fc_q'), tws = val('fc_tws'), twr = val('fc_twr'), L = val('fc_airflow');
+  const dtw = twr - tws;
+  const G = dtw > 0 ? (0.86 * Q / dtw) : 0;
+  const dta = L > 0 ? (Q * 3600) / (1.2 * 1.005 * L) : 0;
+  
+  let html = 
+    box('Расход воды', f(G, 2), 'м³/ч', 1) +
+    box('Расход воды', f(G / 3.6, 2), 'л/с') +
+    box('Расход воздуха', f(L, 0), 'м³/ч', 1) +
+    box('Δt воды', f(dtw, 1), '°C') +
+    box('Δt воздуха (расчётный)', f(dta, 1), '°C');
+  
+  if (dta > 25) html += `<p class="note warn">Δt воздуха ${f(dta, 1)} °C великоват — фанкойл может не обеспечить равномерность. Проверьте расход по паспорту.</p>`;
+  if (dta > 0 && dta < 5) html += `<p class="note warn">Δt воздуха ${f(dta, 1)} °C слишком мал — расход воздуха завышен для этой нагрузки.</p>`;
+  
+  $('fc_res').innerHTML = html;
 }
 
 function calcEL() {
@@ -850,14 +880,6 @@ function calcWC() {
   $('wc_res').innerHTML = box('Расход воды', f(G, 2), 'м³/ч', 1) + box('Расход воздуха', f(L, 0), 'м³/ч', 1) + box('Δt воздуха', f(dta, 1), '°C') + box('Δt воды', f(dtw, 1), '°C');
 }
 
-function calcPN() {
-  const proj = Math.max(val('pn_l_proj'), 1), fact = val('pn_l_fact'), tol = Math.max(val('pn_tol'), 0);
-  const dev = ((fact - proj) / proj) * 100, isPass = Math.abs(dev) <= tol;
-  let html = box('Отклонение', f(dev, 1), '%', 1) + box('Вердикт', isPass ? 'ГОДЕН' : 'НЕ ГОДЕН', '', 1);
-  if (!isPass) html += `<p class="note warn">Отклонение превышает ${tol}%.</p>`;
-  $('pn_res').innerHTML = html;
-}
-
 function updateUnitHint() {
   const type = $('sm_unit_type').value, hint = $('sm_unit_hint');
   if (type === 'supply') hint.textContent = 'Ориентир: 80 000 – 500 000 ₽';
@@ -877,14 +899,13 @@ function calcSM() {
   const equipment_total = unit_price + cond_cost + fan_cost;
   const cost_hw = material_total * (val('sm_hw') / 100);
   const cost_work = (material_total + equipment_total) * (val('sm_work') / 100);
-  const cost_pnr = cost_work * (val('sm_pnr') / 100);
-  const labor_total = cost_hw + cost_work + cost_pnr;
+  const labor_total = cost_hw + cost_work;
   const grand_total = material_total + equipment_total + labor_total;
   const unit_label = $('sm_unit_type').selectedOptions[0].text;
   $('sm_res').innerHTML = 
     `<div class="gh">Материалы</div>` + box('Воздуховоды', f(cost_duct, 0), 'руб.') + box('Фасонина', f(cost_fit, 0), 'руб.') + box('Изоляция', f(cost_ins, 0), 'руб.') + box('Решётки', f(cost_grille, 0), 'руб.') + box('Итого материалы', f(material_total, 0), 'руб.', 1) +
     `<div class="gh">Оборудование</div>` + box('Установка (' + unit_label + ')', f(unit_price, 0), 'руб.') + box('Кондиционеры', f(cond_cost, 0), 'руб.') + box('Вентиляторы', f(fan_cost, 0), 'руб.') + box('Итого оборудование', f(equipment_total, 0), 'руб.', 1) +
-    `<div class="gh">Работы</div>` + box('Крепёж', f(cost_hw, 0), 'руб.') + box('Монтаж', f(cost_work, 0), 'руб.') + box('Пусконаладка', f(cost_pnr, 0), 'руб.') + box('Итого работы', f(labor_total, 0), 'руб.', 1) +
+    `<div class="gh">Работы</div>` + box('Крепёж', f(cost_hw, 0), 'руб.') + box('Монтаж', f(cost_work, 0), 'руб.') + box('Итого работы', f(labor_total, 0), 'руб.', 1) +
     `<div class="gh">Всего</div>` + box('ИТОГО', f(grand_total, 0), 'руб.', 1);
 }
 
@@ -1297,14 +1318,13 @@ bind(['h_l', 'h_t1', 'h_t2'], calcH);
 bind(['z_a', 'z_b', 'z_h', 'z_e', 'z_t', 'z_v', 'z_r', 'z_s'], calcZ);
 bind(['b_a','b_b','b_tw','b_t','b_rh','b_v','b_n','b_t1','b_rh1','b_tsup','b_eff','b_r'], calcB);
 bind(['e_l','e_d','e_w','e_h','e_len','e_k','e_zeta'], calcE);
-bind(['fc_q','fc_tws','fc_twr','fc_tas','fc_tar'], calcFC);
+bind(['fc_q','fc_airflow','fc_tws','fc_twr'], calcFC);
 bind(['el_p','el_ph','el_cos','el_mat','el_l'], calcEL);
 bind(['vd_l','vd_w','vd_h','vd_k','vd_zeta'], calcVD);
 bind(['sl_l1','sl_l2','sl_att'], calcSL);
 bind(['fl_l','fl_c','fl_dp'], calcFL);
 bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
-bind(['pn_l_proj','pn_l_fact','pn_tol'], calcPN);
-bind(['sm_duct','sm_p_duct','sm_fit','sm_ins','sm_p_ins','sm_grille','sm_p_grille','sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty','sm_hw','sm_work','sm_pnr'], calcSM);
+bind(['sm_duct','sm_p_duct','sm_fit','sm_ins','sm_p_ins','sm_grille','sm_p_grille','sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty','sm_hw','sm_work'], calcSM);
 bind(['ou_l','ou_t','ou_rh1','ou_rh2'], calcOU);
 bind(['uh_v','uh_n','uh_t','uh_rh2','uh_rh1','uh_p'], calcUH);
 bind(['tz_w','tz_h','tz_tin','tz_tout','tz_flow','tz_out'], calcTZ);
@@ -1319,8 +1339,9 @@ $('u_c').addEventListener('change', fillU);
 $('u_c').addEventListener('input', fillU);
 bind(['u_v', 'u_u'], calcU);
 $('sm_unit_type').addEventListener('change', updateUnitHint);
+$('fc_size').addEventListener('change', updateFcFromSize);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcPN(); calcSM(); calcOU(); calcUH(); calcTZ(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcSM(); calcOU(); calcUH(); calcTZ(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
 
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
@@ -1356,7 +1377,7 @@ const SUM = {
   t4: ['Расход с запасом', 'м³/ч'], t5: ['Приток', 'м³/ч'], t6: ['Суммарные потери', 'Па'], 
   t9: ['Расход воздуха', 'м³/ч'], t10: ['Ток', 'А'], t11: ['Скорость', 'м/с'], 
   t12: ['Требуемое затухание', 'дБ'], t13: ['Требуемая площадь', 'м²'], t14: ['Расход воды', 'м³/ч'], 
-  t15: ['Отклонение', '%'], t16: ['ИТОГО', 'руб.'], t17: ['Удалить влагу', 'кг/ч'],
+  t16: ['ИТОГО', 'руб.'], t17: ['Удалить влагу', 'кг/ч'],
   t20: ['Требуется добавить', 'кг/ч'], t21: ['Мощность нагрева', 'кВт'],
   t23: ['Экономия тепла', 'кВт'], t24: ['Толщина', 'мм'], t26: ['Всего с запасом', 'кВт'],
   t30: ['Дозаправка фреона', 'г']
@@ -1437,7 +1458,6 @@ $('lg_fi').onchange = async (e) => {
 };
 renderLog();
 
-/* СБРОС ВВЕДЁННЫХ ЗНАЧЕНИЙ */
 const DEFAULTS = {};
 document.querySelectorAll('section.tool input, section.tool select, section.tool textarea').forEach(el => {
   if (el.type === 'file' || !el.id) return;
@@ -1493,7 +1513,6 @@ document.querySelectorAll('section.tool').forEach(section => {
   backBtn.parentNode.insertBefore(btn, backBtn.nextSibling);
 });
 
-/* СВАЙПЫ */
 (function() {
     let xDown = null, yDown = null, isSwiping = false;
     document.addEventListener('touchstart', function(evt) {
