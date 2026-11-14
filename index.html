@@ -1684,34 +1684,51 @@ document.querySelectorAll('section.tool').forEach(section => {
 });
 
 (function() {
-    let xDown = null, yDown = null, isSwiping = false;
+    const THRESHOLD = 10;   // px, чтобы понять направление
+    const SWIPE_MIN = 50;   // px, чтобы переключить инструмент
+    const BLOCK = 'input, select, textarea, button, nav, .tw, a, label, .photo-card';
+
+    let xDown = null, yDown = null;
+    let axis = null; // null — не решили, 'h' — горизонталь, 'v' — вертикаль, 'skip' — игнор
+
     document.addEventListener('touchstart', function(evt) {
-        if (evt.touches.length !== 1) return;
-        if (evt.target.closest('input, select, textarea, button, nav, .tw, a, label')) return;
-        xDown = evt.touches[0].clientX; yDown = evt.touches[0].clientY; isSwiping = false;
+        if (evt.touches.length !== 1) { axis = 'skip'; return; }
+        if (evt.target.closest(BLOCK)) { axis = 'skip'; return; }
+        xDown = evt.touches[0].clientX;
+        yDown = evt.touches[0].clientY;
+        axis = null;
     }, { passive: true });
+
     document.addEventListener('touchmove', function(evt) {
-        if (!xDown || !yDown || evt.touches.length !== 1) return;
-        if (isSwiping) return;
-        const xUp = evt.touches[0].clientX, yUp = evt.touches[0].clientY;
-        const xDiff = xDown - xUp, yDiff = yDown - yUp;
-        if (Math.abs(xDiff) > Math.abs(yDiff)) {
-            if (evt.cancelable) evt.preventDefault();
-            if (Math.abs(xDiff) > 40) {
-                isSwiping = true;
-                const currentTool = document.querySelector('section.tool.on');
-                if (!currentTool) return;
-                const curIndex = tools.findIndex(x => x.id === currentTool.id);
-                if (curIndex < 0) return;
-                const next = curIndex + (xDiff > 0 ? 1 : -1);
-                if (next >= 0 && next < tools.length) openTool(tools[next].id);
-            }
+        if (axis === 'skip' || xDown === null || yDown === null) return;
+        if (evt.touches.length !== 1) { axis = 'skip'; return; }
+
+        const dx = evt.touches[0].clientX - xDown;
+        const dy = evt.touches[0].clientY - yDown;
+
+        if (axis === null) {
+            if (Math.abs(dx) < THRESHOLD && Math.abs(dy) < THRESHOLD) return;
+            axis = Math.abs(dy) > Math.abs(dx) ? 'v' : 'h';
         }
+        if (axis === 'v') return;
+
+        // Горизонтальный жест: фиксируем его и блокируем скролл страницы
+        if (evt.cancelable) evt.preventDefault();
+
+        if (Math.abs(dx) < SWIPE_MIN) return;
+
+        axis = 'skip';
+        const currentTool = document.querySelector('section.tool.on');
+        if (!currentTool) return;
+        const curIndex = tools.findIndex(x => x.id === currentTool.id);
+        if (curIndex < 0) return;
+        const next = curIndex + (dx < 0 ? 1 : -1);
+        if (next >= 0 && next < tools.length) openTool(tools[next].id);
     }, { passive: false });
-    document.addEventListener('touchend', function() {
-        xDown = null; yDown = null;
-        setTimeout(() => { isSwiping = false; }, 100);
-    }, { passive: true });
+
+    function resetSwipe() { xDown = null; yDown = null; axis = null; }
+    document.addEventListener('touchend', resetSwipe, { passive: true });
+    document.addEventListener('touchcancel', resetSwipe, { passive: true });
 })();
 
 showView('cat', 'vent');
