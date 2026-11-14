@@ -102,7 +102,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="nav-btn" data-view="smeta" aria-selected="true">Объект</button>
   <button class="nav-btn" data-view="calc">Расчёты</button>
   <button class="nav-btn" data-view="serv">Сервис</button>
-  <button class="nav-btn" data-view="log">Журнал</button>
 </nav>
 
 <div id="view-cat" class="view on">
@@ -111,6 +110,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 
 <div id="log-view">
+  <button class="back-btn" type="button" data-target="serv">← Назад</button>
   <h2>Журнал расчётов</h2><p class="hint">Записывайте результаты по объекту. Журнал сохраняется на этом устройстве.</p>
   <label>Объект или пометка<input id="lg_o" type="text" placeholder="Например: кабинет 12, 2 этаж"></label>
   <div class="tw"><table><thead><tr><th>№</th><th>Время</th><th>Расчёт</th><th>Пометка</th><th>Исходные данные</th><th>Результат</th><th>Значение</th><th></th></tr></thead><tbody id="lg_b"></tbody><tfoot id="lg_f"></tfoot></table></div>
@@ -240,7 +240,16 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <label>Ширина, мм<input id="vd_w" type="number" value="800" min="50" inputmode="numeric"></label>
 <label>Высота, мм<input id="vd_h" type="number" value="80" min="50" inputmode="numeric"></label>
 <label>Живое сечение, %<input id="vd_k" type="number" value="70" min="10" max="100" inputmode="numeric"></label>
-<label>КМС<input id="vd_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"></label>
+<label>КМС<input id="vd_zeta" type="number" value="1.5" min="0" step="0.1" inputmode="decimal"><span class="hint-inline">1,5 — типовая решётка; уточняйте по каталогу</span></label>
+<label>Типовое значение КМС<select id="vd_zeta_preset">
+<option value="">— выберите —</option>
+<option value="1.0">Решётка с прямыми жалюзи — 1,0</option>
+<option value="1.5">Решётка с наклонными жалюзи — 1,5</option>
+<option value="2.0">Решётка с регулируемыми жалюзи — 2,0</option>
+<option value="2.5">Плафонный диффузор — 2,5</option>
+<option value="3.0">Вихревой диффузор — 3,0</option>
+<option value="0.5">Перфорированная панель — 0,5</option>
+</select></label>
 </div>
 <div class="res" id="vd_res"></div></section>
 
@@ -627,24 +636,31 @@ function showView(viewName, catId) {
   }
 
   if (viewName === 'cat') {
-    const items = tools.filter(t => t.cat === catId);
-    if (items.length === 1) { openTool(items[0].id); return; }
-    $('view-cat').classList.add('on');
-    const navBtn = document.querySelector(`.nav-btn[data-view="${catId}"]`);
-    if (navBtn) navBtn.setAttribute('aria-selected', 'true');
-    else {
-      const calcBtn = document.querySelector('.nav-btn[data-view="calc"]');
-      if (calcBtn) calcBtn.setAttribute('aria-selected', 'true');
-    }
-    $('cat-title').textContent = catNames[catId];
-    $('cat-list').innerHTML = items.map(t =>
-      `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
-    ).join('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const items = tools.filter(t => t.cat === catId);
+  if (items.length === 1) { openTool(items[0].id); return; }
+  $('view-cat').classList.add('on');
+  const navBtn = document.querySelector(`.nav-btn[data-view="${catId}"]`);
+  if (navBtn) navBtn.setAttribute('aria-selected', 'true');
+  else {
+    const calcBtn = document.querySelector('.nav-btn[data-view="calc"]');
+    if (calcBtn) calcBtn.setAttribute('aria-selected', 'true');
+  }
+  $('cat-title').textContent = catNames[catId];
+  const itemsHtml = items.map(t =>
+    `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
+  ).join('');
+  const logHtml = catId === 'serv'
+    ? `<div class="cat-item" onclick="showView('log')"><span>📒 Журнал расчётов</span><span>›</span></div>`
+    : '';
+  $('cat-list').innerHTML = logHtml + itemsHtml;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
   } else if (viewName === 'log') {
-    $('log-view').classList.add('on');
-    document.querySelector('.nav-btn[data-view="log"]').setAttribute('aria-selected', 'true');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  $('log-view').classList.add('on');
+  const servBtn = document.querySelector('.nav-btn[data-view="serv"]');
+  if (servBtn) servBtn.setAttribute('aria-selected', 'true');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
   } else if (viewName === 'tool') {
     const toolEl = $(catId);
     if (toolEl) {
@@ -709,7 +725,10 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 });
 document.querySelectorAll('.back-btn').forEach(btn => {
   btn.onclick = () => {
-    const toolId = btn.closest('section').id;
+    if (btn.dataset.target) { showView('cat', btn.dataset.target); return; }
+    const section = btn.closest('section');
+    if (!section) { showView('cat', 'serv'); return; }
+    const toolId = section.id;
     const t = tools.find(x => x.id === toolId);
     if (!t) { showView('cat', 'smeta'); return; }
     if (t.cat === 'vent' || t.cat === 'heat' || t.cat === 'elec') showView('cat', 'calc');
@@ -1492,6 +1511,14 @@ bind(['e_l','e_d','e_w','e_h','e_len','e_k','e_zeta'], calcE);
 bind(['fc_q','fc_airflow','fc_tws','fc_twr'], calcFC);
 bind(['el_p','el_ph','el_cos','el_mat','el_l'], calcEL);
 bind(['vd_l','vd_w','vd_h','vd_k','vd_zeta'], calcVD);
+  $('vd_zeta_preset').addEventListener('change', e => {
+  const v = e.target.value;
+  if (v === '') return;
+  const inp = $('vd_zeta');
+  inp.value = v;
+  inp.dispatchEvent(new Event('input', { bubbles: true }));
+  inp.dispatchEvent(new Event('change', { bubbles: true }));
+});
 bind(['sl_l1','sl_l2','sl_att'], calcSL);
 bind(['fl_l','fl_c','fl_dp'], calcFL);
 bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
