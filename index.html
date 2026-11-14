@@ -272,41 +272,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <div class="res" id="wc_res"></div></section>
 
-<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы, оборудование и работы.</p>
-
-<div class="gh" style="margin-top:0;">Материалы</div>
-<div class="grid">
-<label>Длина воздуховодов, м<input id="sm_duct" type="number" value="50" min="0" inputmode="numeric"></label>
-<label>Цена 1 м воздуховода, руб<input id="sm_p_duct" type="number" value="2000" min="0" inputmode="numeric"></label>
-<label>Фасонина, % от воздуховодов<input id="sm_fit" type="number" value="40" min="0" inputmode="numeric"></label>
-<label>Площадь изоляции, м²<input id="sm_ins" type="number" value="60" min="0" inputmode="numeric"></label>
-<label>Цена изоляции 1 м², руб<input id="sm_p_ins" type="number" value="600" min="0" inputmode="numeric"></label>
-<label>Кол-во решёток, шт<input id="sm_grille" type="number" value="6" min="0" inputmode="numeric"></label>
-<label>Цена решётки, руб<input id="sm_p_grille" type="number" value="7000" min="0" inputmode="numeric"></label>
-</div>
-
-<div class="gh">Оборудование</div>
-<div class="grid">
-<label>Тип установки<select id="sm_unit_type">
-<option value="supply">Приточная</option>
-<option value="supply_exhaust">Приточно-вытяжная</option>
-<option value="custom">Свой вариант</option>
-</select></label>
-<label>Цена установки, руб<input id="sm_unit_price" type="number" value="260000" min="0" inputmode="numeric"><span class="hint-inline" id="sm_unit_hint">Ориентир: 80 000 – 500 000 ₽</span></label>
-<label>Кондиционеры: цена, руб<input id="sm_cond_price" type="number" value="0" min="0" inputmode="numeric"><span class="hint-inline">Ориентир: 40 000 – 400 000 ₽</span></label>
-<label>Кондиционеры: кол-во, шт<input id="sm_cond_qty" type="number" value="0" min="0" inputmode="numeric"></label>
-<label>Канальные вентиляторы: цена, руб<input id="sm_fan_price" type="number" value="0" min="0" inputmode="numeric"><span class="hint-inline">Ориентир: 5 000 – 50 000 ₽</span></label>
-<label>Канальные вентиляторы: кол-во, шт<input id="sm_fan_qty" type="number" value="0" min="0" inputmode="numeric"></label>
-</div>
-
-<div class="gh">Работы и расходники</div>
-<div class="grid">
-<label>Крепёж/расходники, % от материалов<input id="sm_hw" type="number" value="5" min="0" inputmode="numeric"></label>
-<label>Монтаж, % от материалов+оборудования<input id="sm_work" type="number" value="25" min="0" inputmode="numeric"></label>
-</div>
-
-<div class="res" id="sm_res"></div></section>
-
 <section id="t28" class="tool"><button class="back-btn">← Назад</button><h2>Паспорт объекта</h2><p class="hint">Краткая характеристика объекта.</p>
 <div class="grid">
 <label>Название / адрес<input id="po_name" type="text" placeholder="Например: ООО «Ромашка», ул. Ленина 5"></label>
@@ -392,6 +357,49 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="tool-btn" id="sp_copy" type="button">📋 Скопировать</button>
   <button class="tool-btn" id="sp_share" type="button">📤 Поделиться</button>
 </div></section>
+
+<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы (по спецификации), оборудование и работы.</p>
+
+<div class="gh" style="margin-top:0;">Материалы по спецификации</div>
+<p class="hint" style="margin:0 0 8px;">Позиции и количество подтягиваются из «Спецификации». Цены можно править — они сохраняются.</p>
+<div class="tw">
+  <table id="sm_spec_table">
+    <thead>
+      <tr><th>№</th><th>Наименование</th><th>Кол-во</th><th>Ед.</th><th>Цена, руб</th><th>Сумма, руб</th></tr>
+    </thead>
+    <tbody id="sm_spec_body"><tr><td colspan="6" class="empty">Заполните спецификацию — позиции появятся здесь.</td></tr></tbody>
+    <tfoot><tr><th colspan="5" style="text-align:right;">Итого материалы</th><th id="sm_mat_total">0</th></tr></tfoot>
+  </table>
+</div>
+
+<div class="gh">Оборудование</div>
+<div class="grid">
+<label>Тип установки<select id="sm_unit_type">
+<option value="supply">Приточная</option>
+<option value="supply_exhaust">Приточно-вытяжная</option>
+<option value="custom">Свой вариант</option>
+</select></label>
+<label>Цена установки, руб<input id="sm_unit_price" type="number" value="260000" min="0" inputmode="numeric"><span class="hint-inline" id="sm_unit_hint">Ориентир: 80 000 – 500 000 ₽</span></label>
+<label>Кондиционеры: цена, руб<input id="sm_cond_price" type="number" value="0" min="0" inputmode="numeric"><span class="hint-inline">Ориентир: 40 000 – 400 000 ₽</span></label>
+<label>Кондиционеры: кол-во, шт<input id="sm_cond_qty" type="number" value="0" min="0" inputmode="numeric"></label>
+<label>Канальные вентиляторы: цена, руб<input id="sm_fan_price" type="number" value="0" min="0" inputmode="numeric"><span class="hint-inline">Ориентир: 5 000 – 50 000 ₽</span></label>
+<label>Канальные вентиляторы: кол-во, шт<input id="sm_fan_qty" type="number" value="0" min="0" inputmode="numeric"></label>
+</div>
+
+<div class="gh">Работы и расходники</div>
+<div class="grid">
+<label>Крепёж/расходники, % от материалов<input id="sm_hw" type="number" value="5" min="0" inputmode="numeric"></label>
+<label>Монтаж, % от материалов+оборудования<input id="sm_work" type="number" value="25" min="0" inputmode="numeric"></label>
+</div>
+
+<div class="res" id="sm_res"></div>
+
+<div class="log-actions" style="margin-top:14px;">
+  <button class="tool-btn" id="sm_copy" type="button">📋 Скопировать смету</button>
+  <button class="tool-btn" id="sm_share" type="button">📤 Поделиться</button>
+  <button class="tool-btn sec" id="sm_download" type="button">💾 Скачать TXT</button>
+</div>
+</section>
 
 <section id="t30" class="tool"><button class="back-btn">← Назад</button><h2>Трасса кондиционера</h2><p class="hint">Проверка длины трассы и перепада высот.</p>
 <div class="grid">
@@ -520,6 +528,49 @@ const box = (l, v, u, m) => `<div class="r${m ? ' main' : ''}"><small>${l}</smal
 const num = v => { const n = parseFloat(String(v).replace(/\s|\u00a0|\u202f/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
 const val = id => num($(id).value);
 
+const SPEC_PRICES = {
+  'Воздуховод Ø100': 800,
+  'Воздуховод Ø125': 1000,
+  'Воздуховод Ø160': 1300,
+  'Воздуховод Ø200': 1700,
+  'Воздуховод Ø250': 2200,
+  'Воздуховод прямоуг.': 1500,
+  'Фасонина': 500,
+  'Изоляция': 600,
+  'Решётки / диффузоры': 7000,
+  'Шумоглушители': 5000,
+  'Фильтры': 3000,
+  'Клапаны / заслонки': 4000,
+  'Приточная установка': 260000,
+  'Приточно-вытяжная': 450000,
+  'Кондиционеры': 60000,
+  'Канальные вентиляторы': 15000,
+  'Калориферы': 40000,
+  'Фанкойлы': 35000,
+  'Фреоновая трасса': 800,
+  'Дренаж': 200,
+  'Кабель': 150,
+  'Автоматика': 30000
+};
+
+function getSpecPrice(name) {
+  const saved = localStorage.getItem('hvac_price_' + name);
+  if (saved !== null && saved !== '') return num(saved);
+  return SPEC_PRICES[name] || 0;
+}
+
+function getSpecOther() {
+  const el = $('sp_other');
+  return el ? el.value.trim() : '';
+}
+
+function getMatTotal() {
+  const items = getSpecItems();
+  const other = getSpecOther();
+  if (other) items.push(['Прочее', other, '']);
+  return items.reduce((s, it) => s + (typeof it[1] === 'number' ? it[1] : 0) * getSpecPrice(it[0]), 0);
+}
+
 const themeBtn = $('theme');
 const THEME_LABEL = { auto: 'Тема', light: 'Светлая', dark: 'Тёмная' };
 let theme = 'auto';
@@ -550,7 +601,6 @@ const tools = [
   { id: 't12', name: 'Шумоглушители', cat: 'vent', icon: '🔇' },
   { id: 't13', name: 'Фильтры', cat: 'vent', icon: '🫧' },
   { id: 't14', name: 'Вод. калориферы', cat: 'vent', icon: '♨️' },
-  { id: 't16', name: 'Смета', cat: 'smeta', icon: '💰' },
   { id: 't17', name: 'Осушители', cat: 'vent', icon: '💦' },
   { id: 't18', name: 'Конвертер', cat: 'serv', icon: '🔄' },
   { id: 't19', name: 'Фото', cat: 'serv', icon: '📷' },
@@ -562,6 +612,7 @@ const tools = [
   { id: 't27', name: 'Резервная копия', cat: 'serv', icon: '💾' },
   { id: 't28', name: 'Паспорт объекта', cat: 'smeta', icon: '📋' },
   { id: 't29', name: 'Спецификация', cat: 'smeta', icon: '📄' },
+  { id: 't16', name: 'Смета', cat: 'smeta', icon: '💰' },
   { id: 't30', name: 'Трасса кондиц.', cat: 'heat', icon: '🛣️' }
 ];
 
@@ -603,6 +654,7 @@ function showView(viewName, catId) {
 }
 
 function restoreInputsForSection(section) {
+  if (!section) return;
   section.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
     if (el.type === 'file') return;
     const saved = localStorage.getItem('hvac_in_' + el.id);
@@ -626,6 +678,10 @@ window.openTool = function(id) {
   const section = $(id);
   if (section) {
     restoreInputsForSection(section);
+    if (id === 't16') {
+      try { restoreInputsForSection($('t29')); } catch (e) {}
+      renderSmetaSpec();
+    }
     section.querySelectorAll('input, select, textarea').forEach(el => {
       if (el.type !== 'file') {
         el.dispatchEvent(new Event('input', { bubbles: true }));
@@ -884,11 +940,7 @@ function updateUnitHint() {
 }
 
 function calcSM() {
-  const cost_duct = val('sm_duct') * val('sm_p_duct');
-  const cost_fit = cost_duct * (val('sm_fit') / 100);
-  const cost_ins = val('sm_ins') * val('sm_p_ins');
-  const cost_grille = val('sm_grille') * val('sm_p_grille');
-  const material_total = cost_duct + cost_fit + cost_ins + cost_grille;
+  const material_total = getMatTotal();
   const unit_price = val('sm_unit_price');
   const cond_cost = val('sm_cond_price') * val('sm_cond_qty');
   const fan_cost = val('sm_fan_price') * val('sm_fan_qty');
@@ -898,11 +950,22 @@ function calcSM() {
   const labor_total = cost_hw + cost_work;
   const grand_total = material_total + equipment_total + labor_total;
   const unit_label = $('sm_unit_type').selectedOptions[0].text;
-  $('sm_res').innerHTML = 
-    `<div class="gh">Материалы</div>` + box('Воздуховоды', f(cost_duct, 0), 'руб.') + box('Фасонина', f(cost_fit, 0), 'руб.') + box('Изоляция', f(cost_ins, 0), 'руб.') + box('Решётки', f(cost_grille, 0), 'руб.') + box('Итого материалы', f(material_total, 0), 'руб.', 1) +
-    `<div class="gh">Оборудование</div>` + box('Установка (' + unit_label + ')', f(unit_price, 0), 'руб.') + box('Кондиционеры', f(cond_cost, 0), 'руб.') + box('Вентиляторы', f(fan_cost, 0), 'руб.') + box('Итого оборудование', f(equipment_total, 0), 'руб.', 1) +
-    `<div class="gh">Работы</div>` + box('Крепёж', f(cost_hw, 0), 'руб.') + box('Монтаж', f(cost_work, 0), 'руб.') + box('Итого работы', f(labor_total, 0), 'руб.', 1) +
-    `<div class="gh">Всего</div>` + box('ИТОГО', f(grand_total, 0), 'руб.', 1);
+  const specCount = getSpecItems().length + (getSpecOther() ? 1 : 0);
+  $('sm_res').innerHTML =
+    `<div class="gh">Материалы (из спецификации)</div>` +
+    box('Позиций', specCount, 'шт') +
+    box('Итого материалы', f(material_total, 0), 'руб.', 1) +
+    `<div class="gh">Оборудование</div>` +
+    box('Установка (' + unit_label + ')', f(unit_price, 0), 'руб.') +
+    box('Кондиционеры', f(cond_cost, 0), 'руб.') +
+    box('Вентиляторы', f(fan_cost, 0), 'руб.') +
+    box('Итого оборудование', f(equipment_total, 0), 'руб.', 1) +
+    `<div class="gh">Работы</div>` +
+    box('Крепёж', f(cost_hw, 0), 'руб.') +
+    box('Монтаж', f(cost_work, 0), 'руб.') +
+    box('Итого работы', f(labor_total, 0), 'руб.', 1) +
+    `<div class="gh">Всего</div>` +
+    box('ИТОГО', f(grand_total, 0), 'руб.', 1);
 }
 
 function calcOU() {
@@ -1074,7 +1137,7 @@ function getSpecItems() {
 
 function calcSP() {
   const items = getSpecItems();
-  const other = $('sp_other').value.trim();
+  const other = getSpecOther();
   if (other) items.push(['Прочее', other, '']);
   if (!items.length) {
     $('sp_res').innerHTML = `<div class="spec-preview">Спецификация пуста. Заполните нужные позиции выше.</div>`;
@@ -1084,13 +1147,120 @@ function calcSP() {
   $('sp_res').innerHTML = `<div class="gh">Спецификация (${items.length} позиций)</div><div class="spec-preview">${table}</div>`;
 }
 
-function getSpecText() {
+function renderSmetaSpec() {
+  const body = $('sm_spec_body');
+  if (!body) return;
   const items = getSpecItems();
-  const other = $('sp_other').value.trim();
+  const other = getSpecOther();
   if (other) items.push(['Прочее', other, '']);
-  if (!items.length) return 'Спецификация пуста';
-  const objName = $('po_name').value || 'Объект';
-  return 'Спецификация: ' + objName + '\n\n' + items.map((it, i) => `${i + 1}. ${it[0]} — ${it[1]} ${it[2]}`.trim()).join('\n');
+  if (!items.length) {
+    body.innerHTML = '<tr><td colspan="6" class="empty">Заполните спецификацию — позиции появятся здесь.</td></tr>';
+    $('sm_mat_total').textContent = '0';
+    return;
+  }
+  body.innerHTML = items.map((it, i) => {
+    const qty = typeof it[1] === 'number' ? it[1] : 0;
+    const price = getSpecPrice(it[0]);
+    const sum = qty * price;
+    return `<tr>
+      <td>${i + 1}</td>
+      <td>${it[0]}</td>
+      <td>${f(qty, 1)}</td>
+      <td>${it[2]}</td>
+      <td><input type="number" min="0" inputmode="numeric" value="${price}" data-sm-price="${i}" data-sm-name="${it[0]}" style="width:110px;text-align:right;"></td>
+      <td>${f(sum, 0)}</td>
+    </tr>`;
+  }).join('');
+  $('sm_mat_total').textContent = f(getMatTotal(), 0);
+}
+
+function updateMatTotal() {
+  const el = $('sm_mat_total');
+  if (el) el.textContent = f(getMatTotal(), 0);
+}
+
+function onSpecChange() {
+  calcSP();
+  renderSmetaSpec();
+  calcSM();
+}
+
+document.addEventListener('input', e => {
+  const inp = e.target.closest('input[data-sm-price]');
+  if (!inp) return;
+  const name = inp.dataset.smName;
+  try { localStorage.setItem('hvac_price_' + name, inp.value); } catch (err) {}
+  const row = inp.closest('tr');
+  if (row && row.children.length >= 6) {
+    const qty = num(row.children[2].textContent);
+    const price = num(inp.value);
+    row.children[5].textContent = f(qty * price, 0);
+  }
+  updateMatTotal();
+  calcSM();
+});
+
+function ensureRestored() {
+  try { restoreInputsForSection($('t28')); } catch (e) {}
+  try { restoreInputsForSection($('t29')); } catch (e) {}
+}
+
+function getObjectHeader() {
+  const name = ($('po_name').value || '').trim() || 'Объект не указан';
+  const room = ($('po_room').value || '').trim();
+  const type = $('po_type').selectedOptions[0].text;
+  const s = val('po_s');
+  const lines = ['Объект: ' + name];
+  if (room) lines.push('Помещение: ' + room);
+  lines.push('Назначение: ' + type + (s > 0 ? ', ' + f(s, 1) + ' м²' : ''));
+  return lines.join('\n');
+}
+
+function getSpecText() {
+  ensureRestored();
+  const items = getSpecItems();
+  const other = getSpecOther();
+  if (other) items.push(['Прочее', other, '']);
+  const header = getObjectHeader();
+  if (!items.length) return header + '\n\nСпецификация пуста';
+  const table = items.map((it, i) => `${i + 1}. ${it[0]} — ${f(it[1], 1)} ${it[2]}`.trim()).join('\n');
+  return header + '\n\nСПЕЦИФИКАЦИЯ (' + items.length + ' поз.)\n' + table;
+}
+
+function getSmetaText() {
+  ensureRestored();
+  const items = getSpecItems();
+  const other = getSpecOther();
+  if (other) items.push(['Прочее', other, '']);
+  const header = getObjectHeader();
+  const matRows = items.map((it, i) => {
+    const qty = typeof it[1] === 'number' ? it[1] : 0;
+    const price = getSpecPrice(it[0]);
+    return `${i + 1}. ${it[0]} — ${f(qty, 1)} ${it[2]} × ${f(price, 0)} = ${f(qty * price, 0)} руб.`;
+  }).join('\n');
+  const material_total = getMatTotal();
+  const unit_price = val('sm_unit_price');
+  const cond_cost = val('sm_cond_price') * val('sm_cond_qty');
+  const fan_cost = val('sm_fan_price') * val('sm_fan_qty');
+  const equipment_total = unit_price + cond_cost + fan_cost;
+  const cost_hw = material_total * (val('sm_hw') / 100);
+  const cost_work = (material_total + equipment_total) * (val('sm_work') / 100);
+  const labor_total = cost_hw + cost_work;
+  const grand_total = material_total + equipment_total + labor_total;
+  const unit_label = $('sm_unit_type').selectedOptions[0].text;
+  return header + '\n\nСМЕТА\n\n' +
+    'МАТЕРИАЛЫ (по спецификации):\n' + (matRows || '—') + '\n' +
+    'Итого материалы: ' + f(material_total, 0) + ' руб.\n\n' +
+    'ОБОРУДОВАНИЕ:\n' +
+    'Установка (' + unit_label + '): ' + f(unit_price, 0) + ' руб.\n' +
+    'Кондиционеры: ' + f(cond_cost, 0) + ' руб.\n' +
+    'Вентиляторы: ' + f(fan_cost, 0) + ' руб.\n' +
+    'Итого оборудование: ' + f(equipment_total, 0) + ' руб.\n\n' +
+    'РАБОТЫ:\n' +
+    'Крепёж (' + val('sm_hw') + '%): ' + f(cost_hw, 0) + ' руб.\n' +
+    'Монтаж (' + val('sm_work') + '%): ' + f(cost_work, 0) + ' руб.\n' +
+    'Итого работы: ' + f(labor_total, 0) + ' руб.\n\n' +
+    'ВСЕГО: ' + f(grand_total, 0) + ' руб.';
 }
 
 $('sp_copy').onclick = async () => {
@@ -1107,6 +1277,32 @@ $('sp_share').onclick = async () => {
   }
   const ok = await copyText(text);
   alert(ok ? 'Спецификация скопирована в буфер' : 'Не удалось поделиться');
+};
+
+$('sm_copy').onclick = async () => {
+  const ok = await copyText(getSmetaText());
+  alert(ok ? 'Смета скопирована в буфер' : 'Не удалось скопировать');
+};
+
+$('sm_share').onclick = async () => {
+  const text = getSmetaText();
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Смета ОВиК', text }); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const ok = await copyText(text);
+  alert(ok ? 'Системное меню недоступно. Смета скопирована в буфер.' : 'Не удалось поделиться');
+};
+
+$('sm_download').onclick = () => {
+  ensureRestored();
+  const blob = new Blob([getSmetaText()], { type: 'text/plain;charset=utf-8' });
+  const safe = (($('po_name').value || 'smeta').trim() || 'smeta').replace(/[^\wа-яА-Я\-]+/gi, '_');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'smeta-' + safe + '-' + new Date().toISOString().slice(0, 10) + '.txt';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
 };
 
 function calcTR() {
@@ -1320,7 +1516,7 @@ bind(['vd_l','vd_w','vd_h','vd_k','vd_zeta'], calcVD);
 bind(['sl_l1','sl_l2','sl_att'], calcSL);
 bind(['fl_l','fl_c','fl_dp'], calcFL);
 bind(['wc_q','wc_tin','wc_tout','wc_tws','wc_twr'], calcWC);
-bind(['sm_duct','sm_p_duct','sm_fit','sm_ins','sm_p_ins','sm_grille','sm_p_grille','sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty','sm_hw','sm_work'], calcSM);
+bind(['sm_unit_price','sm_cond_price','sm_cond_qty','sm_fan_price','sm_fan_qty','sm_hw','sm_work'], calcSM);
 bind(['ou_l','ou_t','ou_rh1','ou_rh2'], calcOU);
 bind(['uh_v','uh_n','uh_t','uh_rh2','uh_rh1','uh_p'], calcUH);
 bind(['tz_w','tz_h','tz_tin','tz_tout','tz_flow','tz_out'], calcTZ);
@@ -1328,7 +1524,7 @@ bind(['rc_san','rc_total','rc_heat'], calcRC);
 bind(['iz_d','iz_tin','iz_tout','iz_lam','iz_R'], calcIZ);
 bind(['tl_sw','tl_rw','tl_so','tl_ro','tl_sf','tl_rf','tl_sc','tl_rc','tl_tin','tl_tout'], calcTL);
 bind(['po_name','po_room','po_type','po_s','po_h','po_walls','po_windows','po_pwr_total','po_pwr_used','po_vent','po_ac','po_notes'], calcPO);
-bind(['sp_100','sp_125','sp_160','sp_200','sp_250','sp_rect','sp_fit','sp_ins','sp_grille','sp_silencer','sp_filter','sp_valve','sp_ahu','sp_ahu_pv','sp_ac','sp_fan','sp_heater','sp_fcu','sp_freon','sp_drain','sp_cable','sp_auto','sp_other'], calcSP);
+bind(['sp_100','sp_125','sp_160','sp_200','sp_250','sp_rect','sp_fit','sp_ins','sp_grille','sp_silencer','sp_filter','sp_valve','sp_ahu','sp_ahu_pv','sp_ac','sp_fan','sp_heater','sp_fcu','sp_freon','sp_drain','sp_cable','sp_auto','sp_other'], onSpecChange);
 bind(['tr_pwr','tr_len','tr_h','tr_turns'], calcTR);
 $('e_shape').addEventListener('change', toggleShapeE);
 $('u_c').addEventListener('change', fillU);
@@ -1337,7 +1533,9 @@ bind(['u_v', 'u_u'], calcU);
 $('sm_unit_type').addEventListener('change', updateUnitHint);
 $('fc_size').addEventListener('change', updateFcFromSize);
 
-calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcSM(); calcOU(); calcUH(); calcTZ(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
+calcA(); calcD(); calcC(); calcH(); calcZ(); calcB(); toggleShapeE(); calcFC(); calcEL(); calcVD(); calcSL(); calcFL(); calcWC(); calcOU(); calcUH(); calcTZ(); calcRC(); calcIZ(); calcTL(); calcPO(); calcSP(); calcTR(); fillU(); renderPhotos(); updateUnitHint();
+renderSmetaSpec();
+calcSM();
 
 let LOG = [];
 try { LOG = JSON.parse(localStorage.getItem('hvaclog') || '[]') || []; } catch (e) { LOG = []; }
