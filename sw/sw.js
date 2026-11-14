@@ -1,4 +1,4 @@
-const VERSION = 'v45';
+const VERSION = 'v46';
 const CACHE = 'hvac-' + VERSION;
 
 const SHELL = ['./', './manifest.json', './icon-512.png'];
