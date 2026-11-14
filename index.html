@@ -12,12 +12,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff9c4;--card:#fff;--ink:#12303b;--mut:#5b7480;--line:#fff176;--ac:#0b7a86;--acs:#d6eef0;--ac-ink:#fff;--hot:#c8581a;--hots:#fbe6d8;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1b20;--card:#16262d;--ink:#e3eef2;--mut:#8fa8b3;--line:#2b414b;--ac:#4ec3cf;--acs:#173c42;--ac-ink:#06222a;--hot:#ff9a5c;--hots:#3a2415;color-scheme:dark}
+:root{--bg:#eaf2fb;--card:#ffffff;--ink:#0f1f3a;--mut:#5a6b85;--line:#cddff0;--ac:#1668c2;--acs:#dbeaf9;--ac-ink:#ffffff;--hot:#c24a1a;--hots:#fbe4d6;--grid:#dce8f5;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1626;--card:#142238;--ink:#dbe7f5;--mut:#8aa0b8;--line:#243650;--ac:#4ea8f0;--acs:#173456;--ac-ink:#06182b;--hot:#ffa06a;--hots:#3a2415;--grid:#132135;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1626;--card:#142238;--ink:#dbe7f5;--mut:#8aa0b8;--line:#243650;--ac:#4ea8f0;--acs:#173456;--ac-ink:#06182b;--hot:#ffa06a;--hots:#3a2415;--grid:#132135;color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 8px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);touch-action:pan-y;overscroll-behavior-x:none}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:32px 32px;background-attachment:fixed;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);touch-action:pan-y;overscroll-behavior-x:none}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10;pointer-events:none}
 .wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
 .head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;position:relative;z-index:20}
@@ -63,7 +63,7 @@ footer{margin-top:18px;font-size:.8rem;color:var(--mut)}
 .add:hover,.tool-btn:hover{filter:brightness(1.08)}
 #log-view{display:none; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; margin-top:10px;}
 #log-view.on{display:block;}
-.tw{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch;touch-action:auto;}
+.tw{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;}
 table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
 th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
 th{background:var(--acs)}
@@ -101,7 +101,6 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 <nav role="tablist" id="tabs">
   <button class="nav-btn" data-view="smeta" aria-selected="true">Объект</button>
   <button class="nav-btn" data-view="calc">Расчёты</button>
-  <button class="nav-btn" data-view="elec">Электрика</button>
   <button class="nav-btn" data-view="serv">Сервис</button>
   <button class="nav-btn" data-view="log">Журнал</button>
 </nav>
@@ -357,7 +356,7 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="tool-btn" id="sp_share" type="button">📤 Поделиться</button>
 </div></section>
 
-<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы (по спецификации), оборудование и работы.</p>
+<section id="t16" class="tool"><button class="back-btn">← Назад</button><h2>Смета</h2><p class="hint">Материалы (по спецификации) и работы.</p>
 
 <div class="gh" style="margin-top:0;">Материалы по спецификации</div>
 <p class="hint" style="margin:0 0 8px;">Позиции и количество подтягиваются из «Спецификации». Цены можно править — они сохраняются.</p>
@@ -616,11 +615,13 @@ function showView(viewName, catId) {
 
   if (viewName === 'cat' && catId === 'calc') {
     $('view-cat').classList.add('on');
-    document.querySelector('.nav-btn[data-view="calc"]').setAttribute('aria-selected', 'true');
+    const calcBtn = document.querySelector('.nav-btn[data-view="calc"]');
+    if (calcBtn) calcBtn.setAttribute('aria-selected', 'true');
     $('cat-title').textContent = 'Расчёты';
     $('cat-list').innerHTML =
       `<div class="cat-item" onclick="showView('cat','vent')"><span>🌬️ Вентиляция и Воздух</span><span>›</span></div>` +
-      `<div class="cat-item" onclick="showView('cat','heat')"><span>❄️ Тепло и Холод</span><span>›</span></div>`;
+      `<div class="cat-item" onclick="showView('cat','heat')"><span>❄️ Тепло и Холод</span><span>›</span></div>` +
+      `<div class="cat-item" onclick="showView('cat','elec')"><span>⚡ Электрика</span><span>›</span></div>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
@@ -659,6 +660,28 @@ function showView(viewName, catId) {
   }
 }
 window.showView = showView;
+
+function restoreInputsForSection(section) {
+  if (!section) return;
+  section.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+    if (el.type === 'file') return;
+    const saved = localStorage.getItem('hvac_in_' + el.id);
+    if (saved !== null) el.value = saved;
+  });
+}
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.id && el.closest('section.tool') && el.type !== 'file') {
+    try { localStorage.setItem('hvac_in_' + el.id, el.value); } catch(err) {}
+  }
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.id && el.closest('section.tool') && el.type !== 'file') {
+    try { localStorage.setItem('hvac_in_' + el.id, el.value); } catch(err) {}
+  }
+});
+
 window.openTool = function(id) {
   const section = $(id);
   if (section) {
