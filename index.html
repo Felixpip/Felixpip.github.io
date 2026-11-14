@@ -32,6 +32,11 @@ nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;s
 nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 nav button:hover{border-color:var(--ac)}
 nav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
+  .subnav{display:none;gap:6px;overflow-x:auto;padding-bottom:6px;margin:0 0 10px;scrollbar-width:thin;touch-action:pan-x;}
+.subnav.on{display:flex;}
+.subnav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 12px;border-radius:999px;font:inherit;font-size:.85rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.subnav button:hover{border-color:var(--ac)}
+.subnav button[aria-selected=true]{background:var(--ac);border-color:var(--ac);color:var(--ac-ink);font-weight:700}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
 .cat-list{display:flex; flex-direction:column; gap:10px; margin-top:10px;}
 .cat-item{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:15px; cursor:pointer; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
@@ -103,6 +108,14 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
   <button class="nav-btn" data-view="calc">Расчёты</button>
   <button class="nav-btn" data-view="serv">Сервис</button>
 </nav>
+
+</nav>
+
+<div id="calc-subnav" class="subnav" role="tablist" aria-label="Разделы расчётов">
+  <button type="button" data-subcat="vent">🌬️ Вентиляция</button>
+  <button type="button" data-subcat="heat">❄️ Тепло/Холод</button>
+  <button type="button" data-subcat="elec">⚡ Электрика</button>
+</div>
 
 <div id="view-cat" class="view on">
   <h2 id="cat-title">Категория</h2>
@@ -622,6 +635,25 @@ function showView(viewName, catId) {
   document.querySelectorAll('.view, #log-view, section.tool').forEach(el => el.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
 
+  const CALC_CATS = ['vent', 'heat', 'elec'];
+  let activeSubcat = null;
+  if (viewName === 'cat' && CALC_CATS.includes(catId)) activeSubcat = catId;
+  if (viewName === 'tool') {
+    const tt = tools.find(x => x.id === catId);
+    if (tt && CALC_CATS.includes(tt.cat)) activeSubcat = tt.cat;
+  }
+  const subnav = $('calc-subnav');
+  if (subnav) {
+    if (activeSubcat) {
+      subnav.classList.add('on');
+      subnav.querySelectorAll('button').forEach(b => {
+        b.setAttribute('aria-selected', b.dataset.subcat === activeSubcat ? 'true' : 'false');
+      });
+    } else {
+      subnav.classList.remove('on');
+    }
+  }
+
   if (viewName === 'cat' && catId === 'calc') {
     $('view-cat').classList.add('on');
     const calcBtn = document.querySelector('.nav-btn[data-view="calc"]');
@@ -674,7 +706,9 @@ function showView(viewName, catId) {
   }
 }
 window.showView = showView;
-
+document.querySelectorAll('#calc-subnav button').forEach(b => {
+  b.onclick = () => showView('cat', b.dataset.subcat);
+});
 function restoreInputsForSection(section) {
   if (!section) return;
   section.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
