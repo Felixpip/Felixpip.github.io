@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Калькулятор ОВиК</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b7a86" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1b20" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eaf2fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1626" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -636,31 +636,29 @@ function showView(viewName, catId) {
   }
 
   if (viewName === 'cat') {
-  const items = tools.filter(t => t.cat === catId);
-  if (items.length === 1) { openTool(items[0].id); return; }
-  $('view-cat').classList.add('on');
-  const navBtn = document.querySelector(`.nav-btn[data-view="${catId}"]`);
-  if (navBtn) navBtn.setAttribute('aria-selected', 'true');
-  else {
-    const calcBtn = document.querySelector('.nav-btn[data-view="calc"]');
-    if (calcBtn) calcBtn.setAttribute('aria-selected', 'true');
-  }
-  $('cat-title').textContent = catNames[catId];
-  const itemsHtml = items.map(t =>
-    `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
-  ).join('');
-  const logHtml = catId === 'serv'
-    ? `<div class="cat-item" onclick="showView('log')"><span>📒 Журнал расчётов</span><span>›</span></div>`
-    : '';
-  $('cat-list').innerHTML = logHtml + itemsHtml;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    const items = tools.filter(t => t.cat === catId);
+    if (items.length === 1) { openTool(items[0].id); return; }
+    $('view-cat').classList.add('on');
+    const navBtn = document.querySelector(`.nav-btn[data-view="${catId}"]`);
+    if (navBtn) navBtn.setAttribute('aria-selected', 'true');
+    else {
+      const calcBtn = document.querySelector('.nav-btn[data-view="calc"]');
+      if (calcBtn) calcBtn.setAttribute('aria-selected', 'true');
+    }
+    $('cat-title').textContent = catNames[catId];
+    const itemsHtml = items.map(t =>
+      `<div class="cat-item" onclick="openTool('${t.id}')"><span>${t.icon} ${t.name}</span><span>›</span></div>`
+    ).join('');
+    const logHtml = catId === 'serv'
+      ? `<div class="cat-item" onclick="showView('log')"><span>📒 Журнал расчётов</span><span>›</span></div>`
+      : '';
+    $('cat-list').innerHTML = logHtml + itemsHtml;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (viewName === 'log') {
-  $('log-view').classList.add('on');
-  const servBtn = document.querySelector('.nav-btn[data-view="serv"]');
-  if (servBtn) servBtn.setAttribute('aria-selected', 'true');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    $('log-view').classList.add('on');
+    const servBtn = document.querySelector('.nav-btn[data-view="serv"]');
+    if (servBtn) servBtn.setAttribute('aria-selected', 'true');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (viewName === 'tool') {
     const toolEl = $(catId);
     if (toolEl) {
@@ -719,8 +717,7 @@ window.openTool = function(id) {
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.onclick = () => {
     const v = btn.getAttribute('data-view');
-    if (v === 'log') showView(v);
-    else showView('cat', v);
+    showView('cat', v);
   };
 });
 document.querySelectorAll('.back-btn').forEach(btn => {
@@ -1511,7 +1508,7 @@ bind(['e_l','e_d','e_w','e_h','e_len','e_k','e_zeta'], calcE);
 bind(['fc_q','fc_airflow','fc_tws','fc_twr'], calcFC);
 bind(['el_p','el_ph','el_cos','el_mat','el_l'], calcEL);
 bind(['vd_l','vd_w','vd_h','vd_k','vd_zeta'], calcVD);
-  $('vd_zeta_preset').addEventListener('change', e => {
+$('vd_zeta_preset').addEventListener('change', e => {
   const v = e.target.value;
   if (v === '') return;
   const inp = $('vd_zeta');
