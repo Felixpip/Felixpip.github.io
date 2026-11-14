@@ -1711,5 +1711,13 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+  <script>
+  // Пытаемся разблокировать ориентацию при загрузке PWA
+  (function unlockOrientation() {
+    if ('screen' in window && 'orientation' in screen && 'unlock' in screen.orientation) {
+      screen.orientation.unlock();
+    }
+  })();
+</script>
 </body>
 </html>
