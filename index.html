@@ -332,7 +332,15 @@ td .x,td button{background:none;border:0;color:var(--hot);font-size:1.1rem;curso
 </div>
 <label style="margin-top:10px;">Комментарии<textarea id="po_notes" placeholder="Что важно знать по объекту"></textarea></label>
 <div class="res" id="po_res"></div>
-<p class="note">Сохраняется автоматически.</p></section>
+<p class="note">Сохраняется автоматически.</p>
+<div class="log-actions" style="margin-top: 16px; justify-content: space-between;">
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <button class="tool-btn sec" type="button" onclick="openTool('t29')">📄 Спецификация</button>
+    <button class="tool-btn sec" type="button" onclick="openTool('t16')">💰 Смета</button>
+  </div>
+  <button class="tool-btn sec" type="button" onclick="openTool('t19')" title="Фото объекта" aria-label="Фото объекта" style="padding: 9px 14px; font-size: 1.1rem;">📷</button>
+</div>
+</section>
 
 <section id="t29" class="tool"><button class="back-btn">← Назад</button><h2>Спецификация оборудования</h2><p class="hint">Список для закупки и монтажа.</p>
 <div class="gh">Воздуховоды и арматура</div>
