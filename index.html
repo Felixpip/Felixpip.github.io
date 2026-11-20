@@ -1716,7 +1716,11 @@
 
   function calcRK() {
     const L = Math.max(val('rk_l'),0), t1 = val('rk_t1'), t2 = val('rk_t2');
-    const eff = Math.min(Math.max(val('rk_eff'),0),95)/100, rh = Math.max(val('rk_rh'),0), ts = val('rk_ts');
+    const eff = Math.min(Math.max(val('rk_eff'),0),95)/100, rh = val('rk_rh'), ts = val('rk_ts');
+    if (rh < 0 || rh > 100 || !isFinite(dFrom(t2,rh))) {
+      $('rk_res').innerHTML = '<p class="note warn">Проверьте температуру вытяжки и влажность: RH должна быть в диапазоне 0–100%.</p>';
+      return;
+    }
     const tAfter = t1+(t2-t1)*eff, tExh = t2-(t2-t1)*eff;
     const k = L*1.2*1.005/3600;
     const Qrec = k*(tAfter-t1), Qheat = Math.max(k*(ts-tAfter),0), Qno = Math.max(k*(ts-t1),0);
