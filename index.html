@@ -1035,14 +1035,16 @@
   }
   function dFrom(t, rh, p) {
     p = (p === undefined || p === null || !isFinite(p)) ? 101.325 : p;
+    if (!isFinite(t) || t <= -273.15 || !isFinite(rh) || rh < 0 || rh > 100 || p <= 0) return NaN;
     const Ps = Psat(t);
-    const Pp = Math.max(rh,0)/100 * Ps;
+    const Pp = (rh/100) * Ps;
     const denom = p - Pp;
-    if (denom <= 0) return 0;
+    if (denom <= 0) return NaN;
     return 622 * Pp / denom;
   }
   function dewPoint(d, p) {
     p = (p === undefined || p === null || !isFinite(p)) ? 101.325 : p;
+    if (!isFinite(d) || d < 0 || !isFinite(p) || p <= 0) return NaN;
     const Pp = d * p / (622 + d);
     if (Pp <= 0.01) return -60;
     let a = Math.log(Pp / 0.6108);
@@ -1181,7 +1183,11 @@
       area = Math.PI*d*d/4; v = L/3600/area; d_eq = d;
     } else {
       const a = Math.max(val('e_w'),10)/1000, b = Math.max(val('e_h'),10)/1000;
-      area = a*b; v = L/3600/area; d_eq = 2*a*b/(a+b);
+      area = a*b;
+      v = L/3600/area;
+      // Equivalent diameter for equal friction loss; consistent with calcD() and calcEQ().
+      // 2ab/(a+b) is the hydraulic diameter, not the equal-friction equivalent diameter.
+      d_eq = 1.3*Math.pow(a*b,0.625)/Math.pow(a+b,0.25);
     }
     const Pd = 0.6*v*v, nu = 1.5e-5, Re = v*d_eq/nu;
     let lambda = 0;
@@ -1262,7 +1268,11 @@
   function calcWC() {
     const Q = Math.max(val('wc_q'),0), tin = val('wc_tin'), tout = val('wc_tout');
     const tws = val('wc_tws'), twr = val('wc_twr');
-    const dta = Math.max(tout-tin,0.1), dtw = Math.max(tws-twr,0.1);
+    const dta = tout-tin, dtw = tws-twr;
+    if (dta <= 0 || dtw <= 0) {
+      $('wc_res').innerHTML = '<p class="note warn">Проверьте направление температур: t воздуха на выходе должна быть выше входной, а t воды подачи — выше обратки.</p>';
+      return;
+    }
     const G = (0.86*Q)/dtw, L = (Q*3600)/(1.2*1.005*dta);
     $('wc_res').innerHTML = box('Расход воды',f(G,2),'м³/ч',1)+box('Расход воздуха',f(L,0),'м³/ч',1)+
       box('Δt воздуха',f(dta,1),'°C')+box('Δt воды',f(dtw,1),'°C');
