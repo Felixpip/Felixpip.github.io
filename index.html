@@ -234,7 +234,7 @@
   <section id="t10" class="tool"><button class="back-btn">← Назад</button><h2>Электрика</h2><p class="hint">Ток, автомат, кабель.</p>
     <div class="grid">
       <label>Мощность, кВт<input id="el_p" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
-      <label>Сеть<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (380 В)</option></select></label>
+      <label>Сеть<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (400 В)</option></select></label>
       <label>cosφ<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
       <label>Материал<select id="el_mat"><option value="cu">Медь</option><option value="al">Алюминий</option></select></label>
       <label>Длина, м<input id="el_l" type="number" value="20" min="0" inputmode="numeric"></label>
@@ -469,7 +469,7 @@
       <label>t теплоносителя, °C<input id="iz_tin" type="number" value="90" inputmode="decimal"></label>
       <label>t среды, °C<input id="iz_tout" type="number" value="20" inputmode="decimal"></label>
       <label>Теплопроводность, Вт/(м·К)<input id="iz_lam" type="number" value="0.04" step="0.005" min="0.02" inputmode="decimal"></label>
-      <label>Требуемое R, м²·К/Вт<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
+      <label>Линейное R, м·К/Вт на 1 м<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
     </div>
     <div class="res" id="iz_res"></div></section>
 
@@ -1225,32 +1225,34 @@
     $('fc_res').innerHTML = html;
   }
   function calcEL() {
-    const P = Math.max(val('el_p'),0), ph = $('el_ph').value;
-    const cos = Math.max(val('el_cos'),0.1), mat = $('el_mat').value;
-    const len = Math.max(val('el_l'),0);
-    const U = ph === '3' ? 380 : 220;
+    const P = val('el_p'), ph = $('el_ph').value, cos = val('el_cos');
+    const mat = $('el_mat').value, len = val('el_l');
+    if (P < 0 || len < 0 || cos <= 0 || cos > 1 || !isFinite(P) || !isFinite(len) || !isFinite(cos)) {
+      $('el_res').innerHTML = '<p class="note warn">Проверьте мощность, длину линии и cosφ (0–1).</p>';
+      return;
+    }
+    const U = ph === '3' ? 400 : 230;
     const I = ph === '1' ? (P*1000)/(U*cos) : (P*1000)/(Math.sqrt(3)*U*cos);
     const breakers = [6,10,16,20,25,32,40,50,63,80,100,125,160];
     const needed = I*1.25, found = breakers.find(b => b >= needed);
     const breaker = found !== undefined ? found : null;
+    // Табличные токи — только ориентировочные; зависят от способа прокладки и условий.
     const cu = [{s:1.5,i:19},{s:2.5,i:27},{s:4,i:38},{s:6,i:46},{s:10,i:70},{s:16,i:85},{s:25,i:115},{s:35,i:135}];
     const al = [{s:2.5,i:21},{s:4,i:28},{s:6,i:36},{s:10,i:50},{s:16,i:60},{s:25,i:85},{s:35,i:100}];
     const table = mat === 'cu' ? cu : al;
-    const target = breaker === null ? 200 : breaker;
-    const cable = table.find(c => c.i >= target);
+    const cable = table.find(c => c.i >= (breaker === null ? 200 : breaker));
     const cableSize = cable ? cable.s : null;
+    // Упрощённое падение напряжения по активному сопротивлению, без реактивной составляющей.
     const rho = mat === 'cu' ? 0.0175 : 0.028;
     let dU = 0;
-    if (cableSize) {
-      if (ph === '1') dU = (2*len*I*rho*cos)/cableSize;
-      else dU = (Math.sqrt(3)*len*I*rho*cos)/cableSize;
-    }
+    if (cableSize) dU = (ph === '1' ? 2 : Math.sqrt(3))*len*I*rho/cableSize;
     const dU_pct = U > 0 ? (dU/U)*100 : 0;
-    let html = box('Ток',f(I,1),'А',1)+box('Автомат',breaker===null?'>160':breaker,'А',1)+
-      box('Кабель',cableSize===null?'—':cableSize,'мм²',1)+box('Падение',f(dU,1),'В')+
+    let html = box('Ток',f(I,1),'А',1)+box('Автомат (предварительно)',breaker===null?'>160':breaker,'А',1)+
+      box('Кабель (предварительно)',cableSize===null?'—':cableSize,'мм²',1)+box('Падение по R',f(dU,1),'В')+
       box('Падение %',f(dU_pct,1),'%');
-    if (breaker === null || cableSize === null) html += `<p class="note warn">Расчёт вне таблицы (ток ${f(I,1)} А). Нужен расчёт по ПУЭ.</p>`;
-    if (dU_pct > 5) html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
+    if (breaker === null || cableSize === null) html += '<p class="note warn">Расчёт вне таблицы. Требуется отдельный расчёт по ПУЭ и условиям прокладки.</p>';
+    if (dU_pct > 5) html += '<p class="note warn">Падение напряжения больше 5%.</p>';
+    html += '<p class="note warn">Ориентировочный подбор: таблица не учитывает способ прокладки, температуру, группировку, допустимый ток клемм, ток КЗ и время автоматического отключения. Для двигателей и нелинейной нагрузки нужны дополнительные проверки.</p>';
     $('el_res').innerHTML = html;
   }
   function calcVD() {
@@ -1399,16 +1401,22 @@
       box('Доля рециркуляции',f(pct,1),'%')+box('Экономия тепла',f(save,1),'кВт',1);
   }
   function calcIZ() {
-    const d = Math.max(val('iz_d')/1000,0.01), tin = val('iz_tin'), tout = val('iz_tout');
-    const lam = Math.max(val('iz_lam'),0.02), Rreq = Math.max(val('iz_R'),0.1);
-    const rawDelta = (d/2)*(Math.exp(Math.min(2*Math.PI*lam*Rreq,5))-1);
-    const delta = Math.min(rawDelta, 0.5);
-    const t_surf = tout + (tin-tout)*0.1/(Rreq+0.1);
-    const tr_out = dewPoint(dFrom(tout,70));
-    let html = box('Толщина',f(delta*1000,0),'мм',1)+box('Плоская (для сравнения)',f(lam*Rreq*1000,0),'мм')+
-      box('t поверхности',f(t_surf,1),'°C')+box('t точки росы',f(tr_out,1),'°C');
-    if (delta < rawDelta) html += `<p class="note warn">Толщина ограничена 500 мм — требуемое R очень велико.</p>`;
-    if (t_surf < tr_out) html += `<p class="note warn">Возможна конденсация!</p>`;
+    const d_mm = val('iz_d'), tin = val('iz_tin'), tout = val('iz_tout');
+    const lam = val('iz_lam'), Rline = val('iz_R');
+    if (d_mm <= 0 || lam <= 0 || Rline <= 0 || !isFinite(d_mm) || !isFinite(lam) || !isFinite(Rline)) {
+      $('iz_res').innerHTML = '<p class="note warn">Диаметр, теплопроводность и линейное термическое сопротивление должны быть больше нуля.</p>';
+      return;
+    }
+    const d = d_mm/1000;
+    // Для цилиндра Rline имеет размерность м·К/Вт на 1 м длины.
+    const exponent = 2*Math.PI*lam*Rline;
+    const rawDelta = (d/2)*(Math.exp(Math.min(exponent,5))-1);
+    const delta = Math.min(rawDelta,0.5);
+    let html = box('Толщина изоляции',f(delta*1000,0),'мм',1)+
+      box('Плоская оценка (не для цилиндра)',f(lam*Rline*1000,0),'мм');
+    if (exponent > 5 || delta < rawDelta) html += '<p class="note warn">Расчётная толщина превышает предел отображения 500 мм; проверьте исходное R и методику.</p>';
+    html += '<p class="note warn">Проверка конденсации удалена: для неё нужны относительная влажность среды, коэффициенты теплоотдачи, температура поверхности трубы и конструкция всех слоёв. Текущие входные данные этого не определяют.</p>';
+    html += '<p class="note">В формуле используется линейное сопротивление теплопередаче цилиндра, м·К/Вт на метр трубы, а не R ограждающей конструкции в м²·К/Вт.</p>';
     $('iz_res').innerHTML = html;
   }
   function calcTL() {
@@ -1667,10 +1675,13 @@
 
   const WS_STD = [15,20,25,32,40,50,65,80,100,125,150];
   function calcWS() {
-    const Q_ls = Math.max(val('ws_q'),0), L = Math.max(val('ws_len'),0);
-    const mat = $('ws_mat').value, zeta = Math.max(val('ws_zeta'),0);
-    if (Q_ls <= 0) { $('ws_res').innerHTML = '<p class="note warn">Введите расход воды.</p>'; return; }
-    const Q = Q_ls/1000, nu = 1.3e-6;
+    const Q_ls = val('ws_q'), L = val('ws_len');
+    const mat = $('ws_mat').value, zeta = val('ws_zeta');
+    if (Q_ls <= 0 || L < 0 || zeta < 0 || !isFinite(Q_ls) || !isFinite(L) || !isFinite(zeta)) {
+      $('ws_res').innerHTML = '<p class="note warn">Расход должен быть больше нуля, длина и сумма ζ — неотрицательными.</p>';
+      return;
+    }
+    const Q = Q_ls/1000, nu = 1.004e-6; // вода около 20 °C
     let bestD = null, bestV = null;
     for (const d_mm of WS_STD) {
       const d = d_mm/1000, area = Math.PI*d*d/4, v = Q/area;
@@ -1681,21 +1692,29 @@
       bestV = Q/(Math.PI*Math.pow(bestD/1000,2)/4);
     }
     const d = bestD/1000;
-    let delta = 0.2;
-    if (mat === 'plastic') delta = 0.007;
-    if (mat === 'copper') delta = 0.001;
+    // Эквивалентная абсолютная шероховатость, мм, ориентировочно для новых труб.
+    const roughnessMm = mat === 'plastic' ? 0.0015 : mat === 'copper' ? 0.0015 : 0.045;
     const Re = bestV*d/nu;
-    const lambda = Re > 0 ? 0.11*Math.pow((delta/(d*1000))+(68/Re),0.25) : 0;
-    const h_fr = L > 0 ? lambda*(L/d)*(bestV*bestV)/(2*9.81) : 0;
+    let lambda;
+    if (Re < 2300) lambda = 64/Re;
+    else if (Re < 4000) {
+      const laminar = 64/2300;
+      const turbulent = 0.25/Math.pow(Math.log10(roughnessMm/(3.7*d*1000)+5.74/Math.pow(4000,0.9)),2);
+      const blend = (Re-2300)/(4000-2300);
+      lambda = laminar+(turbulent-laminar)*blend;
+    } else {
+      lambda = 0.25/Math.pow(Math.log10(roughnessMm/(3.7*d*1000)+5.74/Math.pow(Re,0.9)),2);
+    }
+    const h_fr = lambda*(L/d)*(bestV*bestV)/(2*9.81);
     const h_loc = zeta*(bestV*bestV)/(2*9.81);
-    const h_tot = h_fr+h_loc;
-    const i_mm = L > 0 ? (h_fr/L)*1000 : 0;
-    let html = box('Рекомендуемый диаметр',bestD,'мм',1)+box('Фактическая скорость',f(bestV,2),'м/с',1)+
-      box('Удельные потери',f(i_mm,1),'мм/м')+box('Потери на трение',f(h_fr,2),'м.вод.ст.')+
-      box('Местные потери',f(h_loc,2),'м.вод.ст.')+box('Суммарные потери',f(h_tot,2),'м.вод.ст.',1);
-    if (L <= 0) html += `<p class="note warn">Длина 0 — потери на трение не учитываются.</p>`;
-    if (bestV < 0.5) html += `<p class="note warn">Скорость слишком мала (${f(bestV,2)} м/с).</p>`;
-    if (bestV > 1.5) html += `<p class="note warn">Скорость высокая (${f(bestV,2)} м/с).</p>`;
+    const h_tot = h_fr+h_loc, i_mm = L > 0 ? (h_fr/L)*1000 : 0;
+    let html = box('Рекомендуемый внутренний диаметр',bestD,'мм',1)+box('Фактическая скорость',f(bestV,2),'м/с',1)+
+      box('Re',f(Re,0),'')+box('Коэффициент трения λ',f(lambda,4),'')+
+      box('Удельные потери',f(i_mm,1),'мм/м')+box('Потери на трение',f(h_fr,2),'м вод. ст.')+
+      box('Местные потери',f(h_loc,2),'м вод. ст.')+box('Суммарные потери',f(h_tot,2),'м вод. ст.',1);
+    if (bestV > 1.5) html += '<p class="note warn">Даже максимальный диаметр из таблицы даёт скорость выше 1,5 м/с — проверьте расход и расширьте ряд диаметров.</p>';
+    if (L === 0) html += '<p class="note">При нулевой длине учитываются только местные сопротивления.</p>';
+    html += '<p class="note warn">Оценка по Дарси–Вейсбаху и Swamee–Jain: вода принята около 20 °C, шероховатость типовая, диаметры считаются внутренними. Проверьте фактический внутренний диаметр, температуру, материал и фитинги.</p>';
     $('ws_res').innerHTML = html;
   }
   function calcPsi() {
