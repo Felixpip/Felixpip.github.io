@@ -1127,43 +1127,49 @@
   }
   function calcB() {
     const a = Math.max(val('b_a'),0), b = Math.max(val('b_b'),0);
-    const tw = val('b_tw'), t = val('b_t'), rh = Math.max(val('b_rh'),0);
+    const tw = val('b_tw'), t = val('b_t'), rh = val('b_rh');
     const v = Math.max(val('b_v'),0), n = Math.max(val('b_n'),0);
-    const t1 = val('b_t1'), rh1 = Math.max(val('b_rh1'),0);
-    const tsup = val('b_tsup'), eff = Math.max(val('b_eff'),0), r = Math.max(val('b_r'),0);
-    const A = a*b;
-    const Pp = rh/100 * Psat(t);
+    const t1 = val('b_t1'), rh1 = val('b_rh1');
+    const tsup = val('b_tsup'), eff = Math.min(Math.max(val('b_eff'),0),95), r = Math.max(val('b_r'),0);
+    const room = Math.max(val('b_room'),0), hc = Math.max(val('b_hc'),0), kmin = Math.max(val('b_kmin'),0);
+    if (rh < 0 || rh > 100 || rh1 < 0 || rh1 > 100 || !isFinite(dFrom(t,rh)) || !isFinite(dFrom(t1,rh1)) || tw <= -273.15) {
+      $('b_res').innerHTML = '<p class="note warn">Проверьте температуру и относительную влажность: RH должна быть в диапазоне 0–100%, температура — выше абсолютного нуля.</p>';
+      return;
+    }
+    const A = a*b, Pp = rh/100 * Psat(t);
     const Wisp = A*(0.089+0.0782*v)*Math.max(Psat(tw)-Pp,0);
+    // 0,2 кг/(ч·чел.) — упрощённая оценка, не норматив для любого режима бассейна.
     const Wppl = n*0.2, W = (Wisp+Wppl)*(1+r/100);
-    const dIn = dFrom(t,rh), dOut = dFrom(t1,rh1);
-    const dd = Math.max(dIn-dOut, 0.1);
-        const room = Math.max(val('b_room'),0), hc = Math.max(val('b_hc'),0), kmin = Math.max(val('b_kmin'),0);
+    const dIn = dFrom(t,rh), dOut = dFrom(t1,rh1), dd = dIn-dOut;
     const Vroom = room*hc;
-    const Lmoist = (W*1000/dd)/1.2;
-    const Lmin = Vroom*kmin;
-    const Lsupply = Math.max(Lmoist, Lmin);
-    const Lexhaust = Lsupply*1.15;
-    const kFact = Vroom > 0 ? Lsupply/Vroom : 0;
-    const tr = dewPoint(dIn);
-    const tAfterRec = t1 + (t-t1)*(eff/100);
-    const Qheat = Lsupply*1.2*1.005*(tsup-tAfterRec)/3600;
-    const QheatNoRec = Lsupply*1.2*1.005*(tsup-t1)/3600;
-    const Qcool = Lsupply*1.2*(60-45)/3600;
+    // Вентиляция удаляет влагу только если наружный воздух суше внутреннего.
+    const Lmoist = dd > 0 ? (W*1000/dd)/1.2 : 0;
+    const Lmin = Vroom*kmin, Lsupply = Math.max(Lmoist,Lmin);
+    const Lexhaust = Lsupply*1.15, kFact = Vroom > 0 ? Lsupply/Vroom : 0;
+    const tr = dewPoint(dIn), tAfterRec = t1 + (t-t1)*(eff/100);
+    const Qheat = Math.max(Lsupply*1.2*1.005*(tsup-tAfterRec)/3600,0);
+    const QheatNoRec = Math.max(Lsupply*1.2*1.005*(tsup-t1)/3600,0);
+    // Только явная (sensible) составляющая; скрытая теплота осушения здесь не рассчитывается.
+    const QcoolSensible = Math.max(Lsupply*1.2*1.005*(t-tsup)/3600,0);
     let html = `<div class="gh">Влаговыделения и воздухообмен</div>`+
-            box('Площадь зеркала',f(A,1),'м²')+box('Объём помещения',f(Vroom,0),'м³')+
+      box('Площадь зеркала',f(A,1),'м²')+box('Объём помещения',f(Vroom,0),'м³')+
       box('Испарение с зеркала',f(Wisp,2),'кг/ч')+
-      box('От купающихся',f(Wppl,2),'кг/ч')+box('Всего влаговыделений',f(W,2),'кг/ч',1)+
+      box('От купающихся (оценка)',f(Wppl,2),'кг/ч')+box('Всего влаговыделений',f(W,2),'кг/ч',1)+
       box('Точка росы',f(tr,1),'°C')+
-      box('Приток по влаговыделениям',f(Lmoist,0),'м³/ч')+box('Приток по мин. кратности',f(Lmin,0),'м³/ч')+
+      box('Приток по влаговыделениям',dd>0?f(Lmoist,0):'не определяется','м³/ч')+
+      box('Приток по мин. кратности',f(Lmin,0),'м³/ч')+
       box('Расход воздуха (приток)',f(Lsupply,0),'м³/ч',1)+box('Кратность фактическая',f(kFact,1),'1/ч')+
       `<div class="gh">Приточно-вытяжная установка (ПВУ)</div>`+
       box('Приток',f(Lsupply,0),'м³/ч',1)+box('Вытяжка (приток +15%)',f(Lexhaust,0),'м³/ч')+
       box('Нагрев (с рекуп.)',f(Qheat,2),'кВт',1)+box('Нагрев (без рекуп.)',f(QheatNoRec,2),'кВт')+
-      box('t после рекуп.',f(tAfterRec,1),'°C')+box('Охлаждение/осушение (Δh≈15 кДж/кг)',f(Qcool,1),'кВт');
+      box('t после рекуп.',f(tAfterRec,1),'°C')+
+      box('Явное охлаждение (без скрытой теплоты)',f(QcoolSensible,2),'кВт');
+    if (dd <= 0) html += '<p class="note warn">Наружный воздух не суше внутреннего: вентиляция сама по себе не обеспечивает удаление влаги. Нужен отдельный расчёт осушения.</p>';
+    else if (dd < 0.5) html += '<p class="note warn">Разность влагосодержания мала — требуемый расход по влаге может быть очень большим.</p>';
     if (tr > t-1) html += `<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха.</p>`;
-    if (dd < 0.5) html += `<p class="note warn">Влагосодержание снаружи почти равно внутреннему.</p>`;
-        if (room > 0 && room < A) html += `<p class="note warn">Площадь помещения меньше площади зеркала воды.</p>`;
-    if (Lmin > Lmoist) html += `<p class="note">Расход определяется минимальной кратностью, а не влаговыделениями.</p>`;
+    if (room > 0 && room < A) html += '<p class="note warn">Площадь помещения меньше площади зеркала воды.</p>';
+    if (Lmin > Lmoist) html += '<p class="note">Расход определяется минимальной кратностью, а не влаговыделениями.</p>';
+    html += '<p class="note">Оценочная модель: фактическое испарение и влаговыделения зависят от активности бассейна, покрытия зеркала, температуры и режима эксплуатации.</p>';
     $('b_res').innerHTML = html;
   }
   function toggleShapeE() {
@@ -1298,7 +1304,11 @@
   }
   function calcOU() {
     const L = Math.max(val('ou_l'),0), t = val('ou_t');
-    const rh1 = Math.max(val('ou_rh1'),0), rh2 = Math.max(val('ou_rh2'),0);
+    const rh1 = val('ou_rh1'), rh2 = val('ou_rh2');
+    if (rh1 < 0 || rh1 > 100 || rh2 < 0 || rh2 > 100 || !isFinite(dFrom(t,rh1)) || !isFinite(dFrom(t,rh2))) {
+      $('ou_res').innerHTML = '<p class="note warn">Проверьте температуру и влажность: RH должна быть в диапазоне 0–100%.</p>';
+      return;
+    }
     const d1 = dFrom(t,rh1), d2 = dFrom(t,rh2);
     const W = L*1.2*(d1-d2)/1000;
     let html;
@@ -1306,7 +1316,10 @@
       const litrDay = W*24;
       html = box('Удалить влагу',f(W,2),'кг/ч',1)+box('Производительность',f(litrDay,1),'л/сутки',1)+
         box('Рекомендация','Осушитель до '+Math.ceil(litrDay/10)*10+' л/сут','',1);
-    } else html = box('Осушение не требуется','0','кг/ч',1);
+    } else {
+      html = box('Осушение не требуется','0','кг/ч',1);
+      if (W < -0.01) html += '<p class="note warn">Наружный воздух содержит больше влаги, чем целевой: одной вентиляцией осушение не обеспечить.</p>';
+    }
     $('ou_res').innerHTML = html;
   }
   const U = [
@@ -1343,16 +1356,21 @@
   }
   function calcUH() {
     const V = Math.max(val('uh_v'),0), n = Math.max(val('uh_n'),0);
-    const t = val('uh_t'), rh2 = Math.max(val('uh_rh2'),0), rh1 = Math.max(val('uh_rh1'),0);
+    const t = val('uh_t'), rh2 = val('uh_rh2'), rh1 = val('uh_rh1');
     const p = Math.max(val('uh_p'),0);
-    const L = V*n;
-    const d2 = dFrom(t,rh2), d1 = dFrom(t,rh1);
+    if (rh1 < 0 || rh1 > 100 || rh2 < 0 || rh2 > 100 || !isFinite(dFrom(t,rh1)) || !isFinite(dFrom(t,rh2))) {
+      $('uh_res').innerHTML = '<p class="note warn">Проверьте температуру и влажность: RH должна быть в диапазоне 0–100%.</p>';
+      return;
+    }
+    const L = V*n, d2 = dFrom(t,rh2), d1 = dFrom(t,rh1);
     const W_vent = L*1.2*(d2-d1)/1000, W_people = p*0.05;
-    const W_need = W_vent - W_people;
+    const W_need = Math.max(W_vent-W_people,0);
     let html = box('Расход притока',f(L,0),'м³/ч')+box('Влагосодержание наружного',f(d1,1),'г/кг')+
-      box('Влагосодержание целевое',f(d2,1),'г/кг')+box('Влага от людей',f(W_people,2),'кг/ч');
+      box('Влагосодержание целевое',f(d2,1),'г/кг')+box('Влага от людей (оценка)',f(W_people,2),'кг/ч');
     if (W_need > 0.01) html += box('Требуется добавить',f(W_need,2),'кг/ч',1);
     else html += box('Увлажнитель не требуется','0','кг/ч',1);
+    if (W_vent < 0) html += '<p class="note">Наружный воздух влажнее целевого и сам вносит влагу; учтено в балансе.</p>';
+    html += '<p class="note">Влаговыделения от людей заданы упрощённой оценкой и зависят от активности и условий.</p>';
     $('uh_res').innerHTML = html;
   }
   function calcTZ() {
@@ -1681,11 +1699,13 @@
     $('ws_res').innerHTML = html;
   }
   function calcPsi() {
-    const t = val('psi_t'), rh = Math.max(1,Math.min(100,val('psi_rh')));
-    const P = Math.max(50, val('psi_p'));
-    const Ps = Psat(t), Pp = (rh/100)*Ps;
-    const d = 622*Pp/Math.max(P-Pp,0.01);
-    const tr = dewPoint(d, P);
+    const t = val('psi_t'), rh = val('psi_rh'), P = val('psi_p');
+    const d = dFrom(t,rh,P);
+    if (!isFinite(d) || P <= 0 || t <= -273.15) {
+      $('psi_res').innerHTML = '<p class="note warn">Недопустимые исходные данные. Проверьте температуру, RH (0–100%) и абсолютное давление в кПа.</p>';
+      return;
+    }
+    const Ps = Psat(t), Pp = (rh/100)*Ps, tr = dewPoint(d,P);
     const h = 1.005*t + d*(2500+1.86*t)/1000;
     const Rd = 287.05, Rv = 461.5, T = t+273.15;
     const density = ((P-Pp)*1000)/(Rd*T) + (Pp*1000)/(Rv*T);
