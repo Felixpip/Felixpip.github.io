@@ -234,7 +234,7 @@
   <section id="t10" class="tool"><button class="back-btn">← Назад</button><h2>Электрика</h2><p class="hint">Ток, автомат, кабель.</p>
     <div class="grid">
       <label>Мощность, кВт<input id="el_p" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
-      <label>Сеть<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (400 В)</option></select></label>
+      <label>Сеть<select id="el_ph"><option value="1">1 фаза (230 В)</option><option value="3">3 фазы (400 В)</option></select></label>
       <label>cosφ<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
       <label>Материал<select id="el_mat"><option value="cu">Медь</option><option value="al">Алюминий</option></select></label>
       <label>Длина, м<input id="el_l" type="number" value="20" min="0" inputmode="numeric"></label>
@@ -463,11 +463,9 @@
     </div>
     <div class="res" id="rc_res"></div></section>
 
-  <section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Толщина изоляции и конденсат.</p>
+  <section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Расчёт толщины по заданному линейному термическому сопротивлению. Температурный и конденсационный расчёт не выполняется.</p>
     <div class="grid">
       <label>Наружный диаметр, мм<input id="iz_d" type="number" value="100" min="10" inputmode="decimal"></label>
-      <label>t теплоносителя, °C<input id="iz_tin" type="number" value="90" inputmode="decimal"></label>
-      <label>t среды, °C<input id="iz_tout" type="number" value="20" inputmode="decimal"></label>
       <label>Теплопроводность, Вт/(м·К)<input id="iz_lam" type="number" value="0.04" step="0.005" min="0.02" inputmode="decimal"></label>
       <label>Линейное R, м·К/Вт на 1 м<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
     </div>
@@ -768,6 +766,7 @@
   <footer style="text-align:center;">Расчёты справочные и не заменяют проектную документацию.</footer>
 </div>
 
+<script src="math.js"></script>
 <script>
   (function(){
   'use strict';
@@ -1231,8 +1230,13 @@
       $('el_res').innerHTML = '<p class="note warn">Проверьте мощность, длину линии и cosφ (0–1).</p>';
       return;
     }
-    const U = ph === '3' ? 400 : 230;
-    const I = ph === '1' ? (P*1000)/(U*cos) : (P*1000)/(Math.sqrt(3)*U*cos);
+    const electrical = HVACMath.electrical(P, ph, cos);
+    if (!electrical) {
+      $('el_res').innerHTML = '<p class="note warn">Проверьте мощность, фазность и cosφ.</p>';
+      return;
+    }
+    const U = electrical.voltage;
+    const I = electrical.current;
     const breakers = [6,10,16,20,25,32,40,50,63,80,100,125,160];
     const needed = I*1.25, found = breakers.find(b => b >= needed);
     const breaker = found !== undefined ? found : null;
@@ -1401,17 +1405,13 @@
       box('Доля рециркуляции',f(pct,1),'%')+box('Экономия тепла',f(save,1),'кВт',1);
   }
   function calcIZ() {
-    const d_mm = val('iz_d'), tin = val('iz_tin'), tout = val('iz_tout');
-    const lam = val('iz_lam'), Rline = val('iz_R');
-    if (d_mm <= 0 || lam <= 0 || Rline <= 0 || !isFinite(d_mm) || !isFinite(lam) || !isFinite(Rline)) {
+    const d_mm = val('iz_d'), lam = val('iz_lam'), Rline = val('iz_R');
+    const insulation = HVACMath.insulationThickness(d_mm, lam, Rline);
+    if (!insulation) {
       $('iz_res').innerHTML = '<p class="note warn">Диаметр, теплопроводность и линейное термическое сопротивление должны быть больше нуля.</p>';
       return;
     }
-    const d = d_mm/1000;
-    // Для цилиндра Rline имеет размерность м·К/Вт на 1 м длины.
-    const exponent = 2*Math.PI*lam*Rline;
-    const rawDelta = (d/2)*(Math.exp(Math.min(exponent,5))-1);
-    const delta = Math.min(rawDelta,0.5);
+    const { exponent, rawThickness: rawDelta, thickness: delta } = insulation;
     let html = box('Толщина изоляции',f(delta*1000,0),'мм',1)+
       box('Плоская оценка (не для цилиндра)',f(lam*Rline*1000,0),'мм');
     if (exponent > 5 || delta < rawDelta) html += '<p class="note warn">Расчётная толщина превышает предел отображения 500 мм; проверьте исходное R и методику.</p>';
@@ -1695,16 +1695,9 @@
     // Эквивалентная абсолютная шероховатость, мм, ориентировочно для новых труб.
     const roughnessMm = mat === 'plastic' ? 0.0015 : mat === 'copper' ? 0.0015 : 0.045;
     const Re = bestV*d/nu;
-    let lambda;
-    if (Re < 2300) lambda = 64/Re;
-    else if (Re < 4000) {
-      const laminar = 64/2300;
-      const turbulent = 0.25/Math.pow(Math.log10(roughnessMm/(3.7*d*1000)+5.74/Math.pow(4000,0.9)),2);
-      const blend = (Re-2300)/(4000-2300);
-      lambda = laminar+(turbulent-laminar)*blend;
-    } else {
-      lambda = 0.25/Math.pow(Math.log10(roughnessMm/(3.7*d*1000)+5.74/Math.pow(Re,0.9)),2);
-    }
+    const friction = HVACMath.darcyFrictionFactor(Re, roughnessMm, d_mm);
+    const lambda = friction.factor;
+
     const h_fr = lambda*(L/d)*(bestV*bestV)/(2*9.81);
     const h_loc = zeta*(bestV*bestV)/(2*9.81);
     const h_tot = h_fr+h_loc, i_mm = L > 0 ? (h_fr/L)*1000 : 0;
