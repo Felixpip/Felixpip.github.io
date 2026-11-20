@@ -234,7 +234,7 @@
   <section id="t10" class="tool"><button class="back-btn">← Назад</button><h2>Электрика</h2><p class="hint">Ток, автомат, кабель.</p>
     <div class="grid">
       <label>Мощность, кВт<input id="el_p" type="number" value="3.5" min="0" step="0.1" inputmode="decimal"></label>
-      <label>Сеть<select id="el_ph"><option value="1">1 фаза (220 В)</option><option value="3">3 фазы (380 В)</option></select></label>
+      <label>Сеть<select id="el_ph"><option value="1">1 фаза (230 В)</option><option value="3">3 фазы (400 В)</option></select></label>
       <label>cosφ<input id="el_cos" type="number" value="0.9" min="0.1" max="1" step="0.05" inputmode="decimal"></label>
       <label>Материал<select id="el_mat"><option value="cu">Медь</option><option value="al">Алюминий</option></select></label>
       <label>Длина, м<input id="el_l" type="number" value="20" min="0" inputmode="numeric"></label>
@@ -463,13 +463,11 @@
     </div>
     <div class="res" id="rc_res"></div></section>
 
-  <section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Толщина изоляции и конденсат.</p>
+  <section id="t24" class="tool"><button class="back-btn">← Назад</button><h2>Изоляция труб</h2><p class="hint">Расчёт толщины по заданному линейному термическому сопротивлению. Температурный и конденсационный расчёт не выполняется.</p>
     <div class="grid">
       <label>Наружный диаметр, мм<input id="iz_d" type="number" value="100" min="10" inputmode="decimal"></label>
-      <label>t теплоносителя, °C<input id="iz_tin" type="number" value="90" inputmode="decimal"></label>
-      <label>t среды, °C<input id="iz_tout" type="number" value="20" inputmode="decimal"></label>
       <label>Теплопроводность, Вт/(м·К)<input id="iz_lam" type="number" value="0.04" step="0.005" min="0.02" inputmode="decimal"></label>
-      <label>Требуемое R, м²·К/Вт<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
+      <label>Линейное R, м·К/Вт на 1 м<input id="iz_R" type="number" value="0.7" step="0.1" min="0.1" inputmode="decimal"></label>
     </div>
     <div class="res" id="iz_res"></div></section>
 
@@ -768,6 +766,7 @@
   <footer style="text-align:center;">Расчёты справочные и не заменяют проектную документацию.</footer>
 </div>
 
+<script src="math.js"></script>
 <script>
   (function(){
   'use strict';
@@ -1035,14 +1034,16 @@
   }
   function dFrom(t, rh, p) {
     p = (p === undefined || p === null || !isFinite(p)) ? 101.325 : p;
+    if (!isFinite(t) || t <= -273.15 || !isFinite(rh) || rh < 0 || rh > 100 || p <= 0) return NaN;
     const Ps = Psat(t);
-    const Pp = Math.max(rh,0)/100 * Ps;
+    const Pp = (rh/100) * Ps;
     const denom = p - Pp;
-    if (denom <= 0) return 0;
+    if (denom <= 0) return NaN;
     return 622 * Pp / denom;
   }
   function dewPoint(d, p) {
     p = (p === undefined || p === null || !isFinite(p)) ? 101.325 : p;
+    if (!isFinite(d) || d < 0 || !isFinite(p) || p <= 0) return NaN;
     const Pp = d * p / (622 + d);
     if (Pp <= 0.01) return -60;
     let a = Math.log(Pp / 0.6108);
@@ -1125,43 +1126,49 @@
   }
   function calcB() {
     const a = Math.max(val('b_a'),0), b = Math.max(val('b_b'),0);
-    const tw = val('b_tw'), t = val('b_t'), rh = Math.max(val('b_rh'),0);
+    const tw = val('b_tw'), t = val('b_t'), rh = val('b_rh');
     const v = Math.max(val('b_v'),0), n = Math.max(val('b_n'),0);
-    const t1 = val('b_t1'), rh1 = Math.max(val('b_rh1'),0);
-    const tsup = val('b_tsup'), eff = Math.max(val('b_eff'),0), r = Math.max(val('b_r'),0);
-    const A = a*b;
-    const Pp = rh/100 * Psat(t);
+    const t1 = val('b_t1'), rh1 = val('b_rh1');
+    const tsup = val('b_tsup'), eff = Math.min(Math.max(val('b_eff'),0),95), r = Math.max(val('b_r'),0);
+    const room = Math.max(val('b_room'),0), hc = Math.max(val('b_hc'),0), kmin = Math.max(val('b_kmin'),0);
+    if (rh < 0 || rh > 100 || rh1 < 0 || rh1 > 100 || !isFinite(dFrom(t,rh)) || !isFinite(dFrom(t1,rh1)) || tw <= -273.15) {
+      $('b_res').innerHTML = '<p class="note warn">Проверьте температуру и относительную влажность: RH должна быть в диапазоне 0–100%, температура — выше абсолютного нуля.</p>';
+      return;
+    }
+    const A = a*b, Pp = rh/100 * Psat(t);
     const Wisp = A*(0.089+0.0782*v)*Math.max(Psat(tw)-Pp,0);
+    // 0,2 кг/(ч·чел.) — упрощённая оценка, не норматив для любого режима бассейна.
     const Wppl = n*0.2, W = (Wisp+Wppl)*(1+r/100);
-    const dIn = dFrom(t,rh), dOut = dFrom(t1,rh1);
-    const dd = Math.max(dIn-dOut, 0.1);
-        const room = Math.max(val('b_room'),0), hc = Math.max(val('b_hc'),0), kmin = Math.max(val('b_kmin'),0);
+    const dIn = dFrom(t,rh), dOut = dFrom(t1,rh1), dd = dIn-dOut;
     const Vroom = room*hc;
-    const Lmoist = (W*1000/dd)/1.2;
-    const Lmin = Vroom*kmin;
-    const Lsupply = Math.max(Lmoist, Lmin);
-    const Lexhaust = Lsupply*1.15;
-    const kFact = Vroom > 0 ? Lsupply/Vroom : 0;
-    const tr = dewPoint(dIn);
-    const tAfterRec = t1 + (t-t1)*(eff/100);
-    const Qheat = Lsupply*1.2*1.005*(tsup-tAfterRec)/3600;
-    const QheatNoRec = Lsupply*1.2*1.005*(tsup-t1)/3600;
-    const Qcool = Lsupply*1.2*(60-45)/3600;
+    // Вентиляция удаляет влагу только если наружный воздух суше внутреннего.
+    const Lmoist = dd > 0 ? (W*1000/dd)/1.2 : 0;
+    const Lmin = Vroom*kmin, Lsupply = Math.max(Lmoist,Lmin);
+    const Lexhaust = Lsupply*1.15, kFact = Vroom > 0 ? Lsupply/Vroom : 0;
+    const tr = dewPoint(dIn), tAfterRec = t1 + (t-t1)*(eff/100);
+    const Qheat = Math.max(Lsupply*1.2*1.005*(tsup-tAfterRec)/3600,0);
+    const QheatNoRec = Math.max(Lsupply*1.2*1.005*(tsup-t1)/3600,0);
+    // Только явная (sensible) составляющая; скрытая теплота осушения здесь не рассчитывается.
+    const QcoolSensible = Math.max(Lsupply*1.2*1.005*(t-tsup)/3600,0);
     let html = `<div class="gh">Влаговыделения и воздухообмен</div>`+
-            box('Площадь зеркала',f(A,1),'м²')+box('Объём помещения',f(Vroom,0),'м³')+
+      box('Площадь зеркала',f(A,1),'м²')+box('Объём помещения',f(Vroom,0),'м³')+
       box('Испарение с зеркала',f(Wisp,2),'кг/ч')+
-      box('От купающихся',f(Wppl,2),'кг/ч')+box('Всего влаговыделений',f(W,2),'кг/ч',1)+
+      box('От купающихся (оценка)',f(Wppl,2),'кг/ч')+box('Всего влаговыделений',f(W,2),'кг/ч',1)+
       box('Точка росы',f(tr,1),'°C')+
-      box('Приток по влаговыделениям',f(Lmoist,0),'м³/ч')+box('Приток по мин. кратности',f(Lmin,0),'м³/ч')+
+      box('Приток по влаговыделениям',dd>0?f(Lmoist,0):'не определяется','м³/ч')+
+      box('Приток по мин. кратности',f(Lmin,0),'м³/ч')+
       box('Расход воздуха (приток)',f(Lsupply,0),'м³/ч',1)+box('Кратность фактическая',f(kFact,1),'1/ч')+
       `<div class="gh">Приточно-вытяжная установка (ПВУ)</div>`+
       box('Приток',f(Lsupply,0),'м³/ч',1)+box('Вытяжка (приток +15%)',f(Lexhaust,0),'м³/ч')+
       box('Нагрев (с рекуп.)',f(Qheat,2),'кВт',1)+box('Нагрев (без рекуп.)',f(QheatNoRec,2),'кВт')+
-      box('t после рекуп.',f(tAfterRec,1),'°C')+box('Охлаждение/осушение (Δh≈15 кДж/кг)',f(Qcool,1),'кВт');
+      box('t после рекуп.',f(tAfterRec,1),'°C')+
+      box('Явное охлаждение (без скрытой теплоты)',f(QcoolSensible,2),'кВт');
+    if (dd <= 0) html += '<p class="note warn">Наружный воздух не суше внутреннего: вентиляция сама по себе не обеспечивает удаление влаги. Нужен отдельный расчёт осушения.</p>';
+    else if (dd < 0.5) html += '<p class="note warn">Разность влагосодержания мала — требуемый расход по влаге может быть очень большим.</p>';
     if (tr > t-1) html += `<p class="note warn">Точка росы ${f(tr,1)} °C близка к температуре воздуха.</p>`;
-    if (dd < 0.5) html += `<p class="note warn">Влагосодержание снаружи почти равно внутреннему.</p>`;
-        if (room > 0 && room < A) html += `<p class="note warn">Площадь помещения меньше площади зеркала воды.</p>`;
-    if (Lmin > Lmoist) html += `<p class="note">Расход определяется минимальной кратностью, а не влаговыделениями.</p>`;
+    if (room > 0 && room < A) html += '<p class="note warn">Площадь помещения меньше площади зеркала воды.</p>';
+    if (Lmin > Lmoist) html += '<p class="note">Расход определяется минимальной кратностью, а не влаговыделениями.</p>';
+    html += '<p class="note">Оценочная модель: фактическое испарение и влаговыделения зависят от активности бассейна, покрытия зеркала, температуры и режима эксплуатации.</p>';
     $('b_res').innerHTML = html;
   }
   function toggleShapeE() {
@@ -1181,7 +1188,11 @@
       area = Math.PI*d*d/4; v = L/3600/area; d_eq = d;
     } else {
       const a = Math.max(val('e_w'),10)/1000, b = Math.max(val('e_h'),10)/1000;
-      area = a*b; v = L/3600/area; d_eq = 2*a*b/(a+b);
+      area = a*b;
+      v = L/3600/area;
+      // Equivalent diameter for equal friction loss; consistent with calcD() and calcEQ().
+      // 2ab/(a+b) is the hydraulic diameter, not the equal-friction equivalent diameter.
+      d_eq = 1.3*Math.pow(a*b,0.625)/Math.pow(a+b,0.25);
     }
     const Pd = 0.6*v*v, nu = 1.5e-5, Re = v*d_eq/nu;
     let lambda = 0;
@@ -1213,32 +1224,39 @@
     $('fc_res').innerHTML = html;
   }
   function calcEL() {
-    const P = Math.max(val('el_p'),0), ph = $('el_ph').value;
-    const cos = Math.max(val('el_cos'),0.1), mat = $('el_mat').value;
-    const len = Math.max(val('el_l'),0);
-    const U = ph === '3' ? 380 : 220;
-    const I = ph === '1' ? (P*1000)/(U*cos) : (P*1000)/(Math.sqrt(3)*U*cos);
+    const P = val('el_p'), ph = $('el_ph').value, cos = val('el_cos');
+    const mat = $('el_mat').value, len = val('el_l');
+    if (P < 0 || len < 0 || cos <= 0 || cos > 1 || !isFinite(P) || !isFinite(len) || !isFinite(cos)) {
+      $('el_res').innerHTML = '<p class="note warn">Проверьте мощность, длину линии и cosφ (0–1).</p>';
+      return;
+    }
+    const electrical = HVACMath.electrical(P, ph, cos);
+    if (!electrical) {
+      $('el_res').innerHTML = '<p class="note warn">Проверьте мощность, фазность и cosφ.</p>';
+      return;
+    }
+    const U = electrical.voltage;
+    const I = electrical.current;
     const breakers = [6,10,16,20,25,32,40,50,63,80,100,125,160];
     const needed = I*1.25, found = breakers.find(b => b >= needed);
     const breaker = found !== undefined ? found : null;
+    // Табличные токи — только ориентировочные; зависят от способа прокладки и условий.
     const cu = [{s:1.5,i:19},{s:2.5,i:27},{s:4,i:38},{s:6,i:46},{s:10,i:70},{s:16,i:85},{s:25,i:115},{s:35,i:135}];
     const al = [{s:2.5,i:21},{s:4,i:28},{s:6,i:36},{s:10,i:50},{s:16,i:60},{s:25,i:85},{s:35,i:100}];
     const table = mat === 'cu' ? cu : al;
-    const target = breaker === null ? 200 : breaker;
-    const cable = table.find(c => c.i >= target);
+    const cable = table.find(c => c.i >= (breaker === null ? 200 : breaker));
     const cableSize = cable ? cable.s : null;
+    // Упрощённое падение напряжения по активному сопротивлению, без реактивной составляющей.
     const rho = mat === 'cu' ? 0.0175 : 0.028;
     let dU = 0;
-    if (cableSize) {
-      if (ph === '1') dU = (2*len*I*rho*cos)/cableSize;
-      else dU = (Math.sqrt(3)*len*I*rho*cos)/cableSize;
-    }
+    if (cableSize) dU = (ph === '1' ? 2 : Math.sqrt(3))*len*I*rho/cableSize;
     const dU_pct = U > 0 ? (dU/U)*100 : 0;
-    let html = box('Ток',f(I,1),'А',1)+box('Автомат',breaker===null?'>160':breaker,'А',1)+
-      box('Кабель',cableSize===null?'—':cableSize,'мм²',1)+box('Падение',f(dU,1),'В')+
+    let html = box('Ток',f(I,1),'А',1)+box('Автомат (предварительно)',breaker===null?'>160':breaker,'А',1)+
+      box('Кабель (предварительно)',cableSize===null?'—':cableSize,'мм²',1)+box('Падение по R',f(dU,1),'В')+
       box('Падение %',f(dU_pct,1),'%');
-    if (breaker === null || cableSize === null) html += `<p class="note warn">Расчёт вне таблицы (ток ${f(I,1)} А). Нужен расчёт по ПУЭ.</p>`;
-    if (dU_pct > 5) html += `<p class="note warn">Падение напряжения больше 5%.</p>`;
+    if (breaker === null || cableSize === null) html += '<p class="note warn">Расчёт вне таблицы. Требуется отдельный расчёт по ПУЭ и условиям прокладки.</p>';
+    if (dU_pct > 5) html += '<p class="note warn">Падение напряжения больше 5%.</p>';
+    html += '<p class="note warn">Ориентировочный подбор: таблица не учитывает способ прокладки, температуру, группировку, допустимый ток клемм, ток КЗ и время автоматического отключения. Для двигателей и нелинейной нагрузки нужны дополнительные проверки.</p>';
     $('el_res').innerHTML = html;
   }
   function calcVD() {
@@ -1262,7 +1280,11 @@
   function calcWC() {
     const Q = Math.max(val('wc_q'),0), tin = val('wc_tin'), tout = val('wc_tout');
     const tws = val('wc_tws'), twr = val('wc_twr');
-    const dta = Math.max(tout-tin,0.1), dtw = Math.max(tws-twr,0.1);
+    const dta = tout-tin, dtw = tws-twr;
+    if (dta <= 0 || dtw <= 0) {
+      $('wc_res').innerHTML = '<p class="note warn">Проверьте направление температур: t воздуха на выходе должна быть выше входной, а t воды подачи — выше обратки.</p>';
+      return;
+    }
     const G = (0.86*Q)/dtw, L = (Q*3600)/(1.2*1.005*dta);
     $('wc_res').innerHTML = box('Расход воды',f(G,2),'м³/ч',1)+box('Расход воздуха',f(L,0),'м³/ч',1)+
       box('Δt воздуха',f(dta,1),'°C')+box('Δt воды',f(dtw,1),'°C');
@@ -1288,7 +1310,11 @@
   }
   function calcOU() {
     const L = Math.max(val('ou_l'),0), t = val('ou_t');
-    const rh1 = Math.max(val('ou_rh1'),0), rh2 = Math.max(val('ou_rh2'),0);
+    const rh1 = val('ou_rh1'), rh2 = val('ou_rh2');
+    if (rh1 < 0 || rh1 > 100 || rh2 < 0 || rh2 > 100 || !isFinite(dFrom(t,rh1)) || !isFinite(dFrom(t,rh2))) {
+      $('ou_res').innerHTML = '<p class="note warn">Проверьте температуру и влажность: RH должна быть в диапазоне 0–100%.</p>';
+      return;
+    }
     const d1 = dFrom(t,rh1), d2 = dFrom(t,rh2);
     const W = L*1.2*(d1-d2)/1000;
     let html;
@@ -1296,7 +1322,10 @@
       const litrDay = W*24;
       html = box('Удалить влагу',f(W,2),'кг/ч',1)+box('Производительность',f(litrDay,1),'л/сутки',1)+
         box('Рекомендация','Осушитель до '+Math.ceil(litrDay/10)*10+' л/сут','',1);
-    } else html = box('Осушение не требуется','0','кг/ч',1);
+    } else {
+      html = box('Осушение не требуется','0','кг/ч',1);
+      if (W < -0.01) html += '<p class="note warn">Наружный воздух содержит больше влаги, чем целевой: одной вентиляцией осушение не обеспечить.</p>';
+    }
     $('ou_res').innerHTML = html;
   }
   const U = [
@@ -1333,16 +1362,21 @@
   }
   function calcUH() {
     const V = Math.max(val('uh_v'),0), n = Math.max(val('uh_n'),0);
-    const t = val('uh_t'), rh2 = Math.max(val('uh_rh2'),0), rh1 = Math.max(val('uh_rh1'),0);
+    const t = val('uh_t'), rh2 = val('uh_rh2'), rh1 = val('uh_rh1');
     const p = Math.max(val('uh_p'),0);
-    const L = V*n;
-    const d2 = dFrom(t,rh2), d1 = dFrom(t,rh1);
+    if (rh1 < 0 || rh1 > 100 || rh2 < 0 || rh2 > 100 || !isFinite(dFrom(t,rh1)) || !isFinite(dFrom(t,rh2))) {
+      $('uh_res').innerHTML = '<p class="note warn">Проверьте температуру и влажность: RH должна быть в диапазоне 0–100%.</p>';
+      return;
+    }
+    const L = V*n, d2 = dFrom(t,rh2), d1 = dFrom(t,rh1);
     const W_vent = L*1.2*(d2-d1)/1000, W_people = p*0.05;
-    const W_need = W_vent - W_people;
+    const W_need = Math.max(W_vent-W_people,0);
     let html = box('Расход притока',f(L,0),'м³/ч')+box('Влагосодержание наружного',f(d1,1),'г/кг')+
-      box('Влагосодержание целевое',f(d2,1),'г/кг')+box('Влага от людей',f(W_people,2),'кг/ч');
+      box('Влагосодержание целевое',f(d2,1),'г/кг')+box('Влага от людей (оценка)',f(W_people,2),'кг/ч');
     if (W_need > 0.01) html += box('Требуется добавить',f(W_need,2),'кг/ч',1);
     else html += box('Увлажнитель не требуется','0','кг/ч',1);
+    if (W_vent < 0) html += '<p class="note">Наружный воздух влажнее целевого и сам вносит влагу; учтено в балансе.</p>';
+    html += '<p class="note">Влаговыделения от людей заданы упрощённой оценкой и зависят от активности и условий.</p>';
     $('uh_res').innerHTML = html;
   }
   function calcTZ() {
@@ -1371,16 +1405,18 @@
       box('Доля рециркуляции',f(pct,1),'%')+box('Экономия тепла',f(save,1),'кВт',1);
   }
   function calcIZ() {
-    const d = Math.max(val('iz_d')/1000,0.01), tin = val('iz_tin'), tout = val('iz_tout');
-    const lam = Math.max(val('iz_lam'),0.02), Rreq = Math.max(val('iz_R'),0.1);
-    const rawDelta = (d/2)*(Math.exp(Math.min(2*Math.PI*lam*Rreq,5))-1);
-    const delta = Math.min(rawDelta, 0.5);
-    const t_surf = tout + (tin-tout)*0.1/(Rreq+0.1);
-    const tr_out = dewPoint(dFrom(tout,70));
-    let html = box('Толщина',f(delta*1000,0),'мм',1)+box('Плоская (для сравнения)',f(lam*Rreq*1000,0),'мм')+
-      box('t поверхности',f(t_surf,1),'°C')+box('t точки росы',f(tr_out,1),'°C');
-    if (delta < rawDelta) html += `<p class="note warn">Толщина ограничена 500 мм — требуемое R очень велико.</p>`;
-    if (t_surf < tr_out) html += `<p class="note warn">Возможна конденсация!</p>`;
+    const d_mm = val('iz_d'), lam = val('iz_lam'), Rline = val('iz_R');
+    const insulation = HVACMath.insulationThickness(d_mm, lam, Rline);
+    if (!insulation) {
+      $('iz_res').innerHTML = '<p class="note warn">Диаметр, теплопроводность и линейное термическое сопротивление должны быть больше нуля.</p>';
+      return;
+    }
+    const { exponent, rawThickness: rawDelta, thickness: delta } = insulation;
+    let html = box('Толщина изоляции',f(delta*1000,0),'мм',1)+
+      box('Плоская оценка (не для цилиндра)',f(lam*Rline*1000,0),'мм');
+    if (exponent > 5 || delta < rawDelta) html += '<p class="note warn">Расчётная толщина превышает предел отображения 500 мм; проверьте исходное R и методику.</p>';
+    html += '<p class="note warn">Проверка конденсации удалена: для неё нужны относительная влажность среды, коэффициенты теплоотдачи, температура поверхности трубы и конструкция всех слоёв. Текущие входные данные этого не определяют.</p>';
+    html += '<p class="note">В формуле используется линейное сопротивление теплопередаче цилиндра, м·К/Вт на метр трубы, а не R ограждающей конструкции в м²·К/Вт.</p>';
     $('iz_res').innerHTML = html;
   }
   function calcTL() {
@@ -1639,10 +1675,13 @@
 
   const WS_STD = [15,20,25,32,40,50,65,80,100,125,150];
   function calcWS() {
-    const Q_ls = Math.max(val('ws_q'),0), L = Math.max(val('ws_len'),0);
-    const mat = $('ws_mat').value, zeta = Math.max(val('ws_zeta'),0);
-    if (Q_ls <= 0) { $('ws_res').innerHTML = '<p class="note warn">Введите расход воды.</p>'; return; }
-    const Q = Q_ls/1000, nu = 1.3e-6;
+    const Q_ls = val('ws_q'), L = val('ws_len');
+    const mat = $('ws_mat').value, zeta = val('ws_zeta');
+    if (Q_ls <= 0 || L < 0 || zeta < 0 || !isFinite(Q_ls) || !isFinite(L) || !isFinite(zeta)) {
+      $('ws_res').innerHTML = '<p class="note warn">Расход должен быть больше нуля, длина и сумма ζ — неотрицательными.</p>';
+      return;
+    }
+    const Q = Q_ls/1000, nu = 1.004e-6; // вода около 20 °C
     let bestD = null, bestV = null;
     for (const d_mm of WS_STD) {
       const d = d_mm/1000, area = Math.PI*d*d/4, v = Q/area;
@@ -1653,29 +1692,32 @@
       bestV = Q/(Math.PI*Math.pow(bestD/1000,2)/4);
     }
     const d = bestD/1000;
-    let delta = 0.2;
-    if (mat === 'plastic') delta = 0.007;
-    if (mat === 'copper') delta = 0.001;
+    // Эквивалентная абсолютная шероховатость, мм, ориентировочно для новых труб.
+    const roughnessMm = mat === 'plastic' ? 0.0015 : mat === 'copper' ? 0.0015 : 0.045;
     const Re = bestV*d/nu;
-    const lambda = Re > 0 ? 0.11*Math.pow((delta/(d*1000))+(68/Re),0.25) : 0;
-    const h_fr = L > 0 ? lambda*(L/d)*(bestV*bestV)/(2*9.81) : 0;
+    const friction = HVACMath.darcyFrictionFactor(Re, roughnessMm, d_mm);
+    const lambda = friction.factor;
+
+    const h_fr = lambda*(L/d)*(bestV*bestV)/(2*9.81);
     const h_loc = zeta*(bestV*bestV)/(2*9.81);
-    const h_tot = h_fr+h_loc;
-    const i_mm = L > 0 ? (h_fr/L)*1000 : 0;
-    let html = box('Рекомендуемый диаметр',bestD,'мм',1)+box('Фактическая скорость',f(bestV,2),'м/с',1)+
-      box('Удельные потери',f(i_mm,1),'мм/м')+box('Потери на трение',f(h_fr,2),'м.вод.ст.')+
-      box('Местные потери',f(h_loc,2),'м.вод.ст.')+box('Суммарные потери',f(h_tot,2),'м.вод.ст.',1);
-    if (L <= 0) html += `<p class="note warn">Длина 0 — потери на трение не учитываются.</p>`;
-    if (bestV < 0.5) html += `<p class="note warn">Скорость слишком мала (${f(bestV,2)} м/с).</p>`;
-    if (bestV > 1.5) html += `<p class="note warn">Скорость высокая (${f(bestV,2)} м/с).</p>`;
+    const h_tot = h_fr+h_loc, i_mm = L > 0 ? (h_fr/L)*1000 : 0;
+    let html = box('Рекомендуемый внутренний диаметр',bestD,'мм',1)+box('Фактическая скорость',f(bestV,2),'м/с',1)+
+      box('Re',f(Re,0),'')+box('Коэффициент трения λ',f(lambda,4),'')+
+      box('Удельные потери',f(i_mm,1),'мм/м')+box('Потери на трение',f(h_fr,2),'м вод. ст.')+
+      box('Местные потери',f(h_loc,2),'м вод. ст.')+box('Суммарные потери',f(h_tot,2),'м вод. ст.',1);
+    if (bestV > 1.5) html += '<p class="note warn">Даже максимальный диаметр из таблицы даёт скорость выше 1,5 м/с — проверьте расход и расширьте ряд диаметров.</p>';
+    if (L === 0) html += '<p class="note">При нулевой длине учитываются только местные сопротивления.</p>';
+    html += '<p class="note warn">Оценка по Дарси–Вейсбаху и Swamee–Jain: вода принята около 20 °C, шероховатость типовая, диаметры считаются внутренними. Проверьте фактический внутренний диаметр, температуру, материал и фитинги.</p>';
     $('ws_res').innerHTML = html;
   }
   function calcPsi() {
-    const t = val('psi_t'), rh = Math.max(1,Math.min(100,val('psi_rh')));
-    const P = Math.max(50, val('psi_p'));
-    const Ps = Psat(t), Pp = (rh/100)*Ps;
-    const d = 622*Pp/Math.max(P-Pp,0.01);
-    const tr = dewPoint(d, P);
+    const t = val('psi_t'), rh = val('psi_rh'), P = val('psi_p');
+    const d = dFrom(t,rh,P);
+    if (!isFinite(d) || P <= 0 || t <= -273.15) {
+      $('psi_res').innerHTML = '<p class="note warn">Недопустимые исходные данные. Проверьте температуру, RH (0–100%) и абсолютное давление в кПа.</p>';
+      return;
+    }
+    const Ps = Psat(t), Pp = (rh/100)*Ps, tr = dewPoint(d,P);
     const h = 1.005*t + d*(2500+1.86*t)/1000;
     const Rd = 287.05, Rv = 461.5, T = t+273.15;
     const density = ((P-Pp)*1000)/(Rd*T) + (Pp*1000)/(Rv*T);
@@ -1686,7 +1728,11 @@
 
   function calcRK() {
     const L = Math.max(val('rk_l'),0), t1 = val('rk_t1'), t2 = val('rk_t2');
-    const eff = Math.min(Math.max(val('rk_eff'),0),95)/100, rh = Math.max(val('rk_rh'),0), ts = val('rk_ts');
+    const eff = Math.min(Math.max(val('rk_eff'),0),95)/100, rh = val('rk_rh'), ts = val('rk_ts');
+    if (rh < 0 || rh > 100 || !isFinite(dFrom(t2,rh))) {
+      $('rk_res').innerHTML = '<p class="note warn">Проверьте температуру вытяжки и влажность: RH должна быть в диапазоне 0–100%.</p>';
+      return;
+    }
     const tAfter = t1+(t2-t1)*eff, tExh = t2-(t2-t1)*eff;
     const k = L*1.2*1.005/3600;
     const Qrec = k*(tAfter-t1), Qheat = Math.max(k*(ts-tAfter),0), Qno = Math.max(k*(ts-t1),0);
